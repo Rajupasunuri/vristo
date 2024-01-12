@@ -351,13 +351,13 @@ const Tabs = () => {
     return (
         <div>
             <div className="space-y-8 pt-5">
-                <div className="panel" id="border">
+                <div className="panel " id="border">
                     <div className="mb-5 flex items-center justify-between">
                         <h5 className="text-lg font-semibold dark:text-white-light">Time Table</h5>
                     </div>
-                    <div className="mb-5">
+                    <div className="mb-5 w-full">
                         <Tab.Group>
-                            <Tab.List className="mt-3 flex flex-wrap">
+                            <Tab.List className="mt-3 flex flex-wrap ">
                                 <Tab as={Fragment}>
                                     {({ selected }) => (
                                         <button

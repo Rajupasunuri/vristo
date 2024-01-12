@@ -55,7 +55,7 @@ const Tables = () => {
             <h3 className="font-bold text-lg">Facilities</h3>
             <div className="panel">
                 <div className="flex items-center justify-between mb-5 border-b ">
-                    <h5 className="font-semibold text-lg dark:text-white-light">Hostel</h5>
+                    <h5 className="font-semibold text-lg pb-4 dark:text-white-light">Hostel</h5>
                 </div>
                 <div className="flex items-center justify-center font-bold text-base text-blue-600 mb-4">
                     <span>Hostels Available</span>
@@ -65,7 +65,7 @@ const Tables = () => {
                         <thead>
                             <tr>
                                 <th>SL.NO</th>
-                                <th>HOSTEL NAME</th>
+                                <th> NAME</th>
                                 <th>HOSTEL TYPE</th>
                                 <th>NO OF ROOMS</th>
                                 <th>NO OF MEMBERS</th>
