@@ -108,7 +108,7 @@ const Tables = () => {
                                                         >
                                                             <div className="fixed inset-0" />
                                                         </Transition.Child>
-                                                        <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                                                        <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-black/20">
                                                             <div className="flex min-h-screen items-start justify-center px-4">
                                                                 <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                                                     <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">

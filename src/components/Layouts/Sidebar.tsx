@@ -83,8 +83,8 @@ const Sidebar = () => {
                 <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
                         <NavLink to="/" className="main-logo flex items-center shrink-0">
-                            <img className="w-17 h-8 ml-[4px] flex-none" src="/assets/images/crown-logo.png" alt="logo" />
-                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light">VRISTO</span>
+                            <img className="w-19 h-9 ml-[4px] flex-none" src="/assets/images/crown-logo.png" alt="logo" />
+                            <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light"></span>
                         </NavLink>
 
                         <button

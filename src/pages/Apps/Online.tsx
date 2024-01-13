@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
+import TalentShow from './TalentShow';
+import IconXCircle from '../../components/Icon/IconXCircle';
+import Tippy from '@tippyjs/react';
 
 const rowData = [
     {
@@ -232,7 +235,19 @@ const Skin = () => {
                             { accessor: 'question', title: 'QUESTIONS' },
                             { accessor: 'marks', title: 'MARKS' },
                             { accessor: 'status', title: 'STATUS' },
-                            { accessor: 'action', title: 'ACTION' },
+                            {
+                                accessor: 'action',
+                                title: 'ACTION',
+                                render: () => (
+                                    <div className="flex items-center w-max mx-auto">
+                                        <Tippy content="Delete">
+                                            <button type="button" onClick={() => alert('hello')}>
+                                                <IconXCircle />
+                                            </button>
+                                        </Tippy>
+                                    </div>
+                                ),
+                            },
                         ]}
                         totalRecords={initialRecords.length}
                         recordsPerPage={pageSize}
