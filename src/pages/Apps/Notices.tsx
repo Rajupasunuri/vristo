@@ -11,6 +11,44 @@ import IconUser from '../../components/Icon/IconUser';
 import IconPhone from '../../components/Icon/IconPhone';
 import IconInfoCircle from '../../components/Icon/IconInfoCircle';
 import IconSettings from '../../components/Icon/IconSettings';
+import Tippy from '@tippyjs/react';
+import IconXCircle from '../../components/Icon/IconXCircle';
+import TalentShow from './TalentShow';
+import { DataTable } from 'mantine-datatable';
+import IconEye from '../../components/Icon/IconEye';
+
+const rowData = [
+    {
+        id: 1,
+        examtitle: '7th Physics',
+        action: <button></button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Date Expired</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        duration: '00:45',
+        subject: 'Physics',
+        examdate: '14 Oct 2023',
+        time: '10:30AM-10:50AM',
+        question: '15',
+        marks: '15',
+    },
+    {
+        id: 2,
+        action: <button></button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        examtitle: '7th Maths',
+        duration: '00:45',
+        subject: 'Maths',
+        examdate: '14 Oct 2023',
+        time: '10:51AM-11:11AM',
+        question: '10',
+        marks: '10',
+    },
+];
 
 const Tabs = () => {
     const dispatch = useDispatch();
@@ -26,38 +64,63 @@ const Tabs = () => {
         }
     };
 
+    useEffect(() => {
+        dispatch(setPageTitle('Skin Tables'));
+    });
+    const PAGE_SIZES = [10, 20, 30, 50, 100];
+
+    //Skin: Striped
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+    const [initialRecords, setInitialRecords] = useState(rowData);
+    const [recordsData, setRecordsData] = useState(initialRecords);
+
+    const [search, setSearch] = useState('');
+
+    useEffect(() => {
+        setPage(1);
+    }, [pageSize]);
+
+    useEffect(() => {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize;
+        setRecordsData([...initialRecords.slice(from, to)]);
+    }, [page, pageSize, initialRecords]);
+
+    useEffect(() => {
+        setInitialRecords(() => {
+            return rowData.filter((item) => {
+                return (
+                    item.id.toString().includes(search.toLowerCase()) ||
+                    //item.action.toLowerCase().includes(search.toLowerCase()) ||
+                    // item.status.toLowerCase().includes(search.toLowerCase()) ||
+                    item.type.toLowerCase().includes(search.toLowerCase()) ||
+                    item.started.toLowerCase().includes(search.toLowerCase())
+                );
+            });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search]);
+
     return (
         <div>
-            <ul className="flex space-x-2 rtl:space-x-reverse">
-                <li>
-                    <Link to="/components/tabs" className="text-primary hover:underline">
-                        Components
-                    </Link>
-                </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-                    <span>Tabs</span>
-                </li>
-            </ul>
+            <h2 className="font-bold text-lg">Announcements</h2>
             <div className="space-y-8 pt-5">
-                <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-                    <div className="rounded-full bg-primary p-1.5 text-white ring-2 ring-primary/30 ltr:mr-3 rtl:ml-3">
-                        <IconBell />
-                    </div>
-                    <span className="ltr:mr-3 rtl:ml-3">Documentation: </span>
-                    <a href="https://headlessui.com/react/tabs" target="_blank" className="block hover:underline" rel="noreferrer">
-                        https://headlessui.com/react/tabs
-                    </a>
-                </div>
-
                 <div className="panel" id="icon">
-                    <div className="mb-5 flex items-center justify-between">
-                        <h5 className="text-lg font-semibold dark:text-white-light">Icon Tabs</h5>
-                        <button type="button" className="font-semibold hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-600" onClick={() => toggleCode('code3')}>
-                            <span className="flex items-center">
-                                <IconCode className="me-2" />
-                                Code
-                            </span>
-                        </button>
+                    <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
+                        <h5 className="text-lg font-bold dark:text-white-light">Notices</h5>
+                        <div className="flex justify-end space-x-2">
+                            <div>
+                                <Link to="/holiday" className="bg-[#f64e60] text-white p-2 rounded-md">
+                                    Holidays
+                                </Link>
+                            </div>
+                            <div>
+                                <Link to="/events" className="bg-[#ffa800] text-white p-2 rounded-md">
+                                    Events
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                     <div className="mb-5">
                         <Tab.Group>
@@ -68,8 +131,7 @@ const Tabs = () => {
                                             className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
                                                 dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
                                         >
-                                            <IconHome className="ltr:mr-2 rtl:ml-2" />
-                                            Home
+                                            Upcoming Notices
                                         </button>
                                     )}
                                 </Tab>
@@ -79,38 +141,98 @@ const Tabs = () => {
                                             className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
                                                 dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger`}
                                         >
-                                            <IconUser className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
-                                            Profile
+                                            Past Notices
                                         </button>
                                     )}
                                 </Tab>
                             </Tab.List>
                             <Tab.Panels>
                                 <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <h4 className="mb-4 text-2xl font-semibold">We move your world!</h4>
-                                        <p className="mb-4">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                        </p>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-                                            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                                        </p>
+                                    <div className="space-y-6">
+                                        {/* Skin: Striped  */}
+                                        <div className="panel">
+                                            <div className="flex items-center justify-end mb-5">
+                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                            </div>
+                                            <div className="datatables">
+                                                <DataTable
+                                                    striped
+                                                    className="whitespace-nowrap table-striped"
+                                                    // records={recordsData}
+                                                    columns={[
+                                                        { accessor: 'id', title: '#' },
+                                                        { accessor: 'examtitle', title: 'DATE' },
+                                                        { accessor: 'subject', title: 'TITLE' },
+                                                        { accessor: 'examdate', title: 'NOTICE' },
+
+                                                        {
+                                                            accessor: 'action',
+                                                            title: 'ACTION',
+                                                            render: () => (
+                                                                <div className="flex items-center w-max mx-auto">
+                                                                    <Tippy content="Delete">
+                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                            <IconEye />
+                                                                        </button>
+                                                                    </Tippy>
+                                                                </div>
+                                                            ),
+                                                        },
+                                                    ]}
+                                                    totalRecords={initialRecords.length}
+                                                    recordsPerPage={pageSize}
+                                                    page={page}
+                                                    onPageChange={(p) => setPage(p)}
+                                                    recordsPerPageOptions={PAGE_SIZES}
+                                                    onRecordsPerPageChange={setPageSize}
+                                                    minHeight={200}
+                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </Tab.Panel>
                                 <Tab.Panel>
-                                    <div>
-                                        <div className="flex items-start pt-5">
-                                            <div className="h-20 w-20 flex-none ltr:mr-4 rtl:ml-4">
-                                                <img src="/assets/images/profile-34.jpeg" alt="img" className="m-0 h-20 w-20 rounded-full object-cover ring-2 ring-[#ebedf2] dark:ring-white-dark" />
+                                    <div className="space-y-6">
+                                        {/* Skin: Striped  */}
+                                        <div className="panel">
+                                            <div className="flex items-center justify-end mb-5">
+                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                                             </div>
-                                            <div className="flex-auto">
-                                                <h5 className="mb-4 text-xl font-medium">Media heading</h5>
-                                                <p className="text-white-dark">
-                                                    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus
-                                                    viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                                                </p>
+                                            <div className="datatables">
+                                                <DataTable
+                                                    striped
+                                                    className="whitespace-nowrap table-striped"
+                                                    records={recordsData}
+                                                    columns={[
+                                                        { accessor: 'id', title: '#' },
+                                                        { accessor: 'examtitle', title: 'DATE' },
+                                                        { accessor: 'subject', title: 'TITLE' },
+                                                        { accessor: 'examdate', title: 'NOTICE' },
+
+                                                        {
+                                                            accessor: 'action',
+                                                            title: 'ACTION',
+                                                            render: () => (
+                                                                <div className="flex  justify-start text-center pl-3 ">
+                                                                    <Tippy content="Delete" className="flex justify-start">
+                                                                        <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                            <IconEye />
+                                                                        </button>
+                                                                    </Tippy>
+                                                                </div>
+                                                            ),
+                                                        },
+                                                    ]}
+                                                    totalRecords={initialRecords.length}
+                                                    recordsPerPage={pageSize}
+                                                    page={page}
+                                                    onPageChange={(p) => setPage(p)}
+                                                    recordsPerPageOptions={PAGE_SIZES}
+                                                    onRecordsPerPageChange={setPageSize}
+                                                    minHeight={200}
+                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                />
                                             </div>
                                         </div>
                                     </div>
