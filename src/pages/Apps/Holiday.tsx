@@ -111,12 +111,12 @@ const Tabs = () => {
                         <h5 className="text-lg font-bold dark:text-white-light">Holidays</h5>
                         <div className="flex justify-end space-x-2">
                             <div>
-                                <Link to="/notices" className="bg-[#6993ff] text-white p-2 rounded-md">
+                                <Link to="/notices" className="bg-white text-[#6993ff] p-2 rounded-md hover:bg-[#6993ff] hover:text-white border-[#6993ff] border">
                                     Notices
                                 </Link>
                             </div>
                             <div>
-                                <Link to="/events" className="bg-[#ffa800] text-white p-2 rounded-md">
+                                <Link to="/events" className="bg-white text-[#ffa800] p-2 rounded-md hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
                                     Events
                                 </Link>
                             </div>

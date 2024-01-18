@@ -31,6 +31,9 @@ import Medias from '../pages/Apps/Medias';
 import Books from '../pages/Apps/Books';
 import BooksIssued from '../pages/Apps/BooksIssued';
 import ChangePassword from '../pages/Apps/ChangePassword';
+import QueryComplaint from '../pages/Apps/QueryComplaint';
+import InvoicePreviews from '../pages/Apps/InvoicePreviews';
+import PaymentGate from '../pages/Apps/PaymentGate';
 //import Logout from '../pages/Logout';
 const Index = lazy(() => import('../pages/Index'));
 const Logout = lazy(() => import('../pages/Logout'));
@@ -200,17 +203,29 @@ const routes = [
         element: <Scrumboard />,
     },
     {
-        path: '/apps/calendar',
+        path: '/calendar',
         element: <Calendar />,
     },
     {
         path: '/apps/homepage',
         element: <HomePage />,
     },
+    {
+        path: '/preview',
+        element: <InvoicePreviews />,
+    },
 
     {
         path: '/timetable',
         element: <Timetable />,
+    },
+    {
+        path: '/payments',
+        element: <PaymentGate />,
+    },
+    {
+        path: '/query/complaint',
+        element: <QueryComplaint />,
     },
 
     {

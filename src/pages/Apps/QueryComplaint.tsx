@@ -104,20 +104,16 @@ const Tabs = () => {
 
     return (
         <div>
-            <h2 className="font-bold text-lg">Announcements</h2>
+            <h2 className="font-bold text-lg">Query Request Complaint</h2>
             <div className="space-y-8 pt-5">
                 <div className="panel" id="icon">
                     <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
-                        <h5 className="text-lg font-bold dark:text-white-light">Notices</h5>
+                        <h5 className="text-sm font-bold dark:text-white-light">Query Request Complaint</h5>
                         <div className="flex justify-end space-x-2">
+                            <div></div>
                             <div>
-                                <Link to="/holiday" className="bg-white text-[#f64e60] p-2 rounded-md hover:shadow-lg hover:bg-[#f64e60] hover:text-white border-[#f64e60] border">
-                                    Holidays
-                                </Link>
-                            </div>
-                            <div>
-                                <Link to="/events" className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                    Events
+                                <Link to="/query-request" className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
+                                    + Query Request Complaint
                                 </Link>
                             </div>
                         </div>
@@ -131,7 +127,7 @@ const Tabs = () => {
                                             className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
                                                 dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
                                         >
-                                            Upcoming Notices
+                                            Queries
                                         </button>
                                     )}
                                 </Tab>
@@ -139,9 +135,19 @@ const Tabs = () => {
                                     {({ selected }) => (
                                         <button
                                             className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger`}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
                                         >
-                                            Past Notices
+                                            Requests
+                                        </button>
+                                    )}
+                                </Tab>
+                                <Tab as={Fragment}>
+                                    {({ selected }) => (
+                                        <button
+                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                        >
+                                            Complaints
                                         </button>
                                     )}
                                 </Tab>
@@ -203,7 +209,7 @@ const Tabs = () => {
                                                 <DataTable
                                                     striped
                                                     className="whitespace-nowrap table-striped"
-                                                    records={recordsData}
+                                                    // records={recordsData}
                                                     columns={[
                                                         { accessor: 'id', title: '#' },
                                                         { accessor: 'examtitle', title: 'DATE' },
@@ -214,9 +220,9 @@ const Tabs = () => {
                                                             accessor: 'action',
                                                             title: 'ACTION',
                                                             render: () => (
-                                                                <div className="flex  justify-start text-center pl-3 ">
-                                                                    <Tippy content="Delete" className="flex justify-start">
-                                                                        <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                <div className="flex items-center w-max mx-auto">
+                                                                    <Tippy content="Delete">
+                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
                                                                             <IconEye />
                                                                         </button>
                                                                     </Tippy>
@@ -237,8 +243,51 @@ const Tabs = () => {
                                         </div>
                                     </div>
                                 </Tab.Panel>
+                                <Tab.Panel>
+                                    <div className="space-y-6">
+                                        {/* Skin: Striped  */}
+                                        <div className="panel">
+                                            <div className="flex items-center justify-end mb-5">
+                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                            </div>
+                                            <div className="datatables">
+                                                <DataTable
+                                                    striped
+                                                    className="whitespace-nowrap table-striped"
+                                                    // records={recordsData}
+                                                    columns={[
+                                                        { accessor: 'id', title: '#' },
+                                                        { accessor: 'examtitle', title: 'DATE' },
+                                                        { accessor: 'subject', title: 'TITLE' },
+                                                        { accessor: 'examdate', title: 'NOTICE' },
 
-                                <Tab.Panel>Disabled</Tab.Panel>
+                                                        {
+                                                            accessor: 'action',
+                                                            title: 'ACTION',
+                                                            render: () => (
+                                                                <div className="flex items-center w-max mx-auto">
+                                                                    <Tippy content="Delete">
+                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                            <IconEye />
+                                                                        </button>
+                                                                    </Tippy>
+                                                                </div>
+                                                            ),
+                                                        },
+                                                    ]}
+                                                    totalRecords={initialRecords.length}
+                                                    recordsPerPage={pageSize}
+                                                    page={page}
+                                                    onPageChange={(p) => setPage(p)}
+                                                    recordsPerPageOptions={PAGE_SIZES}
+                                                    onRecordsPerPageChange={setPageSize}
+                                                    minHeight={200}
+                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Tab.Panel>
                             </Tab.Panels>
                         </Tab.Group>
                     </div>

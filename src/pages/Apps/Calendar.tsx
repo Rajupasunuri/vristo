@@ -10,6 +10,10 @@ import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconPlus from '../../components/Icon/IconPlus';
 import IconX from '../../components/Icon/IconX';
+import IconInbox from '../../components/Icon/IconInbox';
+import { Link } from 'react-router-dom';
+import IconCalendar from '../../components/Icon/IconCalendar';
+import Tippy from '@tippyjs/react';
 
 const Calendar = () => {
     const dispatch = useDispatch();
@@ -244,10 +248,11 @@ const Calendar = () => {
 
     return (
         <div>
+            <h2 className="font-bold text-lg mb-4">Academics</h2>
             <div className="panel mb-5">
                 <div className="mb-4 flex items-center sm:flex-row flex-col sm:justify-between justify-center">
                     <div className="sm:mb-0 mb-4">
-                        <div className="text-lg font-semibold ltr:sm:text-left rtl:sm:text-right text-center">Calendar</div>
+                        <div className="text-lg font-semibold ltr:sm:text-left rtl:sm:text-right text-center">Diary-Calendar</div>
                         <div className="flex items-center mt-2 flex-wrap sm:justify-start justify-center">
                             <div className="flex items-center ltr:mr-4 rtl:ml-4">
                                 <div className="h-2.5 w-2.5 rounded-sm ltr:mr-2 rtl:ml-2 bg-primary"></div>
@@ -267,10 +272,27 @@ const Calendar = () => {
                             </div>
                         </div>
                     </div>
-                    <button type="button" className="btn btn-primary" onClick={() => editEvent()}>
-                        <IconPlus className="ltr:mr-2 rtl:ml-2" />
-                        Create Event
-                    </button>
+
+                    <div className="flex justify-end space-x-1">
+                        <button type="button" className="btn btn-primary" onClick={() => editEvent()}>
+                            <IconPlus className="ltr:mr-2 rtl:ml-2" />
+                            Create Event
+                        </button>
+                        <div>
+                            <Tippy content="Diary">
+                                <Link to="/diary">
+                                    <IconInbox className="sm:w-9 sm:h-9 w:5 h:5 text-blue-500" />
+                                </Link>
+                            </Tippy>
+                        </div>
+                        <div>
+                            <Tippy content="Calendar">
+                                <Link to="/calendar">
+                                    <IconCalendar className=" sm:w-8 sm:h-8 w-4.5 h-4.5 text-blue-500" />
+                                </Link>
+                            </Tippy>
+                        </div>
+                    </div>
                 </div>
                 <div className="calendar-wrapper">
                     <FullCalendar

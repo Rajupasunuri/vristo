@@ -157,7 +157,7 @@ const Tables = () => {
                 <div className="flex items-center justify-between mb-5 border-b ">
                     <h5 className="font-semibold text-lg pb-4 dark:text-white-light">Books</h5>
                     <div className="flex justify-start pb-4">
-                        <Link to="/books-issued" className="p-2 bg-blue-700 rounded-md text-white font-bold">
+                        <Link to="/books-issued" className="p-2 bg-white text-blue-700 border-blue-700 border hover:bg-blue-700 rounded-md  hover:text-white font-bold">
                             Issued Books
                         </Link>
                     </div>

@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { setPageTitle } from '../../../store/themeConfigSlice';
-import IconSend from '../../../components/Icon/IconSend';
-import IconPrinter from '../../../components/Icon/IconPrinter';
-import IconDownload from '../../../components/Icon/IconDownload';
-import IconEdit from '../../../components/Icon/IconEdit';
-import IconPlus from '../../../components/Icon/IconPlus';
+import { setPageTitle } from '../../store/themeConfigSlice';
+import IconSend from '../../components/Icon/IconSend';
+import IconPrinter from '../../components/Icon/IconPrinter';
+import IconDownload from '../../components/Icon/IconDownload';
+import IconEdit from '../../components/Icon/IconEdit';
+import IconPlus from '../../components/Icon/IconPlus';
+import IconAt from '../../components/Icon/IconAt';
+//import {useReactToPrint} from 'react-to-print';
 
 const Preview = () => {
     const dispatch = useDispatch();
@@ -20,31 +22,10 @@ const Preview = () => {
     const items = [
         {
             id: 1,
-            title: 'Calendar App Customization',
+            title: '3rd Term',
             quantity: 1,
             price: '120',
             amount: '120',
-        },
-        {
-            id: 2,
-            title: 'Chat App Customization',
-            quantity: 1,
-            price: '230',
-            amount: '230',
-        },
-        {
-            id: 3,
-            title: 'Laravel Integration',
-            quantity: 1,
-            price: '405',
-            amount: '405',
-        },
-        {
-            id: 4,
-            title: 'Backend UI Design',
-            quantity: 1,
-            price: '2500',
-            amount: '2500',
         },
     ];
 
@@ -55,15 +36,15 @@ const Preview = () => {
         },
         {
             key: 'title',
-            label: 'ITEMS',
+            label: 'Fee Type',
         },
         {
             key: 'quantity',
-            label: 'QTY',
+            label: 'Fee Amount',
         },
         {
             key: 'price',
-            label: 'PRICE',
+            label: 'Discount',
             class: 'ltr:text-right rtl:text-left',
         },
         {
@@ -78,12 +59,7 @@ const Preview = () => {
 
     return (
         <div>
-            <div className="flex items-center lg:justify-end justify-center flex-wrap gap-4 mb-6">
-                <button type="button" className="btn btn-info gap-2">
-                    <IconSend />
-                    Send Invoice
-                </button>
-
+            <div className="flex items-center lg:justify-end justify-center flex-wrap gap-4 mb-6 print:hidden">
                 <button type="button" className="btn btn-primary gap-2" onClick={() => exportTable()}>
                     <IconPrinter />
                     Print
@@ -94,28 +70,19 @@ const Preview = () => {
                     Download
                 </button>
 
-                <Link to="/apps/invoice/add" className="btn btn-secondary gap-2">
-                    <IconPlus />
-                    Create
-                </Link>
-
-                <Link to="/apps/invoice/edit" className="btn btn-warning gap-2">
-                    <IconEdit />
-                    Edit
+                <Link to="/invoice" className="btn btn-secondary gap-2">
+                    Invoice List
                 </Link>
             </div>
-            <div className="panel">
+            <div className="panel ">
                 <div className="flex justify-between flex-wrap gap-4 px-4">
                     <div className="text-2xl font-semibold uppercase">Invoice</div>
                     <div className="shrink-0">
-                        <img src="/assets/images/logo.svg" alt="img" className="w-14 ltr:ml-auto rtl:mr-auto" />
+                        <img src="/assets/images/crown-logo.png" alt="img" className=" w-30 h-12   ltr:ml-auto rtl:mr-auto" />
                     </div>
                 </div>
                 <div className="ltr:text-right rtl:text-left px-4">
                     <div className="space-y-1 mt-6 text-white-dark">
-                        <div>13 Tetrick Road, Cypress Gardens, Florida, 33884, US</div>
-                        <div>vristo@gmail.com</div>
-                        <div>+1 (070) 123-4567</div>
                         <div>Date:{local}</div>
                     </div>
                 </div>
@@ -124,52 +91,57 @@ const Preview = () => {
                 <div className="flex justify-between lg:flex-row flex-col gap-6 flex-wrap">
                     <div className="flex-1">
                         <div className="space-y-1 text-white-dark">
-                            <div>Issue For:</div>
-                            <div className="text-black dark:text-white font-semibold">John Doe</div>
-                            <div>405 Mulberry Rd. Mc Grady, NC, 28649</div>
-                            <div>redq@company.com</div>
-                            <div>(128) 666 070</div>
+                            <div>
+                                School: <span className="">DEMO</span>
+                            </div>
+
+                            <div>
+                                Address:
+                                <span>
+                                    <div>GKR Towers,Guntur,Andhra </div>
+                                    <div>Pradesh:522034</div>
+                                    <div></div>
+                                </span>
+                            </div>
+                            <div>
+                                Phone No: <span className="">9160797103</span>
+                            </div>
+                            <div>
+                                Email: <span className="">abc@gmail.com</span>
+                            </div>
                         </div>
                     </div>
                     <div className="flex justify-between sm:flex-row flex-col gap-6 lg:w-2/3">
                         <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Invoice :</div>
-                                <div>#8701</div>
+                                <div className="text-white-dark">Name :</div>
+                                <div>Rakesh</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Issue Date :</div>
-                                <div>13 Sep 2022</div>
+                                <div className="text-white-dark">Class:</div>
+                                <div>VII</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Order ID :</div>
-                                <div>#OD-85794</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between">
-                                <div className="text-white-dark">Shipment ID :</div>
-                                <div>#SHP-8594</div>
+                                <div className="text-white-dark">Section:</div>
+                                <div>A</div>
                             </div>
                         </div>
                         <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Bank Name:</div>
-                                <div className="whitespace-nowrap">Bank Of America</div>
+                                <div className="text-white-dark ">Invoice :</div>
+                                <div className="whitespace-nowrap">#403862</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Account Number:</div>
-                                <div>1234567890</div>
+                                <div className="text-white-dark">Status:</div>
+                                <div className=" border border-red-500 bg-red-300 p-2 py-1 rounded-md">Not Paid</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">SWIFT Code:</div>
-                                <div>S58K796</div>
+                                <div className="text-white-dark">Roll No:</div>
+                                <div>8</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">IBAN:</div>
-                                <div>L5698445485</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Country:</div>
-                                <div>United States</div>
+                                <div className="text-white-dark">Registration No:</div>
+                                <div>56</div>
                             </div>
                         </div>
                     </div>
@@ -224,6 +196,11 @@ const Preview = () => {
                         <div className="flex items-center font-semibold text-lg">
                             <div className="flex-1">Grand Total</div>
                             <div className="w-[37%]">$3945</div>
+                        </div>
+                        <div className="">
+                            <Link to="/payments">
+                                <h2 className="print:hidden inline-block mt-2 p-4 py-2 border-blue-400 border text-blue-400 hover:bg-blue-400 hover:text-white">Pay Now</h2>
+                            </Link>
                         </div>
                     </div>
                 </div>
