@@ -35,6 +35,7 @@ import IconMenuPages from '../Icon/Menu/IconMenuPages';
 import IconMenuMore from '../Icon/Menu/IconMenuMore';
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from '@fullcalendar/core/preact';
+import IconX from '../Icon/IconX';
 const Header = () => {
     const location = useLocation();
     const [modal20, setModal20] = useState<boolean>(false);
@@ -460,18 +461,6 @@ const Header = () => {
                                             Profile Information
                                         </Link>
                                     </li>
-                                    {/* <li>
-                                        <Link to="/apps/mailbox" className="dark:hover:text-white">
-                                            <IconMail className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            Inbox
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/auth/boxed-lockscreen" className="dark:hover:text-white">
-                                            <IconLockDots className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-                                            Lock Screen
-                                        </Link>
-                                    </li> */}
 
                                     <li>
                                         <Link to="/change-password" className="dark:hover:text-white">

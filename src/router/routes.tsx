@@ -10,7 +10,7 @@ import Diary from '../pages/Apps/Diary';
 import Assignments from '../pages/Apps/Assignments';
 import { Marks } from '@mantine/core/lib/Slider/Marks/Marks';
 import ExamSchedule from '../pages/Apps/ExamSchedule';
-import { Mark } from '@mantine/core';
+import { AppShell, Mark } from '@mantine/core';
 import Offline from '../pages/Apps/Offline';
 import Online from '../pages/Apps/Online';
 import TalentShow from '../pages/Apps/TalentShow';
@@ -34,6 +34,7 @@ import ChangePassword from '../pages/Apps/ChangePassword';
 import QueryComplaint from '../pages/Apps/QueryComplaint';
 import InvoicePreviews from '../pages/Apps/InvoicePreviews';
 import PaymentGate from '../pages/Apps/PaymentGate';
+import ApplyLeave from '../pages/Apps/ApplyLeave';
 //import Logout from '../pages/Logout';
 const Index = lazy(() => import('../pages/Index'));
 const Logout = lazy(() => import('../pages/Logout'));
@@ -201,6 +202,10 @@ const routes = [
     {
         path: '/apps/scrumboard',
         element: <Scrumboard />,
+    },
+    {
+        path: '/apply/leave',
+        element: <ApplyLeave />,
     },
     {
         path: '/calendar',

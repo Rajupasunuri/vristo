@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconCoffee from '../../components/Icon/IconCoffee';
 import IconCalendar from '../../components/Icon/IconCalendar';
@@ -26,8 +26,10 @@ import { U_URL } from '../Apps/query';
 import Select from 'react-select';
 import swal from 'sweetalert';
 import { Alert, Row, Col, Card, CardBody, CardTitle, CardImg, CardText, CardSubtitle, Modal, Button, FormGroup, InputGroup, Label, Table } from 'reactstrap';
-import UploadAvtar from './UploadAvtar';
+//import UploadAvtar from './UploadAvtar';
 import Uploadfile from './cropimg';
+import IconLock from '../../components/Icon/IconLock';
+import Tippy from '@tippyjs/react';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -196,7 +198,7 @@ const Profile = () => {
                         swal(values.item + ' ' + response.data.message, {
                             icon: 'success',
                         });
-                        history.push('/users');
+                        //  history.push('/users');
                     }
                 })
                 .catch((error) => {
@@ -208,7 +210,7 @@ const Profile = () => {
         }
     };
 
-    const handleSelectUsertypeChange = (selectedOption) => {
+    const handleSelectUsertypeChange = (selectedOption: { value: SetStateAction<string> }) => {
         console.log('selectedOption', selectedOption);
         setUsertypeValue(selectedOption.value);
     };
@@ -232,7 +234,7 @@ const Profile = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     return (
         <div>
-            <ul className="flex space-x-2 rtl:space-x-reverse">
+            {/* <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
                     <Link to="#" className="text-primary hover:underline">
                         Users
@@ -241,29 +243,32 @@ const Profile = () => {
                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
                     <span>Profile</span>
                 </li>
-            </ul>
+            </ul> */}
+            <h2 className="font-bold text-lg">My Account</h2>
             <div className="pt-5">
                 <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
                     <div className="panel">
                         <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Profile</h5>
-                            <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
-                                <IconPencilPaper />
-                            </Link>
+                            <h5 className="font-semibold text-lg dark:text-white-light">Student Profile</h5>
+                            <Tippy content="Edit Profile">
+                                <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
+                                    <IconPencilPaper />
+                                </Link>
+                            </Tippy>
                         </div>
                         <div className="mb-5">
                             <div className="flex flex-col justify-center items-center">
-                                {/* <img src="/assets/images/profile-34.jpeg" alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" /> */}
+                                <img src="/assets/images/profile-34.jpeg" alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
                                 {/* <CropImg imgsrc={localStorage.cu_image_url} className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgw={250}></CropImg> */}
                                 {/* <UploadAvtar></UploadAvtar> */}
-                                <Uploadfile
+                                {/* <Uploadfile
                                     imgsrc={localStorage.cu_image_url}
                                     className="img-thumbnail onclicklink"
                                     onwhich="cu_image_url"
                                     imgtitle="Profile Picture"
                                     imgw={250}
                                     imgh={250}
-                                ></Uploadfile>
+                                ></Uploadfile> */}
                                 {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
                                 <p className="font-semibold text-primary text-xl">Joe Doe</p>
                             </div>
@@ -292,112 +297,63 @@ const Profile = () => {
                                         {yes2}
                                     </span>
                                 </li>
-                            </ul>
-                            <ul className="mt-7 flex items-center justify-center gap-2">
-                                <li>
-                                    <button className="btn btn-info flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconTwitter className="w-5 h-5" />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-danger flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconDribbble />
-                                    </button>
-                                </li>
-                                <li>
-                                    <button className="btn btn-dark flex items-center justify-center rounded-full w-10 h-10 p-0">
-                                        <IconGithub />
-                                    </button>
-                                </li>
+                                <Link to="/change-password" className=" ">
+                                    <span className="flex gap-2">
+                                        <IconLock />
+                                        <div className=" active:bg-gray-400 border-blue-400 border text-blue-400 sm:p-1 rounded-md hover:bg-blue-400 hover:text-white sm:text-xs p-1">
+                                            Change Password
+                                        </div>
+                                    </span>
+                                </Link>
                             </ul>
                         </div>
                     </div>
                     <div className="panel lg:col-span-2 xl:col-span-3">
                         <div className="mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Task</h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">Parents Information</h5>
                         </div>
                         <div className="mb-5">
                             <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
                                 <table className="whitespace-nowrap">
                                     <thead>
                                         <tr>
-                                            <th>Projects</th>
-                                            <th>Progress</th>
-                                            <th>Task Done</th>
-                                            <th className="text-center">Time</th>
+                                            {/* <th colSpan={2} className="text-center col-span">
+                                                Projects
+                                            </th> */}
+                                            {/* <th>Progress</th> */}
+                                            {/* <th>Task Done</th>
+                                            <th className="text-center">Time</th> */}
                                         </tr>
                                     </thead>
-                                    <tbody className="dark:text-white-dark">
+                                    <tbody className="dark:text-white-dark border-1.5">
                                         <tr>
-                                            <td>Figma Design</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-danger rounded-full w-[29.56%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">29.56%</td>
-                                            <td className="text-center">2 mins ago</td>
+                                            <td>Father Name</td>
+                                            <td>Ramesh</td>
                                         </tr>
                                         <tr>
-                                            <td>Vue Migration</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-info rounded-full w-1/2"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">50%</td>
-                                            <td className="text-center">4 hrs ago</td>
+                                            <td>Mother Name</td>
+                                            <td>Rani</td>
                                         </tr>
                                         <tr>
-                                            <td>Flutter App</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-warning rounded-full  w-[39%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">39%</td>
-                                            <td className="text-center">a min ago</td>
+                                            <td>Father's Profession</td>
+                                            <td></td>
                                         </tr>
                                         <tr>
-                                            <td>API Integration</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-success rounded-full  w-[78.03%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">78.03%</td>
-                                            <td className="text-center">2 weeks ago</td>
+                                            <td>Mother's Profession</td>
+                                            <td></td>
                                         </tr>
 
                                         <tr>
-                                            <td>Blog Update</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-secondary  rounded-full  w-full"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">100%</td>
-                                            <td className="text-center">18 hrs ago</td>
+                                            <td>Father Name</td>
+                                            <td>Ramesh</td>
                                         </tr>
                                         <tr>
-                                            <td>Landing Page</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-danger rounded-full  w-[19.15%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-danger">19.15%</td>
-                                            <td className="text-center">5 days ago</td>
+                                            <td>Guardian Name</td>
+                                            <td></td>
                                         </tr>
                                         <tr>
-                                            <td>Shopify Dev</td>
-                                            <td>
-                                                <div className="h-1.5 bg-[#ebedf2] dark:bg-dark/40 rounded-full flex w-full">
-                                                    <div className="bg-primary rounded-full w-[60.55%]"></div>
-                                                </div>
-                                            </td>
-                                            <td className="text-success">60.55%</td>
-                                            <td className="text-center">8 days ago</td>
+                                            <td>Guardian Profession</td>
+                                            <td></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -405,7 +361,7 @@ const Profile = () => {
                         </div>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="panel">
                         <div className="mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">Summary</h5>
@@ -605,7 +561,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

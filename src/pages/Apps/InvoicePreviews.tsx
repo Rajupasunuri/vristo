@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setPageTitle } from '../../store/themeConfigSlice';
@@ -8,7 +8,9 @@ import IconDownload from '../../components/Icon/IconDownload';
 import IconEdit from '../../components/Icon/IconEdit';
 import IconPlus from '../../components/Icon/IconPlus';
 import IconAt from '../../components/Icon/IconAt';
-//import {useReactToPrint} from 'react-to-print';
+import { useReactToPrint } from 'react-to-print';
+import html2canvas from 'html2canvas';
+import jspdf from 'jspdf';
 
 const Preview = () => {
     const dispatch = useDispatch();
@@ -54,8 +56,30 @@ const Preview = () => {
         },
     ];
 
+    const pdfref: RefObject<HTMLDivElement> = useRef(null);
+
     const dates = new Date();
     const local = dates.toLocaleDateString('en-GB');
+    const downloadPdf = () => {
+        const input = pdfref.current;
+        if (input) {
+            html2canvas(input).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf('p', 'mm', 'a4', true);
+                const pdfwidth = pdf.internal.pageSize.getWidth();
+                const pdfheight = pdf.internal.pageSize.getHeight();
+                const imgwidth = canvas.width;
+                const imgheight = canvas.height;
+                const ratio = Math.min(pdfwidth / imgwidth, pdfheight / imgheight);
+                const imgx = (pdfwidth - imgwidth * ratio) / 2;
+                const imgy = 30;
+                pdf.addImage(imgData, 'PNG', imgx, imgy, imgwidth * ratio, imgheight * ratio);
+                pdf.save('invoice.pdf');
+            });
+        } else {
+            console.error('Input element is null.');
+        }
+    };
 
     return (
         <div>
@@ -65,16 +89,16 @@ const Preview = () => {
                     Print
                 </button>
 
-                <button type="button" className="btn btn-success gap-2">
+                <button type="button" onClick={downloadPdf} className="btn btn-success gap-2">
                     <IconDownload />
-                    Download
+                    Download PDF
                 </button>
 
                 <Link to="/invoice" className="btn btn-secondary gap-2">
                     Invoice List
                 </Link>
             </div>
-            <div className="panel ">
+            <div className="panel" ref={pdfref}>
                 <div className="flex justify-between flex-wrap gap-4 px-4">
                     <div className="text-2xl font-semibold uppercase">Invoice</div>
                     <div className="shrink-0">
@@ -133,7 +157,7 @@ const Preview = () => {
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
                                 <div className="text-white-dark">Status:</div>
-                                <div className=" border border-red-500 bg-red-300 p-2 py-1 rounded-md">Not Paid</div>
+                                <div className=" border border-red-500 bg-red-300 p-2 py-0.5 rounded-md">Not Paid</div>
                             </div>
                             <div className="flex items-center w-full justify-between mb-2">
                                 <div className="text-white-dark">Roll No:</div>
@@ -197,12 +221,14 @@ const Preview = () => {
                             <div className="flex-1">Grand Total</div>
                             <div className="w-[37%]">$3945</div>
                         </div>
-                        <div className="">
-                            <Link to="/payments">
-                                <h2 className="print:hidden inline-block mt-2 p-4 py-2 border-blue-400 border text-blue-400 hover:bg-blue-400 hover:text-white">Pay Now</h2>
-                            </Link>
-                        </div>
                     </div>
+                </div>
+            </div>
+            <div className="ltr:text-right rtl:text-left space-y-2">
+                <div className="">
+                    <Link to="/payments">
+                        <h2 className="print:hidden inline-block mt-2 p-4 py-2 border-blue-400 border text-blue-400 hover:bg-blue-400 hover:text-white">Pay Now</h2>
+                    </Link>
                 </div>
             </div>
         </div>
