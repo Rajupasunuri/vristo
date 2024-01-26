@@ -8,8 +8,8 @@ const ChangePassword = () => {
     return (
         <div>
             <h2 className="font-bold text-lg  mb-6 ">My Account</h2>
-            <div className="  grid grid-col-2 gap-y-2 gap-x-4  sm:grid-cols-12 sm:gap-x-6 flex-flow-col sm:grid-flow-row ">
-                <div className="panel  sm:col-span-4 object-cover">
+            <div className="  grid grid-col-2 gap-y-2 gap-x-4  md:grid-cols-12 md:gap-x-6 flex-flow-col md:grid-flow-row ">
+                <div className="panel  md:col-span-4 object-cover">
                     <ul className="text-dark dark:text-white-dark !py-0 w-[230px] font-semibold dark:text-white-light/90">
                         <li>
                             <div className="flex  items-center px-4 py-4">
@@ -54,7 +54,7 @@ const ChangePassword = () => {
                         </li>
                     </ul>
                 </div>
-                <div className="panel  sm:col-span-8 object-cover space-y-6">
+                <div className="panel  md:col-span-8 object-cover space-y-6">
                     <h2 className="font-bold text-lg border-b-2 mb-6">Change Password</h2>
                     <div className="flex items-center justify-between gap-x-2">
                         <label htmlFor="profession">Current Password:</label>
