@@ -142,6 +142,18 @@ const Tables = () => {
                                                                             <IconX />
                                                                         </button>
                                                                     </div>
+                                                                    <iframe
+                                                                        width="560"
+                                                                        height="315"
+                                                                        // src="https://www.youtube.com/embed/N2d7puNyPqw"
+                                                                        src=".././public/assets/crown-logo.png"
+                                                                        title="Video Title"
+                                                                        //  frameBorder="0"
+
+                                                                        allowFullScreen
+                                                                        className="p-6 w-full "
+                                                                    ></iframe>
+
                                                                     <div className="p-5 ">
                                                                         <div className="font-bold flex items-center justify-center">School Hostel</div>
                                                                         <div className="font-bold flex items-center justify-center">Combine Hostel</div>

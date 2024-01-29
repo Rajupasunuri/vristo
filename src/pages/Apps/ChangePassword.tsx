@@ -56,15 +56,15 @@ const ChangePassword = () => {
                 </div>
                 <div className="panel  md:col-span-8 object-cover space-y-6">
                     <h2 className="font-bold text-lg border-b-2 mb-6">Change Password</h2>
-                    <div className="flex items-center justify-between gap-x-2">
+                    <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
                         <label htmlFor="profession">Current Password:</label>
                         <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8" />
                     </div>
-                    <div className="flex items-center justify-between gap-x-2">
+                    <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
                         <label htmlFor="profession">New Password:</label>
                         <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8 " />
                     </div>
-                    <div className="flex items-center justify-between gap-x-2">
+                    <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
                         <label htmlFor="profession">Confirm New Password:</label>
                         <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8" />
                     </div>

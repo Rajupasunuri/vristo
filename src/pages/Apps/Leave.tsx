@@ -17,6 +17,8 @@ import TalentShow from './TalentShow';
 import { DataTable } from 'mantine-datatable';
 import IconEye from '../../components/Icon/IconEye';
 import IconPlus from '../../components/Icon/IconPlus';
+import EditorMce from './EditorMce';
+import Picker from './Picker';
 
 const rowData = [
     {
@@ -77,7 +79,18 @@ const Tabs = () => {
     const [recordsData, setRecordsData] = useState(initialRecords);
 
     const [search, setSearch] = useState('');
+    const [AcademicBox, setAcademicBox] = useState(true);
+    const [LeaveBox, setLeaveBox] = useState(false);
 
+    const handleLeave = () => {
+        setAcademicBox(false);
+        setLeaveBox(true);
+    };
+
+    const handleAcademics = () => {
+        setAcademicBox(true);
+        setLeaveBox(false);
+    };
     useEffect(() => {
         setPage(1);
     }, [pageSize]);
@@ -105,251 +118,300 @@ const Tabs = () => {
 
     return (
         <div>
-            <h2 className="font-bold text-lg">Academics</h2>
-            <div className="space-y-8 pt-5">
-                <div className="panel" id="icon">
-                    <div className="mb-5 flex flex-col sm:flex-row items-center justify-between border-b-2 pb-6">
-                        <h5 className="text-sm font-bold dark:text-white-light mb-4 sm:mb-0">Leave Management</h5>
-                        <div className="flex justify-end space-x-2">
-                            <Link to="/apply/leave" className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                + Apply Leave
-                            </Link>
+            {AcademicBox ? (
+                <>
+                    <h2 className="font-bold text-lg">Academics</h2>
+                    <div className="space-y-8 pt-5">
+                        <div className="panel" id="icon">
+                            <div className="mb-5 flex flex-col sm:flex-row items-center justify-between border-b-2 pb-6">
+                                <h5 className="text-sm font-bold dark:text-white-light mb-4 sm:mb-0">Leave Management</h5>
+                                <div className="flex justify-end space-x-2">
+                                    <button onClick={handleLeave} className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
+                                        + Apply Leave
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="mb-5">
+                                <Tab.Group>
+                                    <Tab.List className="mt-3 mr-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                                >
+                                                    Leaves List(0)
+                                                </button>
+                                            )}
+                                        </Tab>
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                                >
+                                                    Pending Leaves(0)
+                                                </button>
+                                            )}
+                                        </Tab>
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                                >
+                                                    Approved Leaves(0)
+                                                </button>
+                                            )}
+                                        </Tab>
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                                >
+                                                    Rejected Leaves(0)
+                                                </button>
+                                            )}
+                                        </Tab>
+                                    </Tab.List>
+                                    <Tab.Panels>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            // records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: 'SL.NO' },
+
+                                                                { accessor: 'subject', title: 'Subject' },
+                                                                { accessor: 'examtitle', title: 'Leave From' },
+                                                                { accessor: 'examdate', title: 'Leave To' },
+                                                                { accessor: 'status', title: 'Status' },
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex items-center w-max mx-auto">
+                                                                            <Tippy content="Delete">
+                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            // records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: 'SL.NO' },
+
+                                                                { accessor: 'subject', title: 'Subject' },
+                                                                { accessor: 'examtitle', title: 'Leave From' },
+                                                                { accessor: 'examdate', title: 'Leave To' },
+                                                                { accessor: 'status', title: 'Status' },
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex items-center w-max mx-auto">
+                                                                            <Tippy content="Delete">
+                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            // records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: 'SL.NO' },
+
+                                                                { accessor: 'subject', title: 'Subject' },
+                                                                { accessor: 'examtitle', title: 'Leave From' },
+                                                                { accessor: 'examdate', title: 'Leave To' },
+                                                                { accessor: 'status', title: 'Status' },
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex items-center w-max mx-auto">
+                                                                            <Tippy content="Delete">
+                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            // records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: 'SL.NO' },
+
+                                                                { accessor: 'subject', title: 'Subject' },
+                                                                { accessor: 'examtitle', title: 'Leave From' },
+                                                                { accessor: 'examdate', title: 'Leave To' },
+                                                                { accessor: 'status', title: 'Status' },
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex items-center w-max mx-auto">
+                                                                            <Tippy content="Delete">
+                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                    </Tab.Panels>
+                                </Tab.Group>
+                            </div>
                         </div>
                     </div>
-                    <div className="mb-5">
-                        <Tab.Group>
-                            <Tab.List className="mt-3 mr-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
+                </>
+            ) : null}
+            {LeaveBox ? (
+                <>
+                    <h2 className="font-bold text-lg">Leave Mangement</h2>
+                    <div className="space-y-8 pt-5">
+                        <div className="panel " id="icon">
+                            <div className="mb-5 flex flex-col sm:flex-row items-center justify-between border-b-2 pb-6">
+                                <h5 className="text-sm font-bold dark:text-white-light mb-4 sm:mb-0">Apply Leave</h5>
+                                <div className="flex justify-end space-x-2">
+                                    <div></div>
+                                    <div>
                                         <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                            onClick={handleAcademics}
+                                            className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border"
                                         >
-                                            Leaves List(0)
+                                            + Leave Management
                                         </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
-                                        >
-                                            Pending Leaves(0)
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
-                                        >
-                                            Approved Leaves(0)
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
-                                        >
-                                            Rejected Leaves(0)
-                                        </button>
-                                    )}
-                                </Tab>
-                            </Tab.List>
-                            <Tab.Panels>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    // records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: 'SL.NO' },
-
-                                                        { accessor: 'subject', title: 'Subject' },
-                                                        { accessor: 'examtitle', title: 'Leave From' },
-                                                        { accessor: 'examdate', title: 'Leave To' },
-                                                        { accessor: 'status', title: 'Status' },
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex items-center w-max mx-auto">
-                                                                    <Tippy content="Delete">
-                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
-                                        </div>
                                     </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    // records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: 'SL.NO' },
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <div className="flex items-center">
+                                    <span className="sm:mr-20 mr-4">Leave From*</span>
+                                    <Picker />
+                                </div>
+                                <div className="flex items-center ml-4">
+                                    <span className="sm:mr-20 mr-4 sm:ml-4 md:ml-6 lg:ml-8 ml-2">Leave To*</span>
+                                    <Picker />
+                                </div>
+                            </div>
+                            <div className="flex items-center mt-4">
+                                <span className="mr-4">Subject*</span>
+                                <input type="text" className=" w-1/2 ml-20 form-input rounded" />
+                            </div>
+                            <div className="flex mt-8 ">
+                                <span className="mr-20">Message*</span>
 
-                                                        { accessor: 'subject', title: 'Subject' },
-                                                        { accessor: 'examtitle', title: 'Leave From' },
-                                                        { accessor: 'examdate', title: 'Leave To' },
-                                                        { accessor: 'status', title: 'Status' },
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex items-center w-max mx-auto">
-                                                                    <Tippy content="Delete">
-                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    // records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: 'SL.NO' },
-
-                                                        { accessor: 'subject', title: 'Subject' },
-                                                        { accessor: 'examtitle', title: 'Leave From' },
-                                                        { accessor: 'examdate', title: 'Leave To' },
-                                                        { accessor: 'status', title: 'Status' },
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex items-center w-max mx-auto">
-                                                                    <Tippy content="Delete">
-                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    // records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: 'SL.NO' },
-
-                                                        { accessor: 'subject', title: 'Subject' },
-                                                        { accessor: 'examtitle', title: 'Leave From' },
-                                                        { accessor: 'examdate', title: 'Leave To' },
-                                                        { accessor: 'status', title: 'Status' },
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex items-center w-max mx-auto">
-                                                                    <Tippy content="Delete">
-                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                            </Tab.Panels>
-                        </Tab.Group>
+                                <EditorMce />
+                            </div>
+                            {/* <div className="flex justify-center items-center mt-4">
+                        <button className="mr-0 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+                    </div> */}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </>
+            ) : null}
         </div>
     );
 };

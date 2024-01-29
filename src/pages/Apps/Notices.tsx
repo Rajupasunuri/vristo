@@ -102,148 +102,308 @@ const Tabs = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [search]);
 
+    const [Notices, setNotices] = useState(true);
+    const [Events, setEvents] = useState(false);
+    const [Holidays, setHolidays] = useState(false);
+
+    const handleNotices = () => {
+        setNotices(true);
+        setEvents(false);
+        setHolidays(false);
+    };
+    const handleEvents = () => {
+        setNotices(false);
+        setEvents(true);
+        setHolidays(false);
+    };
+    const handleHolidays = () => {
+        setNotices(false);
+        setEvents(false);
+        setHolidays(true);
+    };
+
     return (
         <div>
             <h2 className="font-bold text-lg">Announcements</h2>
-            <div className="space-y-8 pt-5">
-                <div className="panel" id="icon">
-                    <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
-                        <h5 className="text-lg font-bold dark:text-white-light">Notices</h5>
-                        <div className="flex justify-end space-x-2">
-                            <div>
-                                <Link to="/holiday" className="bg-white text-[#f64e60] p-2 rounded-md hover:shadow-lg hover:bg-[#f64e60] hover:text-white border-[#f64e60] border">
-                                    Holidays
-                                </Link>
+            {Notices ? (
+                <>
+                    {' '}
+                    <div className="space-y-8 pt-5">
+                        <div className="panel" id="icon">
+                            <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
+                                <h5 className="text-lg font-bold dark:text-white-light">Notices</h5>
+                                <div className="flex justify-end space-x-2">
+                                    <div>
+                                        <button onClick={handleHolidays} className="bg-white text-[#f64e60] p-2 rounded-md hover:shadow-lg hover:bg-[#f64e60] hover:text-white border-[#f64e60] border">
+                                            Holidays
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button onClick={handleEvents} className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
+                                            Events
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <Link to="/events" className="bg-white text-[#ffa800] p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                    Events
-                                </Link>
+                            <div className="mb-5">
+                                <Tab.Group>
+                                    <Tab.List className="mt-3 mr-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
+                                                >
+                                                    Upcoming Notices
+                                                </button>
+                                            )}
+                                        </Tab>
+                                        <Tab as={Fragment}>
+                                            {({ selected }) => (
+                                                <button
+                                                    className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
+                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger`}
+                                                >
+                                                    Past Notices
+                                                </button>
+                                            )}
+                                        </Tab>
+                                    </Tab.List>
+                                    <Tab.Panels>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            // records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: '#' },
+                                                                { accessor: 'examtitle', title: 'DATE' },
+                                                                { accessor: 'subject', title: 'TITLE' },
+                                                                { accessor: 'examdate', title: 'NOTICE' },
+
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex items-center w-max mx-auto">
+                                                                            <Tippy content="Delete">
+                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                        <Tab.Panel>
+                                            <div className="space-y-6">
+                                                {/* Skin: Striped  */}
+                                                <div className="panel">
+                                                    <div className="flex items-center justify-end mb-5">
+                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                    </div>
+                                                    <div className="datatables">
+                                                        <DataTable
+                                                            striped
+                                                            className="whitespace-nowrap table-striped"
+                                                            records={recordsData}
+                                                            columns={[
+                                                                { accessor: 'id', title: '#' },
+                                                                { accessor: 'examtitle', title: 'DATE' },
+                                                                { accessor: 'subject', title: 'TITLE' },
+                                                                { accessor: 'examdate', title: 'NOTICE' },
+
+                                                                {
+                                                                    accessor: 'action',
+                                                                    title: 'ACTION',
+                                                                    render: () => (
+                                                                        <div className="flex  justify-start text-center pl-3 ">
+                                                                            <Tippy content="Delete" className="flex justify-start">
+                                                                                <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                                    <IconEye />
+                                                                                </button>
+                                                                            </Tippy>
+                                                                        </div>
+                                                                    ),
+                                                                },
+                                                            ]}
+                                                            totalRecords={initialRecords.length}
+                                                            recordsPerPage={pageSize}
+                                                            page={page}
+                                                            onPageChange={(p) => setPage(p)}
+                                                            recordsPerPageOptions={PAGE_SIZES}
+                                                            onRecordsPerPageChange={setPageSize}
+                                                            minHeight={200}
+                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+
+                                        <Tab.Panel>Disabled</Tab.Panel>
+                                    </Tab.Panels>
+                                </Tab.Group>
                             </div>
                         </div>
                     </div>
-                    <div className="mb-5">
-                        <Tab.Group>
-                            <Tab.List className="mt-3 mr-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger border-b-white`}
-                                        >
-                                            Upcoming Notices
+                </>
+            ) : null}
+            {Holidays ? (
+                <>
+                    <div className="space-y-8 pt-5">
+                        <div className="panel" id="icon">
+                            <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
+                                <h5 className="text-lg font-bold dark:text-white-light">Holidays</h5>
+                                <div className="flex justify-end space-x-2">
+                                    <div>
+                                        <button onClick={handleNotices} className="bg-white text-[#6993ff] p-2 rounded-md hover:bg-[#6993ff] hover:text-white border-[#6993ff] border">
+                                            Notices
                                         </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-white-light !border-b-white text-danger !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''}
-                                                dark:hover:border-b-black' -mb-[1px] flex items-center border border-transparent p-3.5 py-2 hover:text-danger`}
-                                        >
-                                            Past Notices
+                                    </div>
+                                    <div>
+                                        <button onClick={handleEvents} className="bg-white text-[#ffa800] p-2 rounded-md hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
+                                            Events
                                         </button>
-                                    )}
-                                </Tab>
-                            </Tab.List>
-                            <Tab.Panels>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    // records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: '#' },
-                                                        { accessor: 'examtitle', title: 'DATE' },
-                                                        { accessor: 'subject', title: 'TITLE' },
-                                                        { accessor: 'examdate', title: 'NOTICE' },
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-5">
+                                <div className="space-y-6">
+                                    {/* Skin: Striped  */}
+                                    <div className="panel">
+                                        <div className="flex items-center justify-end mb-5">
+                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                        </div>
+                                        <div className="datatables">
+                                            <DataTable
+                                                striped
+                                                className="whitespace-nowrap table-striped"
+                                                records={recordsData}
+                                                columns={[
+                                                    { accessor: 'id', title: '#' },
 
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex items-center w-max mx-auto">
-                                                                    <Tippy content="Delete">
-                                                                        <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
+                                                    { accessor: 'subject', title: 'TITLE' },
+                                                    { accessor: 'examdate', title: 'DATE' },
+
+                                                    {
+                                                        accessor: 'action',
+                                                        title: 'ACTION',
+                                                        render: () => (
+                                                            <div className="flex  justify-start text-center pl-3 ">
+                                                                <Tippy content="Delete" className="flex justify-start">
+                                                                    <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                        <IconEye />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </div>
+                                                        ),
+                                                    },
+                                                ]}
+                                                totalRecords={initialRecords.length}
+                                                recordsPerPage={pageSize}
+                                                page={page}
+                                                onPageChange={(p) => setPage(p)}
+                                                recordsPerPageOptions={PAGE_SIZES}
+                                                onRecordsPerPageChange={setPageSize}
+                                                minHeight={200}
+                                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                            />
                                         </div>
                                     </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="space-y-6">
-                                        {/* Skin: Striped  */}
-                                        <div className="panel">
-                                            <div className="flex items-center justify-end mb-5">
-                                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            </div>
-                                            <div className="datatables">
-                                                <DataTable
-                                                    striped
-                                                    className="whitespace-nowrap table-striped"
-                                                    records={recordsData}
-                                                    columns={[
-                                                        { accessor: 'id', title: '#' },
-                                                        { accessor: 'examtitle', title: 'DATE' },
-                                                        { accessor: 'subject', title: 'TITLE' },
-                                                        { accessor: 'examdate', title: 'NOTICE' },
-
-                                                        {
-                                                            accessor: 'action',
-                                                            title: 'ACTION',
-                                                            render: () => (
-                                                                <div className="flex  justify-start text-center pl-3 ">
-                                                                    <Tippy content="Delete" className="flex justify-start">
-                                                                        <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                            <IconEye />
-                                                                        </button>
-                                                                    </Tippy>
-                                                                </div>
-                                                            ),
-                                                        },
-                                                    ]}
-                                                    totalRecords={initialRecords.length}
-                                                    recordsPerPage={pageSize}
-                                                    page={page}
-                                                    onPageChange={(p) => setPage(p)}
-                                                    recordsPerPageOptions={PAGE_SIZES}
-                                                    onRecordsPerPageChange={setPageSize}
-                                                    minHeight={200}
-                                                    paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-
-                                <Tab.Panel>Disabled</Tab.Panel>
-                            </Tab.Panels>
-                        </Tab.Group>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </>
+            ) : null}
+            {Events ? (
+                <>
+                    <div className="space-y-8 pt-5">
+                        <div className="panel" id="icon">
+                            <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
+                                <h5 className="text-lg font-bold dark:text-white-light">Events</h5>
+                                <div className="flex justify-end space-x-2">
+                                    <div>
+                                        <button onClick={handleHolidays} className="bg-white text-[#f64e60] p-2 rounded-md hover:bg-[#f64e60] hover:text-white border-[#f64e60] border">
+                                            Holidays
+                                        </button>
+                                    </div>
+                                    <div>
+                                        <button onClick={handleNotices} className="bg-white text-[#6993ff] p-2 rounded-md hover:bg-[#6993ff] hover:text-white border-[#6993ff] border">
+                                            Notices
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mb-5">
+                                <div className="space-y-6">
+                                    {/* Skin: Striped  */}
+                                    <div className="panel">
+                                        <div className="flex items-center justify-end mb-5">
+                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                        </div>
+                                        <div className="datatables">
+                                            <DataTable
+                                                striped
+                                                className="whitespace-nowrap table-striped"
+                                                records={recordsData}
+                                                columns={[
+                                                    { accessor: 'id', title: '#' },
+                                                    { accessor: 'examtitle', title: 'DATE' },
+                                                    { accessor: 'subject', title: 'TITLE' },
+
+                                                    {
+                                                        accessor: 'action',
+                                                        title: 'DETAILS',
+                                                        render: () => (
+                                                            <div className="flex  justify-start text-center pl-3 ">
+                                                                <Tippy content="Delete" className="flex justify-start">
+                                                                    <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
+                                                                        <IconEye />
+                                                                    </button>
+                                                                </Tippy>
+                                                            </div>
+                                                        ),
+                                                    },
+                                                ]}
+                                                totalRecords={initialRecords.length}
+                                                recordsPerPage={pageSize}
+                                                page={page}
+                                                onPageChange={(p) => setPage(p)}
+                                                recordsPerPageOptions={PAGE_SIZES}
+                                                onRecordsPerPageChange={setPageSize}
+                                                minHeight={200}
+                                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </>
+            ) : null}
         </div>
     );
 };
