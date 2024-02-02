@@ -17,6 +17,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import IconEye from '../../components/Icon/IconEye';
 import IconDownload from '../../components/Icon/IconDownload';
+import ReactPlayer from 'react-player';
+import img from '/public/crown-logo.png';
+import html2canvas from 'html2canvas';
+import React from 'react';
+//import print from '/public/Application.pdf';
 
 const tableData = [
     {
@@ -70,6 +75,44 @@ const Tables = () => {
         }
     };
     const [modal10, setModal10] = useState(false);
+
+    const imgRef = React.createRef<HTMLImageElement>();
+
+    const handleDownload = () => {
+        const imageElement = imgRef.current;
+
+        if (imageElement) {
+            // Added this check
+            html2canvas(imageElement).then((canvas) => {
+                const dataURL = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = 'downloaded-image.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+    };
+    // const download = (url) => {
+    //     const filename = url.split('/').pop();
+    //     const a = document.createElement('a');
+    //     a.href = url;
+    //     a.setAttribute('download1', filename);
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     a.remove();
+    // };
+    const downloadPdf = () => {
+        const pdfUrl = '/src/Application.pdf';
+        // Update the path based on your actual PDF file
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.download = 'Application.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
     return (
         <div className="space-y-6">
             {/* Simple */}
@@ -142,7 +185,7 @@ const Tables = () => {
                                                                             <IconX />
                                                                         </button>
                                                                     </div>
-                                                                    <iframe
+                                                                    {/* <iframe
                                                                         width="560"
                                                                         height="315"
                                                                         // src="https://www.youtube.com/embed/N2d7puNyPqw"
@@ -152,7 +195,18 @@ const Tables = () => {
 
                                                                         allowFullScreen
                                                                         className="p-6 w-full "
-                                                                    ></iframe>
+                                                                    ></iframe> */}
+                                                                    <ReactPlayer
+                                                                        url="https://youtu.be/N2d7puNyPqw?si=fKY2WghPTEFRzlpR"
+                                                                        controls
+                                                                        width="700"
+                                                                        height="800"
+                                                                        className="p-4 w-full h-full"
+                                                                    />
+
+                                                                    <img ref={imgRef} src={img} alt="" width="400px" height="300px" />
+                                                                    <button onClick={handleDownload}>Download Image</button>
+                                                                    <button onClick={downloadPdf}>Download PDF</button>
 
                                                                     <div className="p-5 ">
                                                                         <div className="font-bold flex items-center justify-center">School Hostel</div>
