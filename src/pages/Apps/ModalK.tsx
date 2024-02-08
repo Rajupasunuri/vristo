@@ -22,7 +22,7 @@ const ModalK = () => {
             <div className="grid sm:grid-cols-4 grid-cols-1 gap-2 space-y-2">
                 <div className="panel mt-2 flex flex-col items-center justify-center hover:shadow-black ">
                     <button onClick={() => setModal10(true)} type="button">
-                        <IconFile className="sm:w-[70px] sm:h-[70px] w-[60px] h-[60px] border-b-2" />
+                        <IconVideo className="sm:w-[70px] sm:h-[70px] w-[60px] h-[60px] border-b-2" />
                     </button>
                     <Transition appear show={modal10} as={Fragment}>
                         <Dialog as="div" open={modal10} onClose={() => setModal10(false)} className="sm:w-[300px] w-[100px]">
@@ -65,8 +65,8 @@ const ModalK = () => {
                                             height="200px"
                                             className="p-4 sm:w-full sm:h-full  flex items-center justify-center object-cover "
                                         /> */}
-                                        <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="400px" height="200px" className="object-cover" />
+                                        <div className=" sm:w-full sm:h-full flex items-center justify-center">
+                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="500px" height="250px" className="object-cover" />
                                         </div>
 
                                         {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}
@@ -113,7 +113,7 @@ const ModalK = () => {
                 </div>
                 <div className="panel mt-2 flex flex-col items-center justify-center hover:shadow-black">
                     <button onClick={() => setModal2(true)} type="button">
-                        <IconTxtFile className="sm:w-[70px] sm:h-[70px] w-[60px] h-[60px] border-b-2" />
+                        <IconFile className="sm:w-[55px] sm:h-[55px] w-[45px] h-[45px] border-b-2" />
                     </button>
                     <Transition appear show={modal2} as={Fragment}>
                         <Dialog as="div" open={modal2} onClose={() => setModal2(false)} className="sm:w-[300px] w-[100px]">
@@ -240,8 +240,8 @@ const ModalK = () => {
                                                                     allowFullScreen
                                                                     className="p-6 w-full "
                                                                 ></iframe> */}
-                                        <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="400px" height="200px" className="object-cover" />
+                                        <div className=" sm:w-full sm:h-full flex items-center justify-center">
+                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="500px" height="250px" className="object-cover" />
                                         </div>
 
                                         {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}
@@ -324,8 +324,8 @@ const ModalK = () => {
                                                                     className="p-6 w-full "
                                                                 ></iframe> */}
 
-                                        <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="400px" height="200px" className="object-cover" />
+                                        <div className=" sm:w-full sm:h-full flex items-center justify-center">
+                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="500px" height="250px" className="object-cover" />
                                         </div>
 
                                         {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}
@@ -408,8 +408,8 @@ const ModalK = () => {
                                                                     className="p-6 w-full "
                                                                 ></iframe> */}
 
-                                        <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="400px" height="200px" className="object-cover" />
+                                        <div className=" sm:w-full sm:h-full flex items-center justify-center">
+                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="500px" height="250px" className="object-cover" />
                                         </div>
 
                                         {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}
@@ -491,8 +491,8 @@ const ModalK = () => {
                                                                     allowFullScreen
                                                                     className="p-6 w-full "
                                                                 ></iframe> */}
-                                        <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="400px" height="200px" className="object-cover" />
+                                        <div className=" sm:w-full sm:h-full flex items-center justify-center">
+                                            <ReactPlayer url="https://youtu.be/8EKi2dV51TY?si=3j04cTgx-Izk_od7" controls width="500px" height="250px" className="object-cover" />
                                         </div>
 
                                         {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}

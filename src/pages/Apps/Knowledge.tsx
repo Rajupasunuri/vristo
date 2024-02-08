@@ -21,6 +21,11 @@ import html2canvas from 'html2canvas';
 import React from 'react';
 import img from '/public/crown-logo.png';
 import pdf from '../../../public/Application .pdf';
+import Modal1 from './Modal1';
+import ModalK2 from './Modal2';
+import ModalK3 from './Modal3';
+import IconGrid from '../../components/Icon/IconGrid';
+import IconList from '../../components/Icon/IconList';
 //import {FaYoutube} from 'react-icons';
 
 const tableData = [
@@ -34,6 +39,7 @@ const tableData = [
         note: '',
         availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
         action: '',
+        state: <Modal1 />,
     },
     {
         id: 2,
@@ -45,6 +51,7 @@ const tableData = [
         note: '',
         availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
         action: '',
+        state: <ModalK2 />,
     },
     {
         id: 3,
@@ -56,6 +63,7 @@ const tableData = [
         note: '',
         availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
         action: '',
+        state: <ModalK3 />,
     },
 ];
 
@@ -228,12 +236,12 @@ const Tabs = () => {
                             <div className="flex justify-end  space-x-2 space-y-2 ">
                                 <div className="mt-2">
                                     <button onClick={handleTab} className="bg-white text-[#ffa800] p-1 sm:p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                        button1
+                                        <IconGrid />
                                     </button>
                                 </div>
                                 <div>
                                     <button onClick={handleTab1} className="bg-white text-[#ffa800] p-1 sm:p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                        button2
+                                        <IconList />
                                     </button>
                                 </div>
                             </div>
@@ -287,7 +295,7 @@ const Tabs = () => {
 
                                                         <th>FILE TYPE</th>
 
-                                                        <th className="text-center">ACTION</th>
+                                                        <th className="text-center ">ACTION</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -307,7 +315,8 @@ const Tabs = () => {
                                                                 </td>
 
                                                                 <td>
-                                                                    <div>
+                                                                    <div>{data.state}</div>
+                                                                    {/* <div>
                                                                         <button onClick={() => setModal10(true)} type="button" className="border border-blue-400 rounded-md">
                                                                             <IconEye />
                                                                         </button>
@@ -333,23 +342,13 @@ const Tabs = () => {
                                                                                                     <IconX />
                                                                                                 </button>
                                                                                             </div>
-                                                                                            {/* <iframe
-                                                                        width="560"
-                                                                        height="315"
-                                                                        // src="https://www.youtube.com/embed/N2d7puNyPqw"
-                                                                        src=".././public/assets/crown-logo.png"
-                                                                        title="Video Title"
-                                                                        //  frameBorder="0"
-
-                                                                        allowFullScreen
-                                                                        className="p-6 w-full "
-                                                                    ></iframe> */}
+                                                                         
 
                                                                                             <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
                                                                                                 <img ref={imgRef} src={img} alt="" width="400px" height="200px" />
                                                                                             </div>
 
-                                                                                            {/* <button onClick={downloadPdf}>Download PDF</button> */}
+                                                                                            
 
                                                                                             <div className="panel lg:col-span-2 xl:col-span-3">
                                                                                                 <div className="mb-5">
@@ -357,12 +356,9 @@ const Tabs = () => {
                                                                                                         <table className="whitespace-nowrap">
                                                                                                             <thead>
                                                                                                                 <tr>
-                                                                                                                    {/* <th colSpan={2} className="text-center col-span">
-                                                Projects
-                                            </th> */}
-                                                                                                                    {/* <th>Progress</th> */}
-                                                                                                                    {/* <th>Task Done</th>
-                                            <th className="text-center">Time</th> */}
+                                                    
+                                                                                                                   
+                                                                                    
                                                                                                                 </tr>
                                                                                                             </thead>
                                                                                                             <tbody className="dark:text-white-dark border-1.5">
@@ -396,7 +392,7 @@ const Tabs = () => {
                                                                                 </div>
                                                                             </Dialog>
                                                                         </Transition>
-                                                                    </div>
+                                                                    </div> */}
                                                                 </td>
                                                             </tr>
                                                         );
