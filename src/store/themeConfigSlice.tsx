@@ -347,6 +347,12 @@ const themeConfigSlice = createSlice({
             localStorage.setItem('isLoggedinuser', 'false');
             localStorage.setItem('user', '');
         },
+        logout1: (state) => {
+            state.isLoggedinuser = true;
+            //state.user = null;
+            localStorage.setItem('isLoggedinuser', 'true');
+            //localStorage.setItem('user', '');
+        },
         //console.log('stateuser',state.user)
     },
 });
@@ -365,6 +371,7 @@ export const {
     setPageTitle,
     fetchUserSuccess,
     logout,
+    logout1,
 } = themeConfigSlice.actions;
 
 export const selectAuth = (state: { auth: ThemeConfigState }) => state.auth;

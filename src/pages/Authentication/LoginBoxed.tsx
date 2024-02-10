@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { IRootState, rootReducer } from '../../store/index';
-import { setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
+import { logout1, setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
 //import { fetchUserSuccess } from '../../store/userSlice';
 import Dropdown from '../../components/Dropdown';
 import i18next, { use } from 'i18next';
@@ -20,39 +20,47 @@ import { MY_LOGIN_URL, MY_OTP_URL } from '../Apps/query';
 //import { userReducer } from '../../redux/reducers/loginreducer';
 //import { FETCH_USER_SUCCESS } from '../../redux/actions/actionconstants';
 import { fetchUserSuccess } from '../../store/themeConfigSlice';
-
+import IconLock from '../../components/Icon/IconLock';
+import { match } from 'assert';
 
 const LoginBoxed = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
-    
+
     //const realstate = useSelector((state: IRootState) => state);
     //console.log('realstate',realstate);
     useEffect(() => {
         dispatch(setPageTitle('Login Boxed'));
         //console.log("realstate",state)
-        console.log('isloggedin login',isLoggedinuser);
-        
+        console.log('isloggedin login', isLoggedinuser);
+
         if (isLoggedinuser) {
             navigate('/dashboard');
-          }
         }
-    );
-const [responseData,setresponseData]=useState({})
-    
-    
+    });
+    const [responseData, setresponseData] = useState({});
+    const [values1, setValues1] = useState({
+        email1: '',
+        password1: '',
+        name1: '',
+        username1: '',
+    });
+
+    const [emails1, setEmails1] = useState('');
+    const [names1, setNames1] = useState('');
+    const [pass1, setPass1] = useState('');
+    const [user1, setUser1] = useState('');
+    const [usererror, setUsererror] = useState('');
+    const [userPass, setUserPass] = useState('');
+
     // useEffect(()=>{
     //    console.log('check',useselector)
     // },[useselector])
     //const {auth}=useselector;
     //console.log('authtype',typeof(auth))
-    
-    
-   //const dispatch1=useDispatch();
- 
-   
-    
+
+    //const dispatch1=useDispatch();
 
     const [mobilebox, setMobilebox] = useState(true);
     const [mobileerror, setMobileerror] = useState('');
@@ -65,10 +73,23 @@ const [responseData,setresponseData]=useState({})
         otp: '',
     });
 
-
+    const handleSubmit1 = (event: any) => {
+        axios
+            .post('http://localhost:8081/login', values1)
+            .then((res) => {
+                console.log('Login Successfully', res.data.token);
+                dispatch(logout1());
+                navigate('/dashboard');
+            })
+            .catch((err) => {
+                setUserPass("Username or Password doesn't match");
+                console.log('failed', err);
+            });
+        event.preventDefault();
+    };
 
     // Event handler for form field changes
-    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const handleInputChange = (e: { target: { name: any; value: any } }) => {
         const { name, value } = e.target;
         console.log(name, value);
         // Update the form data with the new value
@@ -81,13 +102,10 @@ const [responseData,setresponseData]=useState({})
         setMobileerror('');
         setOtperror('');
     };
-    
+
     // Form submission handler
-    const submitForm = (e: { preventDefault: () => void; }) => {
+    const submitForm = (e: { preventDefault: () => void }) => {
         e.preventDefault();
-
-
-
 
         // Validate the form data
 
@@ -118,7 +136,6 @@ const [responseData,setresponseData]=useState({})
                             console.log(response.data.message);
                             if (response.data.error) {
                                 setMobileerror(response.data.message);
-
                             } else {
                                 localStorage.setItem('showtab', response.data.showtab);
                                 setMobilebox(false);
@@ -129,17 +146,13 @@ const [responseData,setresponseData]=useState({})
                             console.log('Error is ', error);
                             setMobileerror(error);
                         });
-
                 } else {
                     setMobileerror('Enter Valid Mobile 10 Digits');
                 }
             }
-
         } else if (mobile && otp) {
             if (otp) {
-
                 if (!isNaN(parseInt(otp)) && otp.length == 6) {
-
                     // If there are no errors, proceed with form submission
 
                     if (mobileerror == '' && otperror == '') {
@@ -160,54 +173,51 @@ const [responseData,setresponseData]=useState({})
                             .then((response) => {
                                 console.log('Response is ', response.data);
                                 console.log(response.data.message);
-                                
+
                                 if (response.data.error) {
                                     setOtperror(response.data.message);
                                     const userdetails = response.data.data;
                                     //setresponseData(userdetails);
-                                   // const nes=dispatch(fetchUserSuccess(userdetails));
+                                    // const nes=dispatch(fetchUserSuccess(userdetails));
                                     //console.log('newsea',useselector);
                                     //console.log('nes',nes)
                                 } else {
                                     const userdetails = response.data.data;
                                     // console.log('userdetails:', userdetails);
-                                    // console.log('Form submitted:', formData); 
+                                    // console.log('Form submitted:', formData);
                                     //setresponseData(userdetails);
                                     //const nes=dispatch(fetchUserSuccess(userdetails));
-                                    
-                                   
+
                                     //const news='/auth/fetchUserSuccess';
-                                    console.log(userdetails)
-                                    
-                                
-                                    console.log('logger',isLoggedinuser)
+                                    console.log('heloooo', userdetails);
+
+                                    console.log('logger', isLoggedinuser);
                                     dispatch(fetchUserSuccess(userdetails));
-                                    
+
                                     //console.log('gtr',ser);
                                     //console.log('store data',useselector);
-                                //    localStorage.setItem("id", userdetails.id);//0
-                                //     localStorage.setItem("aid", userdetails.aid);//0
-                                //     localStorage.setItem("mobile", userdetails.mobile);//0
-                                //     localStorage.setItem("email", userdetails.email);//string
-                                //     localStorage.setItem("name", userdetails.name);//string
-                                //     localStorage.setItem("role", userdetails.role);//string
-                                //     localStorage.setItem("profile_completed", userdetails.profile_completed);//0
-                                //     localStorage.setItem("blocked", userdetails.blocked);//0
-                                //     localStorage.setItem("image_url", userdetails.image_url);//string
-                                //     localStorage.setItem("mypin", userdetails.image);
-                                //     localStorage.setItem("createdon", userdetails.createdon);//string
-                                //     localStorage.setItem("updated", userdetails.updated);//string
-                                //     localStorage.setItem("upanel", response.data.upanel);//string
-                                //     localStorage.setItem("usercode", response.data.usercode);//str
-                                //     localStorage.setItem("token", response.data.token);//str
-                                //     localStorage.setItem("isLoggedin",'yes');
-                                //     localStorage.setItem('userData', JSON.stringify(response.data.data));
-                                    
-                                   
+                                    //    localStorage.setItem("id", userdetails.id);//0
+                                    //     localStorage.setItem("aid", userdetails.aid);//0
+                                    //     localStorage.setItem("mobile", userdetails.mobile);//0
+                                    //     localStorage.setItem("email", userdetails.email);//string
+                                    //     localStorage.setItem("name", userdetails.name);//string
+                                    //     localStorage.setItem("role", userdetails.role);//string
+                                    //     localStorage.setItem("profile_completed", userdetails.profile_completed);//0
+                                    //     localStorage.setItem("blocked", userdetails.blocked);//0
+                                    //     localStorage.setItem("image_url", userdetails.image_url);//string
+                                    //     localStorage.setItem("mypin", userdetails.image);
+                                    //     localStorage.setItem("createdon", userdetails.createdon);//string
+                                    //     localStorage.setItem("updated", userdetails.updated);//string
+                                    //     localStorage.setItem("upanel", response.data.upanel);//string
+                                    //     localStorage.setItem("usercode", response.data.usercode);//str
+                                    //     localStorage.setItem("token", response.data.token);//str
+                                    //     localStorage.setItem("isLoggedin",'yes');
+                                    //     localStorage.setItem('userData', JSON.stringify(response.data.data));
+
                                     //dispatch(fetchUserSuccess(userdetails));
-                                    
+
                                     //console.log(useselector.user)
-                                   navigate('/dashboard');
+                                    navigate('/dashboard');
                                     // let avatar = `${process.env.PUBLIC_URL}/img/fake_avatar.png`;
                                     // if (userdetails.image_url == '') {
                                     //     avatar = userdetails.image_url;
@@ -229,23 +239,34 @@ const [responseData,setresponseData]=useState({})
                                 console.log('Error is ', error);
                                 setOtperror(error);
                             });
-
-
-
                     }
                 } else {
                     setOtperror('OTP  6 Digits');
                 }
             }
-
         }
-
-
-
-
     };
 
+    const handleChange8 = (event: any) => {
+        setValues1({ ...values1, [event.target.name]: [event.target.value] });
+        //setEmails("");
+        //setNames("");
+        setPass1('');
+    };
+    const handleChange7 = (event: any) => {
+        setValues1({ ...values1, [event.target.name]: [event.target.value] });
+        //setEmails("");
+        //setNames("");
+        const userinput = event.target.value;
+        setUsererror(userinput);
+        if (userinput.includes(' ')) {
+            setUsererror('Username should not contain spaces');
+        } else {
+            setUsererror('');
+        }
 
+        setUser1('');
+    };
     return (
         <div>
             <div className="absolute inset-0">
@@ -259,41 +280,68 @@ const [responseData,setresponseData]=useState({})
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
-
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5 dark:text-white" onSubmit={handleSubmit1}>
                                 {mobilebox ? (
                                     <div>
-                                        <label htmlFor="Mobile">Mobile <span style={{ color: 'red', float: 'right' }}>{mobileerror}</span></label>
+                                        <label htmlFor="username">Username</label>
                                         <div className="relative text-white-dark">
-                                            <input id="Mobile" type="number" placeholder="Enter Mobile" className="form-input ps-10 placeholder:text-white-dark"
-                                                name="mobile"
-                                                value={formData.mobile}
-                                                onChange={handleInputChange} />
+                                            <input
+                                                id="username"
+                                                type="text"
+                                                placeholder="Enter Username"
+                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                name="username"
+                                                // value={formData.mobile}
+                                                onChange={handleChange7}
+                                                pattern="\S+$"
+                                            />
 
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconMail fill={true} />
                                             </span>
+                                        </div>
+                                        {usererror && <span className="text-red-500">{usererror}</span>}
+                                        <label htmlFor="Password">Password</label>
+                                        <div className="relative text-white-dark">
+                                            <input
+                                                id="Password"
+                                                type="password"
+                                                placeholder="Enter Password"
+                                                className="form-input ps-10 placeholder:text-white-dark"
+                                                name="password"
+                                                // value={formData.mobile}
+                                                onChange={handleChange8}
+                                            />
 
+                                            <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                                <IconLock fill={true} />
+                                            </span>
                                         </div>
                                     </div>
                                 ) : null}
                                 {otpbox ? (
                                     <div>
-                                        <label htmlFor="Otp">Otp <span style={{ color: 'green' }}>(Enter OTP Sent to Mobile)</span> <span style={{ color: 'red', float: 'right' }}>{otperror}</span></label>
+                                        <label htmlFor="Otp">
+                                            Otp <span style={{ color: 'green' }}>(Enter OTP Sent to Mobile)</span> <span style={{ color: 'red', float: 'right' }}>{otperror}</span>
+                                        </label>
                                         <div className="relative text-white-dark">
-                                            <input id="Otp" type="number" placeholder="Enter OTP" className="form-input ps-10 placeholder:text-white-dark"
+                                            <input
+                                                id="Otp"
+                                                type="number"
+                                                placeholder="Enter OTP"
+                                                className="form-input ps-10 placeholder:text-white-dark"
                                                 name="otp"
                                                 value={formData.otp}
-                                                onChange={handleInputChange} />
+                                                onChange={handleInputChange}
+                                            />
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconLockDots fill={true} />
                                             </span>
-
                                         </div>
                                     </div>
                                 ) : null}

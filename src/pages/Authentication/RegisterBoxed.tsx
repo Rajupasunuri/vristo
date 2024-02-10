@@ -13,12 +13,26 @@ import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
+import axios from 'axios';
 
 const RegisterBoxed = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Register Boxed'));
     });
+    const [values, setValues] = useState({
+        name: '',
+        email: '',
+        password: '',
+        username: '',
+    });
+    const [passs, setPasss] = useState('');
+    const [names, setNames] = useState('');
+    const [emails, setEmails] = useState('');
+    const [emails1, setEmails1] = useState('');
+    const [user1, setUser1] = useState('');
+    const [error, setError] = useState(false);
+    const [passs1, setPasss1] = useState('');
     const navigate = useNavigate();
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
@@ -33,8 +47,91 @@ const RegisterBoxed = () => {
     };
     const [flag, setFlag] = useState(themeConfig.locale);
 
-    const submitForm = () => {
-        navigate('/');
+    // const submitForm = () => {
+    //     navigate('/');
+    // };
+
+    // const handleChange = (event: any) => {
+    //     setValues({ ...values, [event.target.name]: event.target.value });
+    //     //setEmails("");
+    //     setNames('');
+    //     //setPasss("");
+    // };
+    // const handleChange1 = (event: any) => {
+    //     setValues({ ...values, [event.target.name]: event.target.value });
+    //     setEmails('');
+    //     //setNames("");
+    //     //setPasss("");
+    // };
+    // const handleChange2 = (event: any) => {
+    //     setValues({ ...values, [event.target.name]: event.target.value });
+    //     //setEmails("");
+    //     //setNames("");
+    //     setPasss('');
+    // };
+    // const handleChange3 = (event: any) => {
+    //     setValues({ ...values, [event.target.name]: event.target.value });
+    //     //setEmails("");
+    //     setUser1('');
+    //     //setPasss("");
+    // };
+    const handleChange = (event: any) => {
+        setValues({ ...values, [event.target.name]: event.target.value });
+    };
+    const handleChange1 = (event: any) => {
+        setValues({ ...values, [event.target.name]: event.target.value });
+    };
+    const handleChange2 = (event: any) => {
+        setValues({ ...values, [event.target.name]: event.target.value });
+    };
+    const handleChange3 = (event: any) => {
+        setValues({ ...values, [event.target.name]: event.target.value });
+    };
+
+    const handleSubmit = (event: any) => {
+        console.log('hello');
+        axios
+            .post('http://localhost:8081/signup', values)
+            .then((res) => {
+                console.log('Registered Successfully');
+                navigate('/');
+            })
+            .catch((err: any) => {
+                setError(true);
+                //console.log(err.response.data);
+                // const { name, email, password } = err.response.data.errors.msg;
+                // const [{ msg: name }, { msg: email }, { msg: password }] =
+                //   err.response.data.errors;
+                if (err.response && err.response.data) {
+                    console.log('hi error');
+                    const { errors } = err.response.data;
+                    console.log(errors);
+                    console.log('length', errors.length);
+                    console.log(errors[0].path);
+                    errors.forEach((error: any) => {
+                        switch (error.path) {
+                            case 'name':
+                                setNames(error.msg);
+
+                                break;
+                            case 'email':
+                                setEmails(error.msg);
+                                break;
+                            case 'password':
+                                setPasss(error.msg);
+                                break;
+                            case 'username':
+                                setUser1(error.msg);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+                } else {
+                    console.log('Unexpected error occurred:', err);
+                }
+            });
+        event.preventDefault();
     };
 
     return (
@@ -96,33 +193,44 @@ const RegisterBoxed = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign Up</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to register</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5 dark:text-white" onSubmit={handleSubmit}>
                                 <div>
                                     <label htmlFor="Name">Name</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Name" type="text" placeholder="Enter Name" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Name" type="text" placeholder="Enter Name" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconUser fill={true} />
                                         </span>
                                     </div>
+                                    <p className="text-danger">{names}</p>
                                 </div>
                                 <div>
                                     <label htmlFor="Email">Email</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark " onChange={handleChange1} />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
                                     </div>
+                                    <p className="text-danger">{emails}</p>
                                 </div>
+                                <div className="mb-3">
+                                    <label htmlFor="Username">
+                                        <strong>Username</strong>
+                                    </label>
+                                    <input type="text" placeholder="Enter username" name="username" className="form-input ps-10 placeholder:text-white-dark" onChange={handleChange2} />
+                                    <p className="text-danger">{}</p>
+                                </div>
+                                <p className="text-danger">{user1}</p>
                                 <div>
                                     <label htmlFor="Password">Password</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Password" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Password" type="password" placeholder="Enter Password" onChange={handleChange3} className="form-input ps-10 placeholder:text-white-dark" />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
                                     </div>
+                                    <p className="text-danger">{passs}</p>
                                 </div>
                                 <div>
                                     <label className="flex cursor-pointer items-center">
