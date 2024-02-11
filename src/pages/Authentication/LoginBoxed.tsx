@@ -22,6 +22,9 @@ import { MY_LOGIN_URL, MY_OTP_URL } from '../Apps/query';
 import { fetchUserSuccess } from '../../store/themeConfigSlice';
 import IconLock from '../../components/Icon/IconLock';
 import { match } from 'assert';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Center } from '@mantine/core';
 
 const LoginBoxed = () => {
     const dispatch = useDispatch();
@@ -78,11 +81,13 @@ const LoginBoxed = () => {
             .post('http://localhost:8081/login', values1)
             .then((res) => {
                 console.log('Login Successfully', res.data.token);
+                toast.success('Logged in Successfully');
                 dispatch(logout1());
                 navigate('/dashboard');
             })
             .catch((err) => {
                 setUserPass("Username or Password doesn't match");
+                toast.error("Username or Password doesn't match");
                 console.log('failed', err);
             });
         event.preventDefault();
@@ -409,6 +414,7 @@ const LoginBoxed = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer position="top-center" autoClose={2000} />
         </div>
     );
 };

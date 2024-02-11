@@ -21,6 +21,7 @@ import IconBolt from '../components/Icon/IconBolt';
 import IconCaretDown from '../components/Icon/IconCaretDown';
 import IconPlus from '../components/Icon/IconPlus';
 import IconMultipleForwardRight from '../components/Icon/IconMultipleForwardRight';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Index = () => {
     const dispatch = useDispatch();
@@ -28,23 +29,18 @@ const Index = () => {
     const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
 
     useEffect(() => {
-        
-        console.log('jhjdhj',isLoggedinuser)
+        console.log('jhjdhj', isLoggedinuser);
         if (!isLoggedinuser) {
             navigate('/');
-            console.log('isloggedin dashboard',isLoggedinuser);
-          }
-        },[]
-    );
+            console.log('isloggedin dashboard', isLoggedinuser);
+        }
+        toast.success('Logged in Successfully');
+    }, []);
     dispatch(setPageTitle('Sales Admin'));
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const [loading] = useState(false);
-   
-
-
-   
 
     //Revenue Chart
     const revenueChart: any = {
@@ -1106,6 +1102,7 @@ const Index = () => {
                     </div>
                 </div>
             </div>
+            <ToastContainer position="top-center" autoClose={2000} />
         </div>
     );
 };
