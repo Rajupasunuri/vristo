@@ -1,573 +1,3 @@
-// import { Link } from 'react-router-dom';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { IRootState } from '../../store';
-// import Dropdown from '../../components/Dropdown';
-// import { setPageTitle } from '../../store/themeConfigSlice';
-// import { SetStateAction, useEffect, useState } from 'react';
-// import IconPencilPaper from '../../components/Icon/IconPencilPaper';
-// import IconCoffee from '../../components/Icon/IconCoffee';
-// import IconCalendar from '../../components/Icon/IconCalendar';
-// import IconMapPin from '../../components/Icon/IconMapPin';
-// import IconMail from '../../components/Icon/IconMail';
-// import IconPhone from '../../components/Icon/IconPhone';
-// import IconTwitter from '../../components/Icon/IconTwitter';
-// import IconDribbble from '../../components/Icon/IconDribbble';
-// import IconGithub from '../../components/Icon/IconGithub';
-// import IconShoppingBag from '../../components/Icon/IconShoppingBag';
-// import IconTag from '../../components/Icon/IconTag';
-// import IconCreditCard from '../../components/Icon/IconCreditCard';
-// import IconClock from '../../components/Icon/IconClock';
-// import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-// //import CropImg from '../Pages/cropimg';
-// //import CropImgUpload from '../Pages/cropimg';
-// import axios from 'axios';
-// //import {u=U_URL}
-// import { U_URL } from '../Apps/query';
-// import Select from 'react-select';
-// import swal from 'sweetalert';
-// import { Alert, Row, Col, Card, CardBody, CardTitle, CardImg, CardText, CardSubtitle, Modal, Button, FormGroup, InputGroup, Label, Table } from 'reactstrap';
-// //import UploadAvtar from './UploadAvtar';
-// import Uploadfile from './cropimg';
-// import IconLock from '../../components/Icon/IconLock';
-// import Tippy from '@tippyjs/react';
-
-// const Profile = () => {
-//     const dispatch = useDispatch();
-//     const [itempageabout, setItemPageAbout] = useState('Add  User | Management');
-//     const [itemlablename, setItemLablename] = useState(' Manager Name');
-//     const [tname, setTname] = useState('u');
-//     const [showAlert, setShowAlert] = useState(false);
-//     const [alertType, setAlertType] = useState('');
-//     const [alertText, setAlertText] = useState('');
-//     const [selectUsertype, setSelectUsertype] = useState([
-//         {
-//             value: '',
-//             label: <div>Select Venue Type</div>,
-//         },
-//     ]);
-//     const [itemvalue, setItemValue] = useState('');
-//     const [cuMobile, setCuMobile] = useState('');
-//     const [cuEmail, setCuEmail] = useState('');
-//     const [cuImageUrl, setCuImageUrl] = useState('');
-//     const [usertypeValue, setUsertypeValue] = useState('');
-//     const [venueName, setVenueName] = useState('');
-//     const [venueDescription, setVenueDescription] = useState('');
-//     const [venueAddress, setVenueAddress] = useState('');
-//     const [hlatlong, setHlatlong] = useState('');
-//     const [openingTime, setOpeningTime] = useState('');
-//     const [closingTime, setClosingTime] = useState('');
-//     const [timings, setTimings] = useState('');
-
-//     const [editMode, setEditMode] = useState(false);
-//     const [editId, setEditId] = useState('');
-
-//     useEffect(() => {
-//         handleGetkeys();
-//     }, []);
-
-//     //   const handleBkey = () => {
-//     //     localStorage.setItem('uuid', '');
-//     //     history.push('/users');
-//     //   };
-
-//     const handleGetkeys = () => {
-//         const headers = {
-//             'Content-Type': 'application/json',
-//             Authorization: localStorage.token,
-//         };
-
-//         const postData = {
-//             uid: localStorage.usercode,
-//             table: tname,
-//             id: localStorage.uuid,
-//         };
-
-//         const getuurl = U_URL + 'getudetails';
-//         axios
-//             .post(getuurl, postData, { headers: headers })
-//             .then((response) => {
-//                 console.log('response', response.data);
-//                 if (response.status === 400) {
-//                 }
-//                 if (!response.data.error) {
-//                     localStorage.setItem('token', response.data.token);
-//                     const cudata = response.data.allitems;
-//                     const allusertypes = [...response.data.usertypes];
-
-//                     if (localStorage.uuid) {
-//                         setEditMode(true);
-//                         setEditId(cudata.id);
-//                         setItemValue(cudata.itemname);
-//                         setCuMobile(cudata.cu_mobile);
-//                         setCuEmail(cudata.cu_email);
-//                         setCuImageUrl(cudata.cu_image_url);
-//                         setShowAlert(false);
-//                         setSelectUsertype(allusertypes);
-//                     } else {
-//                         setEditMode(false);
-//                         setSelectUsertype(allusertypes);
-//                     }
-//                 }
-//             })
-//             .catch((error) => {
-//                 console.log('error', error);
-//             });
-//     };
-
-//     const handleValidSubmit = (
-//         event: { preventDefault: () => void },
-//         values: { item: string; venue_name: any; cu_mobile: any; cu_email: any; venue_description: any; venue_address: any; hlatlong: any; opening_time: any; closing_time: any; timings: any }
-//     ) => {
-//         event.preventDefault();
-//         console.log('values', values);
-//         let noerrors = false;
-//         const headers = {
-//             'Content-Type': 'application/json',
-//             Authorization: localStorage.token,
-//         };
-//         let addkeyurl = U_URL + 'additemcu';
-//         let postData;
-
-//         if (editMode) {
-//             if (!localStorage.cu_image_url) {
-//                 swal('Select Profile Picture', {
-//                     icon: 'warning',
-//                 });
-//             } else {
-//                 noerrors = true;
-//             }
-//         } else {
-//             if (!localStorage.venue_logo || !localStorage.cu_image_url || !localStorage.venue_building || !localStorage.venue_banner || !usertypeValue) {
-//                 swal('Please fill all required fields', {
-//                     icon: 'warning',
-//                 });
-//             } else {
-//                 noerrors = true;
-//             }
-//         }
-
-//         if (noerrors) {
-//             if (editMode) {
-//                 addkeyurl = U_URL + 'edititemcu';
-//                 postData = {
-//                     itemid: editId,
-//                     item: values.item,
-//                     uid: localStorage.usercode,
-//                     table: tname,
-//                     venue_name: values.venue_name,
-//                     cu_mobile: values.cu_mobile,
-//                     cu_email: values.cu_email,
-//                     cu_image_url: localStorage.cu_image_url,
-//                 };
-//             } else {
-//                 postData = {
-//                     item: values.item,
-//                     uid: localStorage.usercode,
-//                     table: tname,
-//                     usertype: usertypeValue,
-//                     venue_name: values.venue_name,
-//                     cu_mobile: values.cu_mobile,
-//                     cu_email: values.cu_email,
-//                     venue_description: values.venue_description,
-//                     venue_address: values.venue_address,
-//                     hlatlong: values.hlatlong,
-//                     opening_time: values.opening_time,
-//                     closing_time: values.closing_time,
-//                     timings: values.timings,
-//                     cu_image_url: localStorage.cu_image_url,
-//                     venue_logo: localStorage.venue_logo,
-//                     venue_building: localStorage.venue_building,
-//                     venue_banner: localStorage.venue_banner,
-//                 };
-//             }
-
-//             axios
-//                 .post(addkeyurl, postData, { headers: headers })
-//                 .then((response) => {
-//                     console.log(response.data.message);
-//                     if (response.data.error) {
-//                         setShowAlert(true);
-//                         setAlertType('warning');
-//                         setAlertText(response.data.message);
-//                     } else {
-//                         setShowAlert(false);
-//                         setAlertType('warning');
-//                         setAlertText('');
-//                         localStorage.setItem('token', response.data.token);
-
-//                         swal(values.item + ' ' + response.data.message, {
-//                             icon: 'success',
-//                         });
-//                         //  history.push('/users');
-//                     }
-//                 })
-//                 .catch((error) => {
-//                     console.log('Error is ', error);
-//                     setShowAlert(true);
-//                     setAlertType('danger');
-//                     setAlertText('Failed Try Again Later!');
-//                 });
-//         }
-//     };
-
-//     const handleSelectUsertypeChange = (selectedOption: { value: SetStateAction<string> }) => {
-//         console.log('selectedOption', selectedOption);
-//         setUsertypeValue(selectedOption.value);
-//     };
-//     const user = useSelector((state: IRootState) => state.themeConfig.user);
-//     let yes;
-//     let yes1;
-//     let yes2;
-//     let yes3;
-//     let yes4;
-//     if (user !== null) {
-//         yes = user.email;
-//         yes1 = user.name;
-//         yes2 = user.mobile;
-//         yes3 = user.role;
-//         yes4 = user.img_url;
-//         console.log('hvbjsdncnxjvxnv', user);
-//     }
-//     useEffect(() => {
-//         dispatch(setPageTitle('Profile'));
-//     });
-//     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-//     return (
-//         <div>
-//             {/* <ul className="flex space-x-2 rtl:space-x-reverse">
-//                 <li>
-//                     <Link to="#" className="text-primary hover:underline">
-//                         Users
-//                     </Link>
-//                 </li>
-//                 <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-//                     <span>Profile</span>
-//                 </li>
-//             </ul> */}
-//             <h2 className="font-bold text-lg">My Account</h2>
-//             <div className="pt-5">
-//                 <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
-//                     <div className="panel">
-//                         <div className="flex items-center justify-between mb-5">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Student Profile</h5>
-//                             <Tippy content="Edit Profile">
-//                                 <Link to="/users/user-account-settings" className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 rounded-full">
-//                                     <IconPencilPaper />
-//                                 </Link>
-//                             </Tippy>
-//                         </div>
-//                         <div className="mb-5">
-//                             <div className="flex flex-col justify-center items-center">
-//                                 <img src="/assets/images/profile-34.jpeg" alt="img" className="w-24 h-24 rounded-full object-cover  mb-5" />
-//                                 {/* <CropImg imgsrc={localStorage.cu_image_url} className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgw={250}></CropImg> */}
-//                                 {/* <UploadAvtar></UploadAvtar> */}
-//                                 {/* <Uploadfile
-//                                     imgsrc={localStorage.cu_image_url}
-//                                     className="img-thumbnail onclicklink"
-//                                     onwhich="cu_image_url"
-//                                     imgtitle="Profile Picture"
-//                                     imgw={250}
-//                                     imgh={250}
-//                                 ></Uploadfile> */}
-//                                 {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
-//                                 <p className="font-semibold text-primary text-xl">Joe Doe</p>
-//                             </div>
-//                             <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-//                                 <li className="flex items-center gap-2">
-//                                     <IconCoffee className="shrink-0" />
-//                                     {yes3}
-//                                 </li>
-//                                 <li className="flex items-center gap-2">
-//                                     <IconCalendar className="shrink-0" />
-//                                     Jan 20, 1989
-//                                 </li>
-//                                 <li className="flex items-center gap-2">
-//                                     <IconMapPin className="shrink-0" />
-//                                     New York, USA
-//                                 </li>
-//                                 <li>
-//                                     <button className="flex items-center gap-2">
-//                                         <IconMail className="w-5 h-5 shrink-0" />
-//                                         <span className="text-primary truncate">Joe@gmail.com</span>
-//                                     </button>
-//                                 </li>
-//                                 <li className="flex items-center gap-2">
-//                                     <IconPhone />
-//                                     <span className="whitespace-nowrap" dir="ltr">
-//                                         {yes2}
-//                                     </span>
-//                                 </li>
-//                                 <Link to="/change-password" className=" ">
-//                                     <span className="flex gap-2">
-//                                         <IconLock />
-//                                         <div className=" active:bg-gray-400 border-blue-400 border text-blue-400 sm:p-1 rounded-md hover:bg-blue-400 hover:text-white sm:text-xs p-1">
-//                                             Change Password
-//                                         </div>
-//                                     </span>
-//                                 </Link>
-//                             </ul>
-//                         </div>
-//                     </div>
-//                     <div className="panel lg:col-span-2 xl:col-span-3">
-//                         <div className="mb-5">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Parents Information</h5>
-//                         </div>
-//                         <div className="mb-5">
-//                             <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-//                                 <table className="whitespace-nowrap">
-//                                     <thead>
-//                                         <tr>
-//                                             {/* <th colSpan={2} className="text-center col-span">
-//                                                 Projects
-//                                             </th> */}
-//                                             {/* <th>Progress</th> */}
-//                                             {/* <th>Task Done</th>
-//                                             <th className="text-center">Time</th> */}
-//                                         </tr>
-//                                     </thead>
-//                                     <tbody className="dark:text-white-dark border-1.5">
-//                                         <tr>
-//                                             <td>Father Name</td>
-//                                             <td>Ramesh</td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td>Mother Name</td>
-//                                             <td>Rani</td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td>Father's Profession</td>
-//                                             <td></td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td>Mother's Profession</td>
-//                                             <td></td>
-//                                         </tr>
-
-//                                         <tr>
-//                                             <td>Father Name</td>
-//                                             <td>Ramesh</td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td>Guardian Name</td>
-//                                             <td></td>
-//                                         </tr>
-//                                         <tr>
-//                                             <td>Guardian Profession</td>
-//                                             <td></td>
-//                                         </tr>
-//                                     </tbody>
-//                                 </table>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//                 {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-//                     <div className="panel">
-//                         <div className="mb-5">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Summary</h5>
-//                         </div>
-//                         <div className="space-y-4">
-//                             <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-//                                 <div className="flex items-center justify-between p-4 py-2">
-//                                     <div className="grid place-content-center w-9 h-9 rounded-md bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light">
-//                                         <IconShoppingBag />
-//                                     </div>
-//                                     <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-//                                         <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-//                                             Income
-//                                             <span className="block text-base text-[#515365] dark:text-white-light">$92,600</span>
-//                                         </h6>
-//                                         <p className="ltr:ml-auto rtl:mr-auto text-secondary">90%</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-//                                 <div className="flex items-center justify-between p-4 py-2">
-//                                     <div className="grid place-content-center w-9 h-9 rounded-md bg-info-light dark:bg-info text-info dark:text-info-light">
-//                                         <IconTag />
-//                                     </div>
-//                                     <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-//                                         <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-//                                             Profit
-//                                             <span className="block text-base text-[#515365] dark:text-white-light">$37,515</span>
-//                                         </h6>
-//                                         <p className="ltr:ml-auto rtl:mr-auto text-info">65%</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div className="border border-[#ebedf2] rounded dark:bg-[#1b2e4b] dark:border-0">
-//                                 <div className="flex items-center justify-between p-4 py-2">
-//                                     <div className="grid place-content-center w-9 h-9 rounded-md bg-warning-light dark:bg-warning text-warning dark:text-warning-light">
-//                                         <IconCreditCard />
-//                                     </div>
-//                                     <div className="ltr:ml-4 rtl:mr-4 flex items-start justify-between flex-auto font-semibold">
-//                                         <h6 className="text-white-dark text-[13px] dark:text-white-dark">
-//                                             Expenses
-//                                             <span className="block text-base text-[#515365] dark:text-white-light">$55,085</span>
-//                                         </h6>
-//                                         <p className="ltr:ml-auto rtl:mr-auto text-warning">80%</p>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div className="panel">
-//                         <div className="flex items-center justify-between mb-10">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Pro Plan</h5>
-//                             <button className="btn btn-primary">Renew Now</button>
-//                         </div>
-//                         <div className="group">
-//                             <ul className="list-inside list-disc text-white-dark font-semibold mb-7 space-y-2">
-//                                 <li>10,000 Monthly Visitors</li>
-//                                 <li>Unlimited Reports</li>
-//                                 <li>2 Years Data Storage</li>
-//                             </ul>
-//                             <div className="flex items-center justify-between mb-4 font-semibold">
-//                                 <p className="flex items-center rounded-full bg-dark px-2 py-1 text-xs text-white-light font-semibold">
-//                                     <IconClock className="w-3 h-3 ltr:mr-1 rtl:ml-1" />5 Days Left
-//                                 </p>
-//                                 <p className="text-info">$25 / month</p>
-//                             </div>
-//                             <div className="rounded-full h-2.5 p-0.5 bg-dark-light overflow-hidden mb-5 dark:bg-dark-light/10">
-//                                 <div className="bg-gradient-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative" style={{ width: '65%' }}></div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div className="panel">
-//                         <div className="flex items-center justify-between mb-5">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Payment History</h5>
-//                         </div>
-//                         <div>
-//                             <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                         March
-//                                         <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-//                                     </h6>
-//                                     <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-//                                         <p className="font-semibold">90%</p>
-//                                         <div className="dropdown ltr:ml-4 rtl:mr-4">
-//                                             <Dropdown
-//                                                 offset={[0, 5]}
-//                                                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-//                                                 btnClassName="hover:text-primary"
-//                                                 button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}
-//                                             >
-//                                                 <ul className="!min-w-[150px]">
-//                                                     <li>
-//                                                         <button type="button">View Invoice</button>
-//                                                     </li>
-//                                                     <li>
-//                                                         <button type="button">Download Invoice</button>
-//                                                     </li>
-//                                                 </ul>
-//                                             </Dropdown>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                         February
-//                                         <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-//                                     </h6>
-//                                     <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-//                                         <p className="font-semibold">90%</p>
-//                                         <div className="dropdown ltr:ml-4 rtl:mr-4">
-//                                             <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-//                                                 <ul className="!min-w-[150px]">
-//                                                     <li>
-//                                                         <button type="button">View Invoice</button>
-//                                                     </li>
-//                                                     <li>
-//                                                         <button type="button">Download Invoice</button>
-//                                                     </li>
-//                                                 </ul>
-//                                             </Dropdown>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div>
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                         January
-//                                         <span className="block text-white-dark dark:text-white-light">Pro Membership</span>
-//                                     </h6>
-//                                     <div className="flex items-start justify-between ltr:ml-auto rtl:mr-auto">
-//                                         <p className="font-semibold">90%</p>
-//                                         <div className="dropdown ltr:ml-4 rtl:mr-4">
-//                                             <Dropdown offset={[0, 5]} placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`} button={<IconHorizontalDots className="opacity-80 hover:opacity-100" />}>
-//                                                 <ul className="!min-w-[150px]">
-//                                                     <li>
-//                                                         <button type="button">View Invoice</button>
-//                                                     </li>
-//                                                     <li>
-//                                                         <button type="button">Download Invoice</button>
-//                                                     </li>
-//                                                 </ul>
-//                                             </Dropdown>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     <div className="panel">
-//                         <div className="flex items-center justify-between mb-5">
-//                             <h5 className="font-semibold text-lg dark:text-white-light">Card Details</h5>
-//                         </div>
-//                         <div>
-//                             <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <div className="flex-none">
-//                                         <img src="/assets/images/card-americanexpress.svg" alt="img" />
-//                                     </div>
-//                                     <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-//                                         <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                             American Express
-//                                             <span className="block text-white-dark dark:text-white-light">Expires on 12/2025</span>
-//                                         </h6>
-//                                         <span className="badge bg-success ltr:ml-auto rtl:mr-auto">Primary</span>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div className="border-b border-[#ebedf2] dark:border-[#1b2e4b]">
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <div className="flex-none">
-//                                         <img src="/assets/images/card-mastercard.svg" alt="img" />
-//                                     </div>
-//                                     <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-//                                         <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                             Mastercard
-//                                             <span className="block text-white-dark dark:text-white-light">Expires on 03/2025</span>
-//                                         </h6>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                             <div>
-//                                 <div className="flex items-center justify-between py-2">
-//                                     <div className="flex-none">
-//                                         <img src="/assets/images/card-visa.svg" alt="img" />
-//                                     </div>
-//                                     <div className="flex items-center justify-between flex-auto ltr:ml-4 rtl:mr-4">
-//                                         <h6 className="text-[#515365] font-semibold dark:text-white-dark">
-//                                             Visa
-//                                             <span className="block text-white-dark dark:text-white-light">Expires on 10/2025</span>
-//                                         </h6>
-//                                     </div>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div> */}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Profile;
 import { BrowserRouter as Router, Route, useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
@@ -600,6 +30,10 @@ import { Alert, Row, Col, Card, CardBody, CardTitle, CardImg, CardText, CardSubt
 import Uploadfile from './cropimg';
 import IconLock from '../../components/Icon/IconLock';
 import Tippy from '@tippyjs/react';
+import state from 'sweetalert/typings/modules/state';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Center } from '@mantine/core';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -634,15 +68,273 @@ const Profile = () => {
     const [profileinfobox, setprofileinfobox] = useState(true);
     const [profilerequestbox, setprofilerequestbox] = useState(false);
     const [changepwdbox, setchangepwdbox] = useState(false);
+    const [passsucc, setPasssucc] = useState(false);
     const { chpwd } = useParams();
+    const [currerr, setCurrerr] = useState('');
+    const [match, setmatch] = useState('');
+    const [succ, setsucc] = useState('');
+
+    const [formData, setFormData] = useState({
+        name: '',
+        section: '',
+        address: '',
+        phoneNumber: '',
+        state: '',
+        image: '',
+        district: '',
+        country: 'India',
+        email: '',
+    });
+
+    const [data2, setData2] = useState({
+        current: '',
+        newpass: '',
+        confirm: '',
+    });
+
+    const [img, setImg] = useState('');
+    const [name, setName] = useState('');
+    const [address, setAddress] = useState('');
+    const [phone, setPhone] = useState('');
+    const [section, setSection] = useState('');
+    const [state1, setState1] = useState('');
+    const [district, setDistrict] = useState('');
+    const [country, setCountry] = useState('');
+    const [email, setEmail] = useState('');
+    const [new1, setNew1] = useState('');
+    const [curr, setCurr] = useState('');
+    const [newpass, setNewpass] = useState('');
+    const [confirm, setConfirm] = useState('');
+    const [length, setlength] = useState('');
+
     useEffect(() => {
-        handleGetkeys();
-        if (chpwd) {
-            handlePwd();
-        } else {
-            handleProfileinfo();
+        // Retrieve the image URL from local storage when the component mounts
+        const storedImg = localStorage.getItem('profileImage');
+
+        if (storedImg) {
+            setImg(storedImg);
         }
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const username = localStorage.getItem('uId');
+                const res2 = await axios.get(`http://localhost:8081/data?username=${username}`);
+                console.log('profile', res2.data);
+                setNew1(res2.data[0].name);
+                setAddress(res2.data[0].address);
+                setPhone(res2.data[0].phone);
+                setSection(res2.data[0].section);
+                setState1(res2.data[0].state);
+                setDistrict(res2.data[0].district);
+                setCountry(res2.data[0].country);
+                setEmail(res2.data[0].email);
+            } catch (err) {
+                console.error('Error getting data:', err);
+            }
+        };
+
+        fetchData();
     }, []);
+    const handleChange10 = (e: any) => {
+        setData2({ ...data2, [e.target.name]: e.target.value });
+        if (e.target.value < 6) {
+            setlength('Password must be at least 6 characters long');
+        } else {
+            setlength('');
+        }
+
+        //setCurr(e.target.value);
+    };
+    console.log('password', data2.current);
+    const handleChange11 = (e: any) => {
+        setData2({ ...data2, [e.target.name]: e.target.value });
+
+        setNewpass(e.target.value);
+    };
+    const handleChange12 = (e: any) => {
+        setData2({ ...data2, [e.target.name]: e.target.value });
+
+        setConfirm(e.target.value);
+    };
+    const handleChange = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+        setNew1(e.target.value);
+    };
+    const handleChange1 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setAddress(e.target.value);
+    };
+    const handleChange2 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setPhone(e.target.value);
+    };
+    const handleChange3 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setSection(e.target.value);
+    };
+    const handleChange4 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setState1(e.target.value);
+    };
+    const handleChange5 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setDistrict(e.target.value);
+    };
+    const handleChange6 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setCountry(e.target.value);
+    };
+    const handleChange7 = (e: any) => {
+        if (e.target.name === 'image') {
+            setFormData({ ...formData, image: e.target.files[0] });
+        } else {
+            setFormData({ ...formData, [e.target.name]: e.target.value });
+        }
+
+        setEmail(e.target.value);
+    };
+
+    const handlePassCh = async (e: any) => {
+        const data1 = new FormData();
+        data1.append('current', data2.current);
+        data1.append('newpass', data2.newpass);
+        data1.append('confirm', data2.confirm);
+
+        console.log('data12', data1);
+
+        try {
+            const l1 = localStorage.getItem('uId');
+            const res1 = await axios.post(`http://localhost:8081/pass?username=${l1}`, data2);
+
+            console.log('Data uploaded successfully');
+            toast(res1.data);
+            console.log('data4', res1.data);
+            setsucc(res1.data);
+            setCurr('');
+            setmatch('');
+            setPasssucc(true);
+            setchangepwdbox(false);
+        } catch (err: any) {
+            console.error('Error uploading data1:', err.response);
+            if (err.response.status === 401) {
+                setCurr(err.response.data);
+                setmatch('');
+            }
+            if (err.response.status === 400) {
+                setmatch(err.response.data);
+                setCurr('');
+            }
+        }
+    };
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('section', formData.section);
+        data.append('address', formData.address);
+        data.append('phoneNumber', formData.phoneNumber);
+        data.append('state', formData.state);
+        //data.append('image', formData.image);
+        data.append('district', formData.district);
+        data.append('country', formData.country);
+        data.append('email', formData.email);
+
+        try {
+            const l2 = localStorage.getItem('uId');
+            const res = await axios.post(`http://localhost:8081/upload?username=${l2}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('Data uploaded successfully');
+            toast.success('Profile Udated Successfully');
+            setprofilebox(true);
+            setprofileinfobox(true);
+            setprofilerequestbox(false);
+            // console.log('data', res.data.data[0]);
+            // const s1 = res.data.data[0].phone;
+            //localStorage.setItem('phone1', s1);
+
+            // localStorage.setItem('profileImage', res.data.data[0].image);
+            // localStorage.setItem('section', res.data.data[0].section);
+            // localStorage.setItem('name', res.data.data[0].name);
+            // localStorage.setItem('phone', res.data.data[0].phone);
+            // localStorage.setItem('state', res.data.data[0].state);
+            // localStorage.setItem('district', res.data.data[0].district);
+            // localStorage.setItem('country', res.data.data[0].country);
+            // localStorage.setItem('email', res.data.data[0].email);
+            // localStorage.setItem('address', res.data.data[0].address);
+
+            // setImg(res.data.data[0].image);
+            // setName(res.data.data[0].name);
+
+            // setSection(res.data.data[0].section);
+
+            // setState1(res.data.data[0].state);
+            // setDistrict(res.data.data[0].district);
+            // setCountry(res.data.data[0].country);
+            // setEmail(res.data.data[0].email);
+            // setAddress(res.data.data[0].address);
+            // setFormData({ ...formData, [e.target.name]: e.target.value });
+        } catch (err) {
+            console.error('Error uploading data:', err);
+        }
+    };
+    // useEffect(() => {
+    //     handleGetkeys();
+    //     if (chpwd) {
+    //         handlePwd();
+    //     } else {
+    //         handleProfileinfo();
+    //     }
+    // }, []);
+
+    // useEffect(() => {
+    //     axios
+    //         .get('http://localhost:8081/data')
+    //         .then((res) => {
+    //             console.log('data2', res.data);
+    //         })
+    //         .catch((err) => {
+    //             console.log('errored occured');
+    //         });
+    // }, []);
 
     //   const handleBkey = () => {
     //     localStorage.setItem('uuid', '');
@@ -665,152 +357,153 @@ const Profile = () => {
         setprofileinfobox(true);
         setprofilerequestbox(false);
         setchangepwdbox(false);
+        setPasssucc(false);
     };
 
-    const handleGetkeys = () => {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.token,
-        };
+    // const handleGetkeys = () => {
+    //     const headers = {
+    //         'Content-Type': 'application/json',
+    //         Authorization: localStorage.token,
+    //     };
 
-        const postData = {
-            uid: localStorage.usercode,
-            table: tname,
-            id: localStorage.uuid,
-        };
+    //     const postData = {
+    //         uid: localStorage.usercode,
+    //         table: tname,
+    //         id: localStorage.uuid,
+    //     };
 
-        const getuurl = U_URL + 'getudetails';
-        axios
-            .post(getuurl, postData, { headers: headers })
-            .then((response) => {
-                console.log('response', response.data);
-                if (response.status === 400) {
-                }
-                if (!response.data.error) {
-                    localStorage.setItem('token', response.data.token);
-                    const cudata = response.data.allitems;
-                    const allusertypes = [...response.data.usertypes];
+    //     const getuurl = U_URL + 'getudetails';
+    //     axios
+    //         .post(getuurl, postData, { headers: headers })
+    //         .then((response) => {
+    //             console.log('response', response.data);
+    //             if (response.status === 400) {
+    //             }
+    //             if (!response.data.error) {
+    //                 localStorage.setItem('token', response.data.token);
+    //                 const cudata = response.data.allitems;
+    //                 const allusertypes = [...response.data.usertypes];
 
-                    if (localStorage.uuid) {
-                        setEditMode(true);
-                        setEditId(cudata.id);
-                        setItemValue(cudata.itemname);
-                        setCuMobile(cudata.cu_mobile);
-                        setCuEmail(cudata.cu_email);
-                        setCuImageUrl(cudata.cu_image_url);
-                        setShowAlert(false);
-                        setSelectUsertype(allusertypes);
-                    } else {
-                        setEditMode(false);
-                        setSelectUsertype(allusertypes);
-                    }
-                }
-            })
-            .catch((error) => {
-                console.log('error', error);
-            });
-    };
+    //                 if (localStorage.uuid) {
+    //                     setEditMode(true);
+    //                     setEditId(cudata.id);
+    //                     setItemValue(cudata.itemname);
+    //                     setCuMobile(cudata.cu_mobile);
+    //                     setCuEmail(cudata.cu_email);
+    //                     setCuImageUrl(cudata.cu_image_url);
+    //                     setShowAlert(false);
+    //                     setSelectUsertype(allusertypes);
+    //                 } else {
+    //                     setEditMode(false);
+    //                     setSelectUsertype(allusertypes);
+    //                 }
+    //             }
+    //         })
+    //         .catch((error) => {
+    //             console.log('error', error);
+    //         });
+    // };
 
-    const handleValidSubmit = (
-        event: { preventDefault: () => void },
-        values: { item: string; venue_name: any; cu_mobile: any; cu_email: any; venue_description: any; venue_address: any; hlatlong: any; opening_time: any; closing_time: any; timings: any }
-    ) => {
-        event.preventDefault();
-        console.log('values', values);
-        let noerrors = false;
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.token,
-        };
-        let addkeyurl = U_URL + 'additemcu';
-        let postData;
+    // const handleValidSubmit = (
+    //     event: { preventDefault: () => void },
+    //     values: { item: string; venue_name: any; cu_mobile: any; cu_email: any; venue_description: any; venue_address: any; hlatlong: any; opening_time: any; closing_time: any; timings: any }
+    // ) => {
+    //     event.preventDefault();
+    //     console.log('values', values);
+    //     let noerrors = false;
+    //     const headers = {
+    //         'Content-Type': 'application/json',
+    //         Authorization: localStorage.token,
+    //     };
+    //     let addkeyurl = U_URL + 'additemcu';
+    //     let postData;
 
-        if (editMode) {
-            if (!localStorage.cu_image_url) {
-                swal('Select Profile Picture', {
-                    icon: 'warning',
-                });
-            } else {
-                noerrors = true;
-            }
-        } else {
-            if (!localStorage.venue_logo || !localStorage.cu_image_url || !localStorage.venue_building || !localStorage.venue_banner || !usertypeValue) {
-                swal('Please fill all required fields', {
-                    icon: 'warning',
-                });
-            } else {
-                noerrors = true;
-            }
-        }
+    //     if (editMode) {
+    //         if (!localStorage.cu_image_url) {
+    //             swal('Select Profile Picture', {
+    //                 icon: 'warning',
+    //             });
+    //         } else {
+    //             noerrors = true;
+    //         }
+    //     } else {
+    //         if (!localStorage.venue_logo || !localStorage.cu_image_url || !localStorage.venue_building || !localStorage.venue_banner || !usertypeValue) {
+    //             swal('Please fill all required fields', {
+    //                 icon: 'warning',
+    //             });
+    //         } else {
+    //             noerrors = true;
+    //         }
+    //     }
 
-        if (noerrors) {
-            if (editMode) {
-                addkeyurl = U_URL + 'edititemcu';
-                postData = {
-                    itemid: editId,
-                    item: values.item,
-                    uid: localStorage.usercode,
-                    table: tname,
-                    venue_name: values.venue_name,
-                    cu_mobile: values.cu_mobile,
-                    cu_email: values.cu_email,
-                    cu_image_url: localStorage.cu_image_url,
-                };
-            } else {
-                postData = {
-                    item: values.item,
-                    uid: localStorage.usercode,
-                    table: tname,
-                    usertype: usertypeValue,
-                    venue_name: values.venue_name,
-                    cu_mobile: values.cu_mobile,
-                    cu_email: values.cu_email,
-                    venue_description: values.venue_description,
-                    venue_address: values.venue_address,
-                    hlatlong: values.hlatlong,
-                    opening_time: values.opening_time,
-                    closing_time: values.closing_time,
-                    timings: values.timings,
-                    cu_image_url: localStorage.cu_image_url,
-                    venue_logo: localStorage.venue_logo,
-                    venue_building: localStorage.venue_building,
-                    venue_banner: localStorage.venue_banner,
-                };
-            }
+    //     if (noerrors) {
+    //         if (editMode) {
+    //             addkeyurl = U_URL + 'edititemcu';
+    //             postData = {
+    //                 itemid: editId,
+    //                 item: values.item,
+    //                 uid: localStorage.usercode,
+    //                 table: tname,
+    //                 venue_name: values.venue_name,
+    //                 cu_mobile: values.cu_mobile,
+    //                 cu_email: values.cu_email,
+    //                 cu_image_url: localStorage.cu_image_url,
+    //             };
+    //         } else {
+    //             postData = {
+    //                 item: values.item,
+    //                 uid: localStorage.usercode,
+    //                 table: tname,
+    //                 usertype: usertypeValue,
+    //                 venue_name: values.venue_name,
+    //                 cu_mobile: values.cu_mobile,
+    //                 cu_email: values.cu_email,
+    //                 venue_description: values.venue_description,
+    //                 venue_address: values.venue_address,
+    //                 hlatlong: values.hlatlong,
+    //                 opening_time: values.opening_time,
+    //                 closing_time: values.closing_time,
+    //                 timings: values.timings,
+    //                 cu_image_url: localStorage.cu_image_url,
+    //                 venue_logo: localStorage.venue_logo,
+    //                 venue_building: localStorage.venue_building,
+    //                 venue_banner: localStorage.venue_banner,
+    //             };
+    //         }
 
-            axios
-                .post(addkeyurl, postData, { headers: headers })
-                .then((response) => {
-                    console.log(response.data.message);
-                    if (response.data.error) {
-                        setShowAlert(true);
-                        setAlertType('warning');
-                        setAlertText(response.data.message);
-                    } else {
-                        setShowAlert(false);
-                        setAlertType('warning');
-                        setAlertText('');
-                        localStorage.setItem('token', response.data.token);
+    //         axios
+    //             .post(addkeyurl, postData, { headers: headers })
+    //             .then((response) => {
+    //                 console.log(response.data.message);
+    //                 if (response.data.error) {
+    //                     setShowAlert(true);
+    //                     setAlertType('warning');
+    //                     setAlertText(response.data.message);
+    //                 } else {
+    //                     setShowAlert(false);
+    //                     setAlertType('warning');
+    //                     setAlertText('');
+    //                     localStorage.setItem('token', response.data.token);
 
-                        swal(values.item + ' ' + response.data.message, {
-                            icon: 'success',
-                        });
-                        //  history.push('/users');
-                    }
-                })
-                .catch((error) => {
-                    console.log('Error is ', error);
-                    setShowAlert(true);
-                    setAlertType('danger');
-                    setAlertText('Failed Try Again Later!');
-                });
-        }
-    };
+    //                     swal(values.item + ' ' + response.data.message, {
+    //                         icon: 'success',
+    //                     });
+    //                     //  history.push('/users');
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.log('Error is ', error);
+    //                 setShowAlert(true);
+    //                 setAlertType('danger');
+    //                 setAlertText('Failed Try Again Later!');
+    //             });
+    //     }
+    // };
 
-    const handleSelectUsertypeChange = (selectedOption: { value: SetStateAction<string> }) => {
-        console.log('selectedOption', selectedOption);
-        setUsertypeValue(selectedOption.value);
-    };
+    // const handleSelectUsertypeChange = (selectedOption: { value: SetStateAction<string> }) => {
+    //     console.log('selectedOption', selectedOption);
+    //     setUsertypeValue(selectedOption.value);
+    // };
     const user = useSelector((state: IRootState) => state.themeConfig.user);
     let yes;
     let yes1;
@@ -847,7 +540,11 @@ const Profile = () => {
                                     </div>
                                     <div className="mb-5">
                                         <div className="flex flex-col justify-center items-center">
-                                            <img src="/assets/images/profile-34.jpeg" alt="img" className="w-48 h-48 rounded-full object-cover  mb-5" />
+                                            <img
+                                                src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg"
+                                                alt="img"
+                                                className="w-48 h-46 md:w-37 md:h-35  overflow-hidden  object-cover  mb-5"
+                                            />
                                             {/* <CropImg imgsrc={localStorage.cu_image_url} className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgw={250}></CropImg> */}
                                             {/* <UploadAvtar></UploadAvtar> */}
                                             {/* <Uploadfile
@@ -859,16 +556,16 @@ const Profile = () => {
                                     imgh={250}
                                 ></Uploadfile> */}
                                             {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
-                                            <p className="font-semibold text-primary text-xl">Joe Doe</p>
+                                            <p className="font-semibold text-primary  text-xl">{new1}</p>
                                         </div>
                                         <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
                                             <li className="flex items-center gap-2">Class: Class 1</li>
-                                            <li className="flex items-center gap-2">Section: A</li>
+                                            <li className="flex items-center gap-2">Section: {section}</li>
 
                                             <li className="flex items-center gap-2">
                                                 <IconPhone />
                                                 <span className="whitespace-nowrap" dir="ltr">
-                                                    99999999999
+                                                    {phone}
                                                 </span>
                                             </li>
                                             <li className="flex items-center gap-2">
@@ -928,6 +625,22 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Guardian Profession</td>
                                                         <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Address</td>
+                                                        <td>{address}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>District</td>
+                                                        <td>{district}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>State</td>
+                                                        <td>{state1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Country</td>
+                                                        <td>{country}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -1000,23 +713,57 @@ const Profile = () => {
                                         </li>
                                     </ul>
                                 </div>
-                                <div className="panel space-y-6 lg:col-span-2 xl:col-span-3">
+                                <form className="panel space-y-6 lg:col-span-2 xl:col-span-3" onSubmit={handlePassCh}>
                                     <div className="mb-5">
                                         <h5 className="font-semibold text-lg dark:text-white-light">Change Passsword</h5>
                                     </div>
                                     <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
-                                        <label htmlFor="profession">Current Password:</label>
-                                        <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8" />
+                                        <label htmlFor="Current">Current Password:</label>
+                                        <input id="Current" type="password" placeholder="" name="current" onChange={handleChange10} value={data2.current} required className="form-input w-1/2 mr-8" />
                                     </div>
+                                    <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{curr}</p>
                                     <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
-                                        <label htmlFor="profession">New Password:</label>
-                                        <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8 " />
+                                        <label htmlFor="New">New Password:</label>
+                                        <input id="New" type="password" placeholder="" name="newpass" onChange={handleChange10} value={data2.newpass} required className="form-input w-1/2 mr-8 " />
                                     </div>
+                                    <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{match}</p>
+                                    {/* <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{length}</p> */}
+
                                     <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
-                                        <label htmlFor="profession">Confirm New Password:</label>
-                                        <input id="profession" type="password" placeholder="" className="form-input w-1/2 mr-8" />
+                                        <label htmlFor="Confirm">Confirm New Password:</label>
+                                        <input id="Confirm" type="password" placeholder="" name="confirm" onChange={handleChange10} value={data2.confirm} required className="form-input w-1/2 mr-8" />
                                     </div>
-                                </div>
+                                    <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{match}</p>
+                                    <div className=" flex sm:justify-start justify-center items-center gap-x-2 sm:col-span-2 mt-3">
+                                        <button type="submit" className="btn btn-primary">
+                                            Update Profile
+                                        </button>
+                                        <button type="button" onClick={handleProfileinfo} className="btn btn-primary">
+                                            <Link to="/users/profile">Cancel</Link>
+                                        </button>
+                                    </div>
+                                </form>
+                            </>
+                        ) : null}
+                        {passsucc ? (
+                            <>
+                                <>
+                                    <div className="panel">
+                                        <ul className="mt-0 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
+                                            <li className="flex items-center gap-2">
+                                                <span onClick={handleProfileinfo} className="flex gap-2">
+                                                    <IconLock />
+                                                    <div className=" active:bg-gray-400 border-blue-400 border text-blue-400 sm:p-1 rounded-md hover:bg-blue-400 hover:text-white sm:text-xs p-1 cursor-pointer">
+                                                        Back to Profile
+                                                    </div>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div className="panel space-y-6 lg:col-span-2 xl:col-span-3 flex justify-center items-center text-base" onSubmit={handlePassCh}>
+                                        Password Changed Successfully
+                                    </div>
+                                </>
                             </>
                         ) : null}
                     </div>
@@ -1040,23 +787,33 @@ const Profile = () => {
                                 <h5 className="font-semibold text-lg dark:text-white-light">Edit Profile</h5>
                             </div>
                             <div>
-                                <form className="   p-4 mb-5  ">
+                                <form className="   p-4 mb-5  " onSubmit={handleSubmit}>
                                     <div className="flex flex-col sm:flex-row">
                                         <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
-                                            <img src="/assets//images/profile-34.jpeg" alt="img" className="w-20 h-20 md:w-32 md:h-32 rounded-full object-cover mx-auto" />
+                                            {/* Hidden input field */}
+                                            <input type="file" name="image" id="imageInput" accept="images/*" onChange={handleChange} style={{ display: 'none' }} />
+
+                                            {/* Clickable image */}
+                                            <label htmlFor="imageInput" style={{ cursor: 'pointer' }}>
+                                                <img
+                                                    src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg"
+                                                    alt="img"
+                                                    className="w-20 h-18 md:w-31 md:h-28  object-cover mx-auto"
+                                                />
+                                            </label>
                                         </div>
                                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                             <div>
                                                 <label htmlFor="name">Full Name</label>
-                                                <input id="name" type="text" placeholder="" value="" className="form-input" />
+                                                <input id="name" type="text" placeholder="" name="name" value={new1} onChange={handleChange} className="form-input" readOnly={false} />
                                             </div>
                                             <div>
-                                                <label htmlFor="profession">Section</label>
-                                                <input id="profession" type="text" placeholder="" value={yes3} className="form-input" />
+                                                <label htmlFor="section">Section</label>
+                                                <input id="section" type="text" placeholder="" name="section" value={section} onChange={handleChange3} className="form-input" />
                                             </div>
                                             <div>
                                                 <label htmlFor="country">Country</label>
-                                                <select defaultValue="India" id="country" className="form-select text-white-dark">
+                                                <select defaultValue="India" id="country" name="country" value={country} onChange={handleChange6} className="form-select text-white-dark">
                                                     <option value="All Countries">All Countries</option>
                                                     <option value="United States">United States</option>
                                                     <option value="India">India</option>
@@ -1069,32 +826,32 @@ const Profile = () => {
                                             </div>
                                             <div>
                                                 <label htmlFor="address">Address</label>
-                                                <input id="address" type="text" placeholder="" className="form-input" />
+                                                <input id="address" type="text-space" placeholder="" name="address" value={address} onChange={handleChange1} className="form-input" />
                                             </div>
                                             <div>
-                                                <label htmlFor="location">Location</label>
-                                                <input id="location" type="text" placeholder="" className="form-input" />
+                                                <label htmlFor="district">District/City</label>
+                                                <input id="district" type="text" placeholder="" name="district" value={district} onChange={handleChange5} className="form-input" />
                                             </div>
                                             <div>
-                                                <label htmlFor="phone">Phone</label>
-                                                <input id="phone" type="text" placeholder="" value={yes2} className="form-input" />
+                                                <label htmlFor="state">State</label>
+                                                <input id="state" type="text" placeholder="" name="state" value={state1} onChange={handleChange4} className="form-input" />
                                             </div>
                                             <div>
                                                 <label htmlFor="email">Email</label>
-                                                <input id="email" type="email" placeholder="" value={yes} className="form-input" />
+                                                <input id="email" type="email" placeholder="" value={email} name="email" onChange={handleChange7} className="form-input" />
                                             </div>
                                             <div>
-                                                <label htmlFor="web">Website</label>
-                                                <input id="web" type="text" placeholder="" className="form-input" />
+                                                <label htmlFor="phone">Phone</label>
+                                                <input id="phone" type="text" placeholder="" name="phoneNumber" value={phone} onChange={handleChange2} className="form-input" />
                                             </div>
-                                            <div>
+                                            {/* <div>
                                                 <label className="inline-flex cursor-pointer">
                                                     <input type="checkbox" className="form-checkbox" />
                                                     <span className="text-white-dark relative checked:bg-none">Make this my default address</span>
                                                 </label>
-                                            </div>
+                                            </div> */}
                                             <div className=" flex gap-x-2 sm:col-span-2 mt-3">
-                                                <button type="button" className="btn btn-primary">
+                                                <button type="submit" className="btn btn-primary">
                                                     Update Profile
                                                 </button>
                                                 <button type="button" onClick={handleProfileinfo} className="btn btn-primary">
@@ -1109,6 +866,7 @@ const Profile = () => {
                     </div>
                 ) : null}
             </div>
+            <ToastContainer position="top-center" autoClose={2000} />
         </div>
     );
 };

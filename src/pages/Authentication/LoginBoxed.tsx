@@ -48,6 +48,7 @@ const LoginBoxed = () => {
         password1: '',
         name1: '',
         username1: '',
+        // users: localStorage.getItem('username'),
     });
 
     const [emails1, setEmails1] = useState('');
@@ -56,6 +57,8 @@ const LoginBoxed = () => {
     const [user1, setUser1] = useState('');
     const [usererror, setUsererror] = useState('');
     const [userPass, setUserPass] = useState('');
+    const [userpath, setUserpath] = useState('');
+    const [passpath, setPasspath] = useState('');
 
     // useEffect(()=>{
     //    console.log('check',useselector)
@@ -81,13 +84,53 @@ const LoginBoxed = () => {
             .post('http://localhost:8081/login', values1)
             .then((res) => {
                 console.log('Login Successfully', res.data.token);
-                toast.success('Logged in Successfully');
+                toast('Logged in Successfully');
                 dispatch(logout1());
                 navigate('/dashboard');
+                setUserPass('');
+                localStorage.setItem('uId', user1);
+                const ls = localStorage.getItem('uId');
+                axios
+                    .get(`http://localhost:8081/getuser?username=${ls}`)
+                    .then((res) => {
+                        console.log('result', res.data[0]);
+
+                        localStorage.setItem('section', res.data[0].section);
+                        localStorage.setItem('name', res.data[0].name);
+                        localStorage.setItem('phone', res.data[0].phone);
+                        localStorage.setItem('state', res.data[0].state);
+                        localStorage.setItem('district', res.data[0].district);
+                        localStorage.setItem('country', res.data[0].country);
+                        localStorage.setItem('email', res.data[0].email);
+                        localStorage.setItem('address', res.data[0].address);
+                    })
+                    .catch((err) => console.log('errors', err));
             })
             .catch((err) => {
                 setUserPass("Username or Password doesn't match");
                 toast.error("Username or Password doesn't match");
+                if (err.response && err.response.data) {
+                    console.log('hi error');
+                    const { errors } = err.response.data;
+                    console.log(errors);
+                    console.log('length', errors.length);
+                    console.log(errors[0].path);
+                    errors.forEach((error: any) => {
+                        switch (error.path) {
+                            case 'password':
+                                setPasspath(error.msg);
+                                break;
+                            case 'username':
+                                setUserpath(error.msg);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+                } else {
+                    console.log('Unexpected error occurred:', err);
+                }
+
                 console.log('failed', err);
             });
         event.preventDefault();
@@ -257,6 +300,8 @@ const LoginBoxed = () => {
         //setEmails("");
         //setNames("");
         setPass1('');
+        setUserPass('');
+        setPasspath('');
     };
     const handleChange7 = (event: any) => {
         setValues1({ ...values1, [event.target.name]: [event.target.value] });
@@ -269,8 +314,9 @@ const LoginBoxed = () => {
         } else {
             setUsererror('');
         }
-
-        setUser1('');
+        setUserPass('');
+        setUser1(event.target.value);
+        setUserpath('');
     };
     return (
         <div>
@@ -288,7 +334,7 @@ const LoginBoxed = () => {
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="mb-10">
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                                <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
+                                <p className="text-base font-bold leading-normal text-white-dark">Enter your Username and Password to login</p>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={handleSubmit1}>
                                 {mobilebox ? (
@@ -305,12 +351,14 @@ const LoginBoxed = () => {
                                                 onChange={handleChange7}
                                                 pattern="\S+$"
                                             />
+                                            <p className="text-red-500">{userPass}</p>
 
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconMail fill={true} />
                                             </span>
                                         </div>
                                         {usererror && <span className="text-red-500">{usererror}</span>}
+
                                         <label htmlFor="Password">Password</label>
                                         <div className="relative text-white-dark">
                                             <input
@@ -322,6 +370,8 @@ const LoginBoxed = () => {
                                                 // value={formData.mobile}
                                                 onChange={handleChange8}
                                             />
+                                            {/* <p>{passpath}</p> */}
+                                            <p className="text-red-500">{userPass}</p>
 
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconLock fill={true} />

@@ -25,6 +25,12 @@ const RegisterBoxed = () => {
         email: '',
         password: '',
         username: '',
+        section: '',
+        country: '',
+        address: '',
+        district: '',
+        state: '',
+        phone: '',
     });
     const [passs, setPasss] = useState('');
     const [names, setNames] = useState('');
@@ -175,6 +181,75 @@ const RegisterBoxed = () => {
                                     </div>
                                     <p className="text-danger">{passs}</p>
                                 </div>
+
+                                <div>
+                                    <label htmlFor="Section">Section</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="Section" type="text" placeholder="Enter Section" name="section" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+                                <div>
+                                    <label htmlFor="Country">Country</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="Country" type="text" placeholder="Enter Country" name="country" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+                                <div>
+                                    <label htmlFor="Address">Address</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="Address" type="text" placeholder="Enter Address" name="address" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+                                <div>
+                                    <label htmlFor="District">District</label>
+                                    <div className="relative text-white-dark">
+                                        <input
+                                            id="District"
+                                            type="text"
+                                            placeholder="Enter District"
+                                            name="district"
+                                            onChange={handleChange}
+                                            className="form-input ps-10 placeholder:text-white-dark"
+                                        />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+                                <div>
+                                    <label htmlFor="State">State</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="State" type="text" placeholder="Enter State" name="state" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+                                <div>
+                                    <label htmlFor="Phone">Phone</label>
+                                    <div className="relative text-white-dark">
+                                        <input id="Phone" type="text" placeholder="Enter Phone Number" name="phone" onChange={handleChange} className="form-input ps-10 placeholder:text-white-dark" />
+                                        <span className="absolute start-4 top-1/2 -translate-y-1/2">
+                                            <IconUser fill={true} />
+                                        </span>
+                                    </div>
+                                    <p className="text-danger">{names}</p>
+                                </div>
+
                                 <div>
                                     <label className="flex cursor-pointer items-center">
                                         <input type="checkbox" className="form-checkbox bg-white dark:bg-black" />
