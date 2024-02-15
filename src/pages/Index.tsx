@@ -46,12 +46,16 @@ const Index = () => {
     const revenueChart: any = {
         series: [
             {
-                name: 'Income',
+                name: 'Total Working Days',
                 data: [16800, 16800, 15500, 17800, 15500, 17000, 19000, 16000, 15000, 17000, 14000, 17000],
             },
             {
-                name: 'Expenses',
+                name: 'Total Present Days',
                 data: [16500, 17500, 16200, 17300, 16000, 19500, 16000, 17000, 16000, 19000, 18000, 19000],
+            },
+            {
+                name: 'Total Absent Days',
+                data: [17500, 17500, 17200, 17800, 19000, 18500, 17000, 17000, 16000, 19000, 18900, 19000],
             },
         ],
         options: {
@@ -258,7 +262,7 @@ const Index = () => {
                     },
                 },
             },
-            labels: ['Apparel', 'Sports', 'Others'],
+            labels: ['Total Fee', 'Balance Fee', 'Fee Paid'],
             states: {
                 hover: {
                     filter: {
@@ -420,17 +424,17 @@ const Index = () => {
                         Dashboard
                     </Link>
                 </li>
-                <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                {/* <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
                     <span>Sales</span>
-                </li>
+                </li> */}
             </ul>
 
             <div className="pt-5">
                 <div className="grid xl:grid-cols-3 gap-6 mb-6">
                     <div className="panel h-full xl:col-span-2">
                         <div className="flex items-center justify-between dark:text-white-light mb-5">
-                            <h5 className="font-semibold text-lg">Revenue</h5>
-                            <div className="dropdown">
+                            <h5 className="font-semibold text-lg">Attendance</h5>
+                            {/* <div className="dropdown">
                                 <Dropdown
                                     offset={[0, 1]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
@@ -448,11 +452,11 @@ const Index = () => {
                                         </li>
                                     </ul>
                                 </Dropdown>
-                            </div>
+                            </div> */}
                         </div>
-                        <p className="text-lg dark:text-white-light/90">
+                        {/* <p className="text-lg dark:text-white-light/90">
                             Total Profit <span className="text-primary ml-2">$10,840</span>
-                        </p>
+                        </p> */}
                         <div className="relative">
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
                                 {loading ? (
@@ -468,7 +472,7 @@ const Index = () => {
 
                     <div className="panel h-full">
                         <div className="flex items-center mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Sales By Category</h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">Fees Details</h5>
                         </div>
                         <div>
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
@@ -487,33 +491,25 @@ const Index = () => {
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                     <div className="panel h-full sm:col-span-2 xl:col-span-1">
                         <div className="flex items-center mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">
+                            {/* <h5 className="font-semibold text-lg dark:text-white-light">
                                 Daily Sales
                                 <span className="block text-white-dark text-sm font-normal">Go to columns for details.</span>
-                            </h5>
-                            <div className="ltr:ml-auto rtl:mr-auto relative">
+                            </h5> */}
+                            {/* <div className="ltr:ml-auto rtl:mr-auto relative">
                                 <div className="w-11 h-11 text-warning bg-[#ffeccb] dark:bg-warning dark:text-[#ffeccb] grid place-content-center rounded-full">
                                     <IconDollarSign />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div>
-                            <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
-                                {loading ? (
-                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
-                                        <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
-                                    </div>
-                                ) : (
-                                    <ReactApexChart series={dailySales.series} options={dailySales.options} type="bar" height={160} />
-                                )}
-                            </div>
+                            <div className="bg-white dark:bg-black rounded-lg overflow-hidden"></div>
                         </div>
                     </div>
                     <div className="panel h-full">
                         <div className="flex items-center justify-between dark:text-white-light mb-5">
-                            <h5 className="font-semibold text-lg">Summary</h5>
+                            {/* <h5 className="font-semibold text-lg">Summary</h5> */}
                             <div className="dropdown">
-                                <Dropdown
+                                {/* <Dropdown
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                                     button={<IconHorizontalDots className="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary" />}
                                 >
@@ -528,28 +524,28 @@ const Index = () => {
                                             <button type="button">Mark as Done</button>
                                         </li>
                                     </ul>
-                                </Dropdown>
+                                </Dropdown> */}
                             </div>
                         </div>
                         <div className="space-y-9">
                             <div className="flex items-center">
                                 <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
-                                    <div className="bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light  rounded-full w-9 h-9 grid place-content-center">
+                                    {/* <div className="bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light  rounded-full w-9 h-9 grid place-content-center">
                                         <IconInbox />
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="flex-1">
-                                    <div className="flex font-semibold text-white-dark mb-2">
+                                    {/* <div className="flex font-semibold text-white-dark mb-2">
                                         <h6>Income</h6>
                                         <p className="ltr:ml-auto rtl:mr-auto">$92,600</p>
                                     </div>
                                     <div className="rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
                                         <div className="bg-gradient-to-r from-[#7579ff] to-[#b224ef] w-11/12 h-full rounded-full"></div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
+                                {/* <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
                                     <div className="bg-success-light dark:bg-success text-success dark:text-success-light rounded-full w-9 h-9 grid place-content-center">
                                         <IconTag />
                                     </div>
@@ -562,10 +558,10 @@ const Index = () => {
                                     <div className="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
                                         <div className="bg-gradient-to-r from-[#3cba92] to-[#0ba360] w-full h-full rounded-full" style={{ width: '65%' }}></div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="flex items-center">
-                                <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
+                                {/* <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
                                     <div className="bg-warning-light dark:bg-warning text-warning dark:text-warning-light rounded-full w-9 h-9 grid place-content-center">
                                         <IconCreditCard />
                                     </div>
@@ -578,37 +574,37 @@ const Index = () => {
                                     <div className="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
                                         <div className="bg-gradient-to-r from-[#f09819] to-[#ff5858] w-full h-full rounded-full" style={{ width: '80%' }}></div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
 
                     <div className="panel h-full p-0">
                         <div className="flex items-center justify-between w-full p-5 absolute">
-                            <div className="relative">
+                            {/* <div className="relative">
                                 <div className="text-success dark:text-success-light bg-success-light dark:bg-success w-11 h-11 rounded-lg flex items-center justify-center">
                                     <IconShoppingCart />
                                 </div>
-                            </div>
-                            <h5 className="font-semibold text-2xl ltr:text-right rtl:text-left dark:text-white-light">
+                            </div> */}
+                            {/* <h5 className="font-semibold text-2xl ltr:text-right rtl:text-left dark:text-white-light">
                                 3,192
                                 <span className="block text-sm font-normal">Total Orders</span>
-                            </h5>
+                            </h5> */}
                         </div>
                         <div className="bg-transparent rounded-lg overflow-hidden">
                             {/* loader */}
-                            {loading ? (
+                            {/* {loading ? (
                                 <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
                                     <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                 </div>
                             ) : (
                                 <ReactApexChart series={totalOrders.series} options={totalOrders.options} type="area" height={290} />
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </div>
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-                    <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
+                    {/* <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
                         <h5 className="font-semibold text-lg dark:text-white-light mb-5">Recent Activities</h5>
                         <PerfectScrollbar className="relative h-[290px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3 mb-4">
                             <div className="text-sm cursor-pointer">
@@ -879,15 +875,15 @@ const Index = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="grid lg:grid-cols-2 grid-cols-1 gap-6">
                     <div className="panel h-full w-full">
-                        <div className="flex items-center justify-between mb-5">
+                        {/* <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">Recent Orders</h5>
-                        </div>
-                        <div className="table-responsive">
+                        </div> */}
+                        {/* <div className="table-responsive">
                             <table>
                                 <thead>
                                     <tr>
@@ -981,14 +977,14 @@ const Index = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="panel h-full w-full">
-                        <div className="flex items-center justify-between mb-5">
+                        {/* <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">Top Selling Product</h5>
-                        </div>
-                        <div className="table-responsive">
+                        </div> */}
+                        {/* <div className="table-responsive">
                             <table>
                                 <thead>
                                     <tr className="border-b-0">
@@ -1098,11 +1094,11 @@ const Index = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
-            <ToastContainer position="top-center" autoClose={2000} />
+            {/* <ToastContainer position="top-center" autoClose={2000} /> */}
         </div>
     );
 };

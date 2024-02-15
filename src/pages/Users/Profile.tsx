@@ -106,6 +106,7 @@ const Profile = () => {
     const [newpass, setNewpass] = useState('');
     const [confirm, setConfirm] = useState('');
     const [length, setlength] = useState('');
+    const [passvalid, setpassvalid] = useState('');
 
     useEffect(() => {
         // Retrieve the image URL from local storage when the component mounts
@@ -139,6 +140,9 @@ const Profile = () => {
     }, []);
     const handleChange10 = (e: any) => {
         setData2({ ...data2, [e.target.name]: e.target.value });
+        setmatch('');
+        setpassvalid('');
+
         if (e.target.value < 6) {
             setlength('Password must be at least 6 characters long');
         } else {
@@ -231,12 +235,13 @@ const Profile = () => {
     };
 
     const handlePassCh = async (e: any) => {
-        const data1 = new FormData();
-        data1.append('current', data2.current);
-        data1.append('newpass', data2.newpass);
-        data1.append('confirm', data2.confirm);
+        // const data1 = new FormData();
+        // data1.append('current', data2.current);
+        // data1.append('newpass', data2.newpass);
+        // data1.append('confirm', data2.confirm);
 
-        console.log('data12', data1);
+        // console.log('data12', data1);
+        e.preventDefault();
 
         try {
             const l1 = localStorage.getItem('uId');
@@ -248,17 +253,28 @@ const Profile = () => {
             setsucc(res1.data);
             setCurr('');
             setmatch('');
+            setprofilebox(true);
             setPasssucc(true);
+            setprofileinfobox(false);
             setchangepwdbox(false);
+            setData2({
+                current: '',
+                newpass: '',
+                confirm: '',
+            });
         } catch (err: any) {
-            console.error('Error uploading data1:', err.response);
+            console.error('Error uploading data1:', err);
             if (err.response.status === 401) {
                 setCurr(err.response.data);
                 setmatch('');
             }
-            if (err.response.status === 400) {
+            if (err.response.status === 402) {
                 setmatch(err.response.data);
                 setCurr('');
+            }
+            if (err.response.status === 400) {
+                console.log('mega', err.response.data.errors[0].msg);
+                setpassvalid(err.response.data.errors[0].msg);
             }
         }
     };
@@ -505,19 +521,7 @@ const Profile = () => {
     //     setUsertypeValue(selectedOption.value);
     // };
     const user = useSelector((state: IRootState) => state.themeConfig.user);
-    let yes;
-    let yes1;
-    let yes2;
-    let yes3;
-    let yes4;
-    if (user !== null) {
-        yes = user.email;
-        yes1 = user.name;
-        yes2 = user.mobile;
-        yes3 = user.role;
-        yes4 = user.img_url;
-        console.log('hvbjsdncnxjvxnv', user);
-    }
+
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
     });
@@ -726,8 +730,8 @@ const Profile = () => {
                                         <label htmlFor="New">New Password:</label>
                                         <input id="New" type="password" placeholder="" name="newpass" onChange={handleChange10} value={data2.newpass} required className="form-input w-1/2 mr-8 " />
                                     </div>
-                                    <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{match}</p>
-                                    {/* <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{length}</p> */}
+                                    <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{passvalid ? <>{passvalid}</> : <>{match}</>}</p>
+                                    {/* <p className="text-red-500 sm:text-sm text-xs flex sm:justify-end justify-center items-center  mr-9">{passvalid}</p> */}
 
                                     <div className="flex sm:flex-row flex-col items-center justify-between gap-x-2">
                                         <label htmlFor="Confirm">Confirm New Password:</label>
@@ -760,9 +764,7 @@ const Profile = () => {
                                             </li>
                                         </ul>
                                     </div>
-                                    <div className="panel space-y-6 lg:col-span-2 xl:col-span-3 flex justify-center items-center text-base" onSubmit={handlePassCh}>
-                                        Password Changed Successfully
-                                    </div>
+                                    <div className="panel space-y-6 lg:col-span-2 xl:col-span-3 flex justify-center items-center text-base">Password Changed Successfully</div>
                                 </>
                             </>
                         ) : null}

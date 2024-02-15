@@ -59,6 +59,7 @@ const LoginBoxed = () => {
     const [userPass, setUserPass] = useState('');
     const [userpath, setUserpath] = useState('');
     const [passpath, setPasspath] = useState('');
+    const [userf, setuserf] = useState('');
 
     // useEffect(()=>{
     //    console.log('check',useselector)
@@ -72,6 +73,7 @@ const LoginBoxed = () => {
     const [mobileerror, setMobileerror] = useState('');
     const [otpbox, setOtpbox] = useState(false);
     const [otperror, setOtperror] = useState('');
+    const [minpass, setminpass] = useState('');
 
     // State variables for form fields and errors
     const [formData, setFormData] = useState({
@@ -84,6 +86,7 @@ const LoginBoxed = () => {
             .post('http://localhost:8081/login', values1)
             .then((res) => {
                 console.log('Login Successfully', res.data.token);
+                console.log('response', res);
                 toast('Logged in Successfully');
                 dispatch(logout1());
                 navigate('/dashboard');
@@ -107,13 +110,23 @@ const LoginBoxed = () => {
                     .catch((err) => console.log('errors', err));
             })
             .catch((err) => {
-                setUserPass("Username or Password doesn't match");
-                toast.error("Username or Password doesn't match");
+                if (err.response.status == 401) {
+                    setUserPass(err.response.data);
+                }
+                if (err.response.status == 404) {
+                    setuserf(err.response.data);
+                }
+                if (err.response.status == 400) {
+                    setminpass(err.response.data.errors[0].msg);
+                }
+                //toast.error("Username or Password doesn't match");
+                console.log('superr', err.response.status);
                 if (err.response && err.response.data) {
                     console.log('hi error');
                     const { errors } = err.response.data;
                     console.log(errors);
                     console.log('length', errors.length);
+                    console.log('error1', err.response.data.errors[0].msg);
                     console.log(errors[0].path);
                     errors.forEach((error: any) => {
                         switch (error.path) {
@@ -302,6 +315,8 @@ const LoginBoxed = () => {
         setPass1('');
         setUserPass('');
         setPasspath('');
+        setminpass('');
+        setuserf('');
     };
     const handleChange7 = (event: any) => {
         setValues1({ ...values1, [event.target.name]: [event.target.value] });
@@ -317,6 +332,8 @@ const LoginBoxed = () => {
         setUserPass('');
         setUser1(event.target.value);
         setUserpath('');
+        setuserf('');
+        setminpass('');
     };
     return (
         <div>
@@ -347,11 +364,12 @@ const LoginBoxed = () => {
                                                 placeholder="Enter Username"
                                                 className="form-input ps-10 placeholder:text-white-dark"
                                                 name="username"
+                                                required
                                                 // value={formData.mobile}
                                                 onChange={handleChange7}
                                                 pattern="\S+$"
                                             />
-                                            <p className="text-red-500">{userPass}</p>
+                                            <p className="text-red-500">{userf}</p>
 
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconMail fill={true} />
@@ -369,9 +387,10 @@ const LoginBoxed = () => {
                                                 name="password"
                                                 // value={formData.mobile}
                                                 onChange={handleChange8}
+                                                required
                                             />
                                             {/* <p>{passpath}</p> */}
-                                            <p className="text-red-500">{userPass}</p>
+                                            <p className="text-red-500">{userPass ? <>{userPass}</> : <>{minpass}</>}</p>
 
                                             <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                                 <IconLock fill={true} />
