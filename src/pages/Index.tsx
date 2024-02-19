@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../store';
@@ -22,12 +22,165 @@ import IconCaretDown from '../components/Icon/IconCaretDown';
 import IconPlus from '../components/Icon/IconPlus';
 import IconMultipleForwardRight from '../components/Icon/IconMultipleForwardRight';
 import { ToastContainer, toast } from 'react-toastify';
+import IconBook from '../components/Icon/IconBook';
+import IconPencilPaper from '../components/Icon/IconPencilPaper';
+import IconNotesEdit from '../components/Icon/IconNotesEdit';
+import IconNotes from '../components/Icon/IconNotes';
+import IconBookmark from '../components/Icon/IconBookmark';
+import IconOpenBook from '../components/Icon/IconOpenBook';
+import IconLaptop from '../components/Icon/IconLaptop';
+import IconPencil from '../components/Icon/IconPencil';
+import { DataTable, DataTableSortStatus } from 'mantine-datatable';
+import sortBy from 'lodash/sortBy';
+import Tippy from '@tippyjs/react';
+import IconEye from '../components/Icon/IconEye';
+import IconXCircle from '../components/Icon/IconXCircle';
+
+const rowData = [
+    {
+        id: 1,
+        examtitle: '7th Physics',
+        action: <button></button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Date Expired</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        duration: '00:45',
+        subject: 'Physics',
+        examdate: '14 Oct 2023',
+        time: '10:30AM-10:50AM',
+        question: '15',
+        marks: '15',
+    },
+    {
+        id: 2,
+        action: <button></button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        examtitle: '7th Maths',
+        duration: '00:45',
+        subject: 'Maths',
+        examdate: '14 Oct 2023',
+        time: '10:51AM-11:11AM',
+        question: '10',
+        marks: '10',
+    },
+];
+const rowData2 = [
+    {
+        id: 1,
+        action: <button className="bg-blue-900 px-4 py-1 rounded-md text-white">Expired</button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        examtitle: 39,
+        validfrom: '15 NOV 2023',
+        validto: '28 NOV 2023',
+        duration: '00:45',
+    },
+    {
+        id: 2,
+        action: <button className="bg-blue-900 px-4 py-1 rounded-md text-white">Expired</button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        examtitle: 39,
+        validfrom: '15 NOV 2023',
+        validto: '28 NOV 2023',
+        duration: '00:45',
+    },
+    {
+        id: 3,
+        action: <button className="bg-blue-900 px-4 py-1 rounded-md text-white">Expired</button>,
+        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
+        type: 'offline',
+        started: '+1 (821) 447-3782',
+        finished: '',
+        examtitle: 39,
+        validfrom: '15 NOV 2023',
+        validto: '28 NOV 2023',
+        duration: '00:45',
+    },
+];
 
 const Index = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
 
+    const PAGE_SIZES2 = [10, 20, 30, 50, 100];
+
+    //Skin: Striped
+    const [page2, setPage2] = useState(1);
+    const [pageSize2, setPageSize2] = useState(PAGE_SIZES2[0]);
+    const [initialRecords2, setInitialRecords2] = useState(rowData2);
+    const [recordsData2, setRecordsData2] = useState(initialRecords2);
+
+    const [search2, setSearch2] = useState('');
+
+    useEffect(() => {
+        setPage2(1);
+    }, [pageSize2]);
+
+    useEffect(() => {
+        const from = (page2 - 1) * pageSize2;
+        const to = from + pageSize;
+        setRecordsData2([...initialRecords2.slice(from, to)]);
+    }, [page2, pageSize2, initialRecords2]);
+
+    useEffect(() => {
+        setInitialRecords2(() => {
+            return rowData2.filter((item) => {
+                return (
+                    item.id.toString().includes(search2.toLowerCase()) ||
+                    //item.action.toLowerCase().includes(search.toLowerCase()) ||
+                    // item.status.toLowerCase().includes(search.toLowerCase()) ||
+                    item.type.toLowerCase().includes(search.toLowerCase()) ||
+                    item.started.toLowerCase().includes(search.toLowerCase())
+                );
+            });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search2]);
+
+    const PAGE_SIZES1 = [10, 20, 30, 50, 100];
+
+    //Skin: Striped
+    const [page1, setPage1] = useState(1);
+    const [pageSize1, setPageSize1] = useState(PAGE_SIZES1[0]);
+    const [initialRecords1, setInitialRecords1] = useState(rowData);
+    const [recordsData, setRecordsData] = useState(initialRecords1);
+
+    const [search1, setSearch1] = useState('');
+
+    useEffect(() => {
+        setPage(1);
+    }, [pageSize1]);
+
+    useEffect(() => {
+        const from = (page1 - 1) * pageSize1;
+        const to = from + pageSize1;
+        setRecordsData([...initialRecords1.slice(from, to)]);
+    }, [page1, pageSize1, initialRecords1]);
+
+    useEffect(() => {
+        setInitialRecords1(() => {
+            return rowData.filter((item) => {
+                return (
+                    item.id.toString().includes(search1.toLowerCase()) ||
+                    //item.action.toLowerCase().includes(search.toLowerCase()) ||
+                    // item.status.toLowerCase().includes(search.toLowerCase()) ||
+                    item.examtitle.toLowerCase().includes(search1.toLowerCase()) ||
+                    item.subject.toLowerCase().includes(search1.toLowerCase())
+                );
+            });
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [search1]);
     useEffect(() => {
         console.log('jhjdhj', isLoggedinuser);
         if (!isLoggedinuser) {
@@ -41,6 +194,123 @@ const Index = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const [loading] = useState(false);
+
+    // const dispatch = useDispatch();
+    // useEffect(() => {
+    //     dispatch(setPageTitle('Invoice List'));
+    // });
+    const [items, setItems] = useState([
+        {
+            id: 1,
+            invoice: '081451',
+            feeamount: '2275.45',
+            feetype: '3rd Term',
+
+            discount: '',
+            afterdiscount: '',
+            date: '15 Dec 2020',
+            amount: '2275.45',
+            status: { tooltip: 'Paid', color: 'success' },
+            profile: 'profile-1.jpeg',
+            paid: '',
+        },
+        {
+            id: 2,
+            invoice: '081452',
+            feeamount: '2275.45',
+            feetype: '2nd Term',
+
+            discount: '',
+            afterdiscount: '',
+            date: '20 Dec 2020',
+            amount: '1044.00',
+            status: { tooltip: 'Paid', color: 'success' },
+            profile: 'profile-1.jpeg',
+            paid: '',
+        },
+        {
+            id: 3,
+            invoice: '081681',
+            feeamount: '2275.45',
+            feetype: '1st Term',
+            discount: '',
+            afterdiscount: '',
+            date: '27 Dec 2020',
+            amount: '20.00',
+            status: { tooltip: 'Pending', color: 'danger' },
+            profile: 'profile-1.jpeg',
+            paid: '',
+        },
+    ]);
+
+    const deleteRow = (id: any = null) => {
+        if (window.confirm('Are you sure want to delete selected row ?')) {
+            if (id) {
+                setRecords(items.filter((user) => user.id !== id));
+                setInitialRecords(items.filter((user) => user.id !== id));
+                setItems(items.filter((user) => user.id !== id));
+                setSearch('');
+                setSelectedRecords([]);
+            } else {
+                let selectedRows = selectedRecords || [];
+                const ids = selectedRows.map((d: any) => {
+                    return d.id;
+                });
+                const result = items.filter((d) => !ids.includes(d.id as never));
+                setRecords(result);
+                setInitialRecords(result);
+                setItems(result);
+                setSearch('');
+                setSelectedRecords([]);
+                setPage(1);
+            }
+        }
+    };
+
+    const [page, setPage] = useState(1);
+    const PAGE_SIZES = [10, 20, 30, 50, 100];
+    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+    const [initialRecords, setInitialRecords] = useState(sortBy(items, 'invoice'));
+    const [records, setRecords] = useState(initialRecords);
+    const [selectedRecords, setSelectedRecords] = useState<any>([]);
+
+    const [search, setSearch] = useState('');
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
+        columnAccessor: 'firstName',
+        direction: 'asc',
+    });
+
+    useEffect(() => {
+        setPage(1);
+        /* eslint-disable react-hooks/exhaustive-deps */
+    }, [pageSize]);
+
+    useEffect(() => {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize;
+        setRecords([...initialRecords.slice(from, to)]);
+    }, [page, pageSize, initialRecords]);
+
+    useEffect(() => {
+        setInitialRecords(() => {
+            return items.filter((item) => {
+                return (
+                    item.invoice.toLowerCase().includes(search.toLowerCase()) ||
+                    item.feetype.toLowerCase().includes(search.toLowerCase()) ||
+                    item.discount.toLowerCase().includes(search.toLowerCase()) ||
+                    item.date.toLowerCase().includes(search.toLowerCase()) ||
+                    item.amount.toLowerCase().includes(search.toLowerCase()) ||
+                    item.status.tooltip.toLowerCase().includes(search.toLowerCase())
+                );
+            });
+        });
+    }, [search]);
+
+    useEffect(() => {
+        const data2 = sortBy(initialRecords, sortStatus.columnAccessor);
+        setRecords(sortStatus.direction === 'desc' ? data2.reverse() : data2);
+        setPage(1);
+    }, [sortStatus]);
 
     //Revenue Chart
     const revenueChart: any = {
@@ -418,19 +688,73 @@ const Index = () => {
 
     return (
         <div>
-            <ul className="flex space-x-2 rtl:space-x-reverse">
+            {/* <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
                     <Link to="/" className="text-primary hover:underline">
                         Dashboard
                     </Link>
-                </li>
-                {/* <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+                </li> */}
+            {/* <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
                     <span>Sales</span>
                 </li> */}
-            </ul>
-
+            {/* </ul> */}
             <div className="pt-5">
+                <div className="grid sm:grid-cols-2 xl:grid-cols-6 grid-cols-2 gap-6 mb-6">
+                    <Link to="/preview">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
+                            <IconDollarSign className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
+                            <p className="text-blue-500">PayFee</p>
+                        </div>
+                    </Link>
+
+                    <Link to="/knowledge-bank">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y2 ">
+                            <IconBook className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <p className="text-blue-500">Knowledge Bank</p>
+                        </div>
+                    </Link>
+                    <Link to="/assignments">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
+                            <IconNotesEdit className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <p className="text-blue-500">Home Work</p>
+                        </div>
+                    </Link>
+                    <Link to="/diary">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2 ">
+                            <IconOpenBook className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <p className="text-blue-500">Diary</p>
+                        </div>
+                    </Link>
+                    <Link to="/online-exam">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
+                            <IconLaptop className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <p className="text-blue-500">Online Exam</p>
+                        </div>
+                    </Link>
+                    <Link to="/offline-exam">
+                        <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
+                            <IconPencil className="text-blue-500 sm:w-14 sm:h-14 w-8 h-8  " />
+                            <p className="text-blue-500">Offline Exam</p>
+                        </div>
+                    </Link>
+                </div>
                 <div className="grid xl:grid-cols-3 gap-6 mb-6">
+                    <div className="panel h-full">
+                        <div className="flex items-center mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">Fees Details</h5>
+                        </div>
+                        <div>
+                            <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
+                                {loading ? (
+                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
+                                        <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
+                                    </div>
+                                ) : (
+                                    <ReactApexChart series={salesByCategory.series} options={salesByCategory.options} type="donut" height={460} />
+                                )}
+                            </div>
+                        </div>
+                    </div>
                     <div className="panel h-full xl:col-span-2">
                         <div className="flex items-center justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg">Attendance</h5>
@@ -469,140 +793,8 @@ const Index = () => {
                             </div>
                         </div>
                     </div>
-
-                    <div className="panel h-full">
-                        <div className="flex items-center mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Fees Details</h5>
-                        </div>
-                        <div>
-                            <div className="bg-white dark:bg-black rounded-lg overflow-hidden">
-                                {loading ? (
-                                    <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
-                                        <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
-                                    </div>
-                                ) : (
-                                    <ReactApexChart series={salesByCategory.series} options={salesByCategory.options} type="donut" height={460} />
-                                )}
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-                    <div className="panel h-full sm:col-span-2 xl:col-span-1">
-                        <div className="flex items-center mb-5">
-                            {/* <h5 className="font-semibold text-lg dark:text-white-light">
-                                Daily Sales
-                                <span className="block text-white-dark text-sm font-normal">Go to columns for details.</span>
-                            </h5> */}
-                            {/* <div className="ltr:ml-auto rtl:mr-auto relative">
-                                <div className="w-11 h-11 text-warning bg-[#ffeccb] dark:bg-warning dark:text-[#ffeccb] grid place-content-center rounded-full">
-                                    <IconDollarSign />
-                                </div>
-                            </div> */}
-                        </div>
-                        <div>
-                            <div className="bg-white dark:bg-black rounded-lg overflow-hidden"></div>
-                        </div>
-                    </div>
-                    <div className="panel h-full">
-                        <div className="flex items-center justify-between dark:text-white-light mb-5">
-                            {/* <h5 className="font-semibold text-lg">Summary</h5> */}
-                            <div className="dropdown">
-                                {/* <Dropdown
-                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                    button={<IconHorizontalDots className="w-5 h-5 text-black/70 dark:text-white/70 hover:!text-primary" />}
-                                >
-                                    <ul>
-                                        <li>
-                                            <button type="button">View Report</button>
-                                        </li>
-                                        <li>
-                                            <button type="button">Edit Report</button>
-                                        </li>
-                                        <li>
-                                            <button type="button">Mark as Done</button>
-                                        </li>
-                                    </ul>
-                                </Dropdown> */}
-                            </div>
-                        </div>
-                        <div className="space-y-9">
-                            <div className="flex items-center">
-                                <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
-                                    {/* <div className="bg-secondary-light dark:bg-secondary text-secondary dark:text-secondary-light  rounded-full w-9 h-9 grid place-content-center">
-                                        <IconInbox />
-                                    </div> */}
-                                </div>
-                                <div className="flex-1">
-                                    {/* <div className="flex font-semibold text-white-dark mb-2">
-                                        <h6>Income</h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto">$92,600</p>
-                                    </div>
-                                    <div className="rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
-                                        <div className="bg-gradient-to-r from-[#7579ff] to-[#b224ef] w-11/12 h-full rounded-full"></div>
-                                    </div> */}
-                                </div>
-                            </div>
-                            <div className="flex items-center">
-                                {/* <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
-                                    <div className="bg-success-light dark:bg-success text-success dark:text-success-light rounded-full w-9 h-9 grid place-content-center">
-                                        <IconTag />
-                                    </div>
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex font-semibold text-white-dark mb-2">
-                                        <h6>Profit</h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto">$37,515</p>
-                                    </div>
-                                    <div className="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
-                                        <div className="bg-gradient-to-r from-[#3cba92] to-[#0ba360] w-full h-full rounded-full" style={{ width: '65%' }}></div>
-                                    </div>
-                                </div> */}
-                            </div>
-                            <div className="flex items-center">
-                                {/* <div className="w-9 h-9 ltr:mr-3 rtl:ml-3">
-                                    <div className="bg-warning-light dark:bg-warning text-warning dark:text-warning-light rounded-full w-9 h-9 grid place-content-center">
-                                        <IconCreditCard />
-                                    </div>
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex font-semibold text-white-dark mb-2">
-                                        <h6>Expenses</h6>
-                                        <p className="ltr:ml-auto rtl:mr-auto">$55,085</p>
-                                    </div>
-                                    <div className="w-full rounded-full h-2 bg-dark-light dark:bg-[#1b2e4b] shadow">
-                                        <div className="bg-gradient-to-r from-[#f09819] to-[#ff5858] w-full h-full rounded-full" style={{ width: '80%' }}></div>
-                                    </div>
-                                </div> */}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="panel h-full p-0">
-                        <div className="flex items-center justify-between w-full p-5 absolute">
-                            {/* <div className="relative">
-                                <div className="text-success dark:text-success-light bg-success-light dark:bg-success w-11 h-11 rounded-lg flex items-center justify-center">
-                                    <IconShoppingCart />
-                                </div>
-                            </div> */}
-                            {/* <h5 className="font-semibold text-2xl ltr:text-right rtl:text-left dark:text-white-light">
-                                3,192
-                                <span className="block text-sm font-normal">Total Orders</span>
-                            </h5> */}
-                        </div>
-                        <div className="bg-transparent rounded-lg overflow-hidden">
-                            {/* loader */}
-                            {/* {loading ? (
-                                <div className="min-h-[325px] grid place-content-center bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] ">
-                                    <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
-                                </div>
-                            ) : (
-                                <ReactApexChart series={totalOrders.series} options={totalOrders.options} type="area" height={290} />
-                            )} */}
-                        </div>
-                    </div>
-                </div>
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                     {/* <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
                         <h5 className="font-semibold text-lg dark:text-white-light mb-5">Recent Activities</h5>
@@ -878,7 +1070,7 @@ const Index = () => {
                     </div> */}
                 </div>
 
-                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6">
+                <div className="grid lg:grid-cols-2 grid-cols-1 gap-6 mb-4">
                     <div className="panel h-full w-full">
                         {/* <div className="flex items-center justify-between mb-5">
                             <h5 className="font-semibold text-lg dark:text-white-light">Recent Orders</h5>
@@ -1099,6 +1291,192 @@ const Index = () => {
                 </div>
             </div>
             {/* <ToastContainer position="top-center" autoClose={2000} /> */}
+            <div className="space-y-4">
+                <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
+                    <div className="invoice-table">
+                        <div className="mb-4.5 px-5 flex justify-between items-center ite md:items-center md:flex-row flex-col gap-5">
+                            <div>
+                                <p className="font-semibold text-lg dark:text-white-light">Invoice to be paid</p>
+                            </div>
+                            <div className="ltr:ml-auto rtl:mr-auto">
+                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                            </div>
+                        </div>
+
+                        <div className="datatables pagination-padding">
+                            <DataTable
+                                className="whitespace-nowrap table-hover invoice-table"
+                                records={records}
+                                columns={[
+                                    {
+                                        accessor: 'id',
+                                        title: 'SL.NO',
+                                    },
+                                    {
+                                        accessor: 'invoice',
+
+                                        render: ({ invoice }) => (
+                                            <NavLink to="/apps/invoice/preview">
+                                                <div className="text-primary underline hover:no-underline font-semibold">{`#${invoice}`}</div>
+                                            </NavLink>
+                                        ),
+                                    },
+                                    {
+                                        accessor: 'feetype',
+                                        title: 'FEE TYPE',
+                                    },
+                                    {
+                                        accessor: 'feeamount',
+                                        title: 'FEE AMOUNT',
+                                    },
+                                    {
+                                        accessor: 'discount',
+                                        title: 'Discount',
+                                    },
+                                    {
+                                        accessor: 'afterdiscount',
+                                        title: 'AfterDiscount',
+                                    },
+                                    {
+                                        accessor: 'paid',
+                                    },
+
+                                    {
+                                        accessor: 'amount',
+                                        title: 'Due Amount',
+                                        titleClassName: 'text-right',
+                                        render: ({ amount, id }) => <div className="text-right font-semibold">{`$${amount}`}</div>,
+                                    },
+                                    {
+                                        accessor: 'status',
+
+                                        render: ({ status }) => <span className={`badge badge-outline-${status.color} `}>{status.tooltip}</span>,
+                                    },
+                                    {
+                                        accessor: 'date',
+                                        title: 'Due Date',
+                                    },
+                                    {
+                                        accessor: 'action',
+                                        title: 'Actions',
+                                        sortable: false,
+                                        textAlignment: 'center',
+                                        render: ({ id, status: rowStatus }) => (
+                                            <div className="flex gap-4 items-center w-max mx-auto">
+                                                <Tippy className="bg-black text-white" content={rowStatus.tooltip === 'Paid' ? 'View' : 'Pay Now'}>
+                                                    <NavLink to="/preview" className="flex hover:text-primary">
+                                                        <IconEye />
+                                                    </NavLink>
+                                                </Tippy>
+                                                {/* <NavLink to="" className="flex"> */}
+
+                                                {/* </NavLink> */}
+                                            </div>
+                                        ),
+                                    },
+                                ]}
+                                highlightOnHover
+                                totalRecords={initialRecords.length}
+                                recordsPerPage={pageSize}
+                                page={page}
+                                onPageChange={(p) => setPage(p)}
+                                recordsPerPageOptions={PAGE_SIZES}
+                                onRecordsPerPageChange={setPageSize}
+                                sortStatus={sortStatus}
+                                onSortStatusChange={setSortStatus}
+                                selectedRecords={selectedRecords}
+                                onSelectedRecordsChange={setSelectedRecords}
+                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                            />
+                        </div>
+                    </div>
+                </div>
+                {/* online exam */}
+                <div className="space-y-6">
+                    {/* Skin: Striped  */}
+                    <div className="panel">
+                        <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">Online Exams</h5>
+                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search1} onChange={(e) => setSearch1(e.target.value)} />
+                        </div>
+                        <div className="datatables">
+                            <DataTable
+                                striped
+                                className="whitespace-nowrap table-striped"
+                                records={recordsData}
+                                columns={[
+                                    { accessor: 'id', title: '#' },
+                                    { accessor: 'examtitle', title: 'EXAM TITLE' },
+                                    { accessor: 'subject', title: 'SUBJECT' },
+                                    { accessor: 'examdate', title: 'EXAM DATE' },
+                                    { accessor: 'duration', title: 'DURATION' },
+                                    { accessor: 'time', title: 'TIME' },
+                                    { accessor: 'question', title: 'QUESTIONS' },
+                                    { accessor: 'marks', title: 'MARKS' },
+                                    { accessor: 'status', title: 'STATUS' },
+                                    {
+                                        accessor: 'action',
+                                        title: 'ACTION',
+                                        render: () => (
+                                            <div className="flex items-center w-max mx-auto">
+                                                <Tippy content="Delete">
+                                                    <button type="button" onClick={() => alert('hello')}>
+                                                        <IconXCircle />
+                                                    </button>
+                                                </Tippy>
+                                            </div>
+                                        ),
+                                    },
+                                ]}
+                                totalRecords={initialRecords1.length}
+                                recordsPerPage={pageSize1}
+                                page={page1}
+                                onPageChange={(p) => setPage1(p)}
+                                recordsPerPageOptions={PAGE_SIZES1}
+                                onRecordsPerPageChange={setPageSize1}
+                                minHeight={200}
+                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="space-y-6">
+                    {/* Skin: Striped  */}
+                    <div className="panel">
+                        <div className="flex items-center justify-between mb-5">
+                            <h5 className="font-semibold text-lg dark:text-white-light">Talent Show Exams</h5>
+                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                        </div>
+                        <div className="datatables">
+                            <DataTable
+                                striped
+                                className="whitespace-nowrap table-striped"
+                                records={recordsData}
+                                columns={[
+                                    { accessor: 'id', title: '#' },
+                                    { accessor: 'action', title: 'ACTION' },
+                                    { accessor: 'status', title: 'STATUS' },
+                                    { accessor: 'type', title: 'TYPE' },
+                                    { accessor: 'phone', title: 'STARTED' },
+                                    { accessor: 'finished', title: 'FINISHED' },
+                                    { accessor: 'examtitle', title: 'EXAM TITLE' },
+                                    { accessor: 'validfrom', title: 'VALID FROM' },
+                                    { accessor: 'validto', title: 'VALID TO' },
+                                    { accessor: 'duration', title: 'DURATION HH:MM' },
+                                ]}
+                                totalRecords={initialRecords.length}
+                                recordsPerPage={pageSize}
+                                page={page}
+                                onPageChange={(p) => setPage(p)}
+                                recordsPerPageOptions={PAGE_SIZES}
+                                onRecordsPerPageChange={setPageSize}
+                                minHeight={200}
+                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

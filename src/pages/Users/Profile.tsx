@@ -142,6 +142,7 @@ const Profile = () => {
         setData2({ ...data2, [e.target.name]: e.target.value });
         setmatch('');
         setpassvalid('');
+        setCurr('');
 
         if (e.target.value < 6) {
             setlength('Password must be at least 6 characters long');
