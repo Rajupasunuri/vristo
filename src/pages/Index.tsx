@@ -35,6 +35,9 @@ import sortBy from 'lodash/sortBy';
 import Tippy from '@tippyjs/react';
 import IconEye from '../components/Icon/IconEye';
 import IconXCircle from '../components/Icon/IconXCircle';
+import { FaRupeeSign, FaBookReader, FaBook, FaLaptop } from 'react-icons/fa';
+import { MdHomeWork } from 'react-icons/md';
+import { FaPenToSquare } from 'react-icons/fa6';
 
 const rowData = [
     {
@@ -702,38 +705,39 @@ const Index = () => {
                 <div className="grid sm:grid-cols-2 xl:grid-cols-6 grid-cols-2 gap-6 mb-6">
                     <Link to="/preview">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
-                            <IconDollarSign className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
+                            {/* <IconDollarSign className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " /> */}
+                            <FaRupeeSign className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
                             <p className="text-blue-500">PayFee</p>
                         </div>
                     </Link>
 
                     <Link to="/knowledge-bank">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y2 ">
-                            <IconBook className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <FaBookReader className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
                             <p className="text-blue-500">Knowledge Bank</p>
                         </div>
                     </Link>
                     <Link to="/assignments">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
-                            <IconNotesEdit className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <MdHomeWork className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
                             <p className="text-blue-500">Home Work</p>
                         </div>
                     </Link>
                     <Link to="/diary">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2 ">
-                            <IconOpenBook className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <FaBook className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
                             <p className="text-blue-500">Diary</p>
                         </div>
                     </Link>
                     <Link to="/online-exam">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
-                            <IconLaptop className=" sm:w-14 sm:h-14 w-8 h-8 text-blue-500 " />
+                            <FaLaptop className=" sm:w-12 sm:h-12 w-8 h-8 text-blue-500 " />
                             <p className="text-blue-500">Online Exam</p>
                         </div>
                     </Link>
                     <Link to="/offline-exam">
                         <div className="panel h-full  hover:bg-gray-100 cursor-pointer flex justify-center rounded-3xl items-center flex-col gap-y-2">
-                            <IconPencil className="text-blue-500 sm:w-14 sm:h-14 w-8 h-8  " />
+                            <FaPenToSquare className="text-blue-500 sm:w-12 sm:h-12 w-8 h-8  " />
                             <p className="text-blue-500">Offline Exam</p>
                         </div>
                     </Link>
@@ -741,7 +745,7 @@ const Index = () => {
                 <div className="grid xl:grid-cols-3 gap-6 mb-6">
                     <div className="panel h-full">
                         <div className="flex items-center mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Fees Details</h5>
+                            <h5 className="font-semibold text-lg dark:text-white-light">Fees Summary</h5>
                         </div>
                         <div>
                             <div className="bg-white dark:bg-black rounded-lg overflow-hidden">

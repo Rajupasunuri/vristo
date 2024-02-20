@@ -75,7 +75,7 @@ const ModalK3 = () => {
                                 </div>
 
                                 {/* <img ref={imgRef} src={img} alt="" width="400px" height="300px" /> */}
-                                {/* <button onClick={handleDownload}>Download Image</button> */}
+                                <button onClick={handleDownload}>Download Image</button>
 
                                 <div className="panel lg:col-span-2 xl:col-span-3">
                                     <div className="mb-5">
