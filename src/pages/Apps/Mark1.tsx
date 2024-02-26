@@ -7,6 +7,8 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
 import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 const rowData = [
     {
@@ -584,114 +586,117 @@ const Export = () => {
         });
     }
 
+    //     let columns: any = col;
+    //     let records = rowData;
+    //     let filename = 'table';
+
+    //     let newVariable: any;
+    //     newVariable = window.navigator;
+
+    //     if (type === 'csv') {
+    //         let coldelimiter = ';';
+    //         let linedelimiter = '\n';
+    //         let result = columns
+    //             .map((d: any) => {
+    //                 return capitalize(d);
+    //             })
+    //             .join(coldelimiter);
+    //         result += linedelimiter;
+    //         // eslint-disable-next-line array-callback-return
+    //         records.map((item: any) => {
+    //             // eslint-disable-next-line array-callback-return
+    //             columns.map((d: any, index: any) => {
+    //                 if (index > 0) {
+    //                     result += coldelimiter;
+    //                 }
+    //                 let val = item[d] ? item[d] : '';
+    //                 result += val;
+    //             });
+    //             result += linedelimiter;
+    //         });
+
+    //         if (result == null) return;
+    //         if (!result.match(/^data:text\/csv/i) && !newVariable.msSaveOrOpenBlob) {
+    //             var data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(result);
+    //             var link = document.createElement('a');
+    //             link.setAttribute('href', data);
+    //             link.setAttribute('download', filename + '.csv');
+    //             link.click();
+    //         } else {
+    //             var blob = new Blob([result]);
+    //             if (newVariable.msSaveOrOpenBlob) {
+    //                 newVariable.msSaveBlob(blob, filename + '.csv');
+    //             }
+    //         }
+    //     } else if (type === 'print') {
+    //         var rowhtml = '<p>' + filename + '</p>';
+    //         rowhtml +=
+    //             '<table style="width: 100%; " cellpadding="0" cellcpacing="0"><thead><tr style="color: #515365; background: #eff5ff; -webkit-print-color-adjust: exact; print-color-adjust: exact; "> ';
+    //         // eslint-disable-next-line array-callback-return
+    //         columns.map((d: any) => {
+    //             rowhtml += '<th>' + capitalize(d) + '</th>';
+    //         });
+    //         rowhtml += '</tr></thead>';
+    //         rowhtml += '<tbody>';
+
+    //         // eslint-disable-next-line array-callback-return
+    //         records.map((item: any) => {
+    //             rowhtml += '<tr>';
+    //             // eslint-disable-next-line array-callback-return
+    //             columns.map((d: any) => {
+    //                 let val = item[d] ? item[d] : '';
+    //                 rowhtml += '<td>' + val + '</td>';
+    //             });
+    //             rowhtml += '</tr>';
+    //         });
+    //         rowhtml +=
+    //             '<style>body {font-family:Arial; color:#495057;}p{text-align:center;font-size:18px;font-weight:bold;margin:15px;}table{ border-collapse: collapse; border-spacing: 0; }th,td{font-size:12px;text-align:left;padding: 4px;}th{padding:8px 4px;}tr:nth-child(2n-1){background:#f7f7f7; }</style>';
+    //         rowhtml += '</tbody></table>';
+    //         var winPrint: any = window.open('', '', 'left=0,top=0,width=1000,height=600,toolbar=0,scrollbars=0,status=0');
+    //         winPrint.document.write('<title>Print</title>' + rowhtml);
+    //         winPrint.document.close();
+    //         winPrint.focus();
+    //         winPrint.print();
+    //     } else if (type === 'txt') {
+    //         let coldelimiter = ',';
+    //         let linedelimiter = '\n';
+    //         let result = columns
+    //             .map((d: any) => {
+    //                 return capitalize(d);
+    //             })
+    //             .join(coldelimiter);
+    //         result += linedelimiter;
+    //         // eslint-disable-next-line array-callback-return
+    //         records.map((item: any) => {
+    //             // eslint-disable-next-line array-callback-return
+    //             columns.map((d: any, index: any) => {
+    //                 if (index > 0) {
+    //                     result += coldelimiter;
+    //                 }
+    //                 let val = item[d] ? item[d] : '';
+    //                 result += val;
+    //             });
+    //             result += linedelimiter;
+    //         });
+
+    //         if (result == null) return;
+    //         if (!result.match(/^data:text\/txt/i) && !newVariable.msSaveOrOpenBlob) {
+    //             var data1 = 'data:application/txt;charset=utf-8,' + encodeURIComponent(result);
+    //             var link1 = document.createElement('a');
+    //             link1.setAttribute('href', data1);
+    //             link1.setAttribute('download', filename + '.txt');
+    //             link1.click();
+    //         } else {
+    //             var blob1 = new Blob([result]);
+    //             if (newVariable.msSaveOrOpenBlob) {
+    //                 newVariable.msSaveBlob(blob1, filename + '.txt');
+    //             }
+    //         }
+    //     }
+    // };
+
     const exportTable = (type: any) => {
-        let columns: any = col;
-        let records = rowData;
-        let filename = 'table';
-
-        let newVariable: any;
-        newVariable = window.navigator;
-
-        if (type === 'csv') {
-            let coldelimiter = ';';
-            let linedelimiter = '\n';
-            let result = columns
-                .map((d: any) => {
-                    return capitalize(d);
-                })
-                .join(coldelimiter);
-            result += linedelimiter;
-            // eslint-disable-next-line array-callback-return
-            records.map((item: any) => {
-                // eslint-disable-next-line array-callback-return
-                columns.map((d: any, index: any) => {
-                    if (index > 0) {
-                        result += coldelimiter;
-                    }
-                    let val = item[d] ? item[d] : '';
-                    result += val;
-                });
-                result += linedelimiter;
-            });
-
-            if (result == null) return;
-            if (!result.match(/^data:text\/csv/i) && !newVariable.msSaveOrOpenBlob) {
-                var data = 'data:application/csv;charset=utf-8,' + encodeURIComponent(result);
-                var link = document.createElement('a');
-                link.setAttribute('href', data);
-                link.setAttribute('download', filename + '.csv');
-                link.click();
-            } else {
-                var blob = new Blob([result]);
-                if (newVariable.msSaveOrOpenBlob) {
-                    newVariable.msSaveBlob(blob, filename + '.csv');
-                }
-            }
-        } else if (type === 'print') {
-            var rowhtml = '<p>' + filename + '</p>';
-            rowhtml +=
-                '<table style="width: 100%; " cellpadding="0" cellcpacing="0"><thead><tr style="color: #515365; background: #eff5ff; -webkit-print-color-adjust: exact; print-color-adjust: exact; "> ';
-            // eslint-disable-next-line array-callback-return
-            columns.map((d: any) => {
-                rowhtml += '<th>' + capitalize(d) + '</th>';
-            });
-            rowhtml += '</tr></thead>';
-            rowhtml += '<tbody>';
-
-            // eslint-disable-next-line array-callback-return
-            records.map((item: any) => {
-                rowhtml += '<tr>';
-                // eslint-disable-next-line array-callback-return
-                columns.map((d: any) => {
-                    let val = item[d] ? item[d] : '';
-                    rowhtml += '<td>' + val + '</td>';
-                });
-                rowhtml += '</tr>';
-            });
-            rowhtml +=
-                '<style>body {font-family:Arial; color:#495057;}p{text-align:center;font-size:18px;font-weight:bold;margin:15px;}table{ border-collapse: collapse; border-spacing: 0; }th,td{font-size:12px;text-align:left;padding: 4px;}th{padding:8px 4px;}tr:nth-child(2n-1){background:#f7f7f7; }</style>';
-            rowhtml += '</tbody></table>';
-            var winPrint: any = window.open('', '', 'left=0,top=0,width=1000,height=600,toolbar=0,scrollbars=0,status=0');
-            winPrint.document.write('<title>Print</title>' + rowhtml);
-            winPrint.document.close();
-            winPrint.focus();
-            winPrint.print();
-        } else if (type === 'txt') {
-            let coldelimiter = ',';
-            let linedelimiter = '\n';
-            let result = columns
-                .map((d: any) => {
-                    return capitalize(d);
-                })
-                .join(coldelimiter);
-            result += linedelimiter;
-            // eslint-disable-next-line array-callback-return
-            records.map((item: any) => {
-                // eslint-disable-next-line array-callback-return
-                columns.map((d: any, index: any) => {
-                    if (index > 0) {
-                        result += coldelimiter;
-                    }
-                    let val = item[d] ? item[d] : '';
-                    result += val;
-                });
-                result += linedelimiter;
-            });
-
-            if (result == null) return;
-            if (!result.match(/^data:text\/txt/i) && !newVariable.msSaveOrOpenBlob) {
-                var data1 = 'data:application/txt;charset=utf-8,' + encodeURIComponent(result);
-                var link1 = document.createElement('a');
-                link1.setAttribute('href', data1);
-                link1.setAttribute('download', filename + '.txt');
-                link1.click();
-            } else {
-                var blob1 = new Blob([result]);
-                if (newVariable.msSaveOrOpenBlob) {
-                    newVariable.msSaveBlob(blob1, filename + '.txt');
-                }
-            }
-        }
+        window.print();
     };
 
     const capitalize = (text: any) => {
@@ -703,10 +708,30 @@ const Export = () => {
             .map((s: any) => s.charAt(0).toUpperCase() + s.substring(1))
             .join(' ');
     };
+    const downloadPDF = () => {
+        const input = document.getElementById('table-container');
+        if (!input) {
+            console.error("Element with ID 'table-container' not found.");
+            return;
+        }
+
+        html2canvas(input, { scale: 2 }).then((canvas) => {
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 218;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            // Ensure canvas size is adjusted to fit the entire table
+            const pdfHeight = (imgHeight * 218) / imgWidth;
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, pdfHeight);
+
+            pdf.save('table.pdf');
+        });
+    };
     return (
         <div>
-            <div className="panel mt-6">
-                <div className="flex justify-between items-center flex-wrap border-b-2 mb-4 pb-4">
+            <div className="panel mt-6 ">
+                <div className="flex  justify-between items-center flex-wrap border-b-2 mb-4 pb-4 print:hidden">
                     {/* <button type="button" onClick={() => exportTable('csv')} className="btn btn-primary btn-sm m-1 ">
                             <IconFile className="w-5 h-5 ltr:mr-2 rtl:ml-2" />
                             CSV
@@ -724,19 +749,20 @@ const Export = () => {
                         <h4 className="text-base font-bold">Marks</h4>
                     </div>
                     <button type="button" onClick={() => exportTable('print')} className="btn btn-primary btn-sm m-1">
-                        <IconPrinter className="ltr:mr-2 rtl:ml-2" />
+                        <IconPrinter className="ltr:mr-2 rtl:ml-2 " />
                         PRINT
                     </button>
+                    {/* <button onClick={downloadPDF}>pdf</button> */}
                 </div>
 
-                <div className="datatables">
+                <div className="datatables  " id="table-container">
                     <div className="flex justify-center items-center mb-4">
-                        <img src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg" alt="Image" />
+                        <img src="public\assets\images\C2172.jpg" alt="Image" />
                     </div>
                     <div>
                         <h4 className=" font-normal text-lg mb-4">Marks Information</h4>
                     </div>
-                    <DataTable
+                    {/* <DataTable
                         highlightOnHover
                         className="whitespace-nowrap table-hover"
                         records={recordsData}
@@ -765,7 +791,143 @@ const Export = () => {
                         onSortStatusChange={setSortStatus}
                         minHeight={200}
                         paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                    />
+                    /> */}
+                    <div className="table-responsive">
+                        <table className="table-hover table-striped  border border-collapse ">
+                            <thead></thead>
+                            <tbody>
+                                <tr>
+                                    <td className="">Subjects</td>
+                                    <td colSpan={2} className=" ">
+                                        I MID Exam
+                                    </td>
+                                    <td colSpan={2} className="">
+                                        II MID Exam
+                                    </td>
+                                    <td colSpan={2} className="">
+                                        Quaterly Exam
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className=" ">Max Marks</td>
+                                    <td>Max</td>
+                                    <td>Actual</td>
+                                    <td>Max</td>
+                                    <td>Actual</td>
+                                    <td>Max</td>
+                                    <td>Actual</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Biology</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Chemistry</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">English</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Geography</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Hindi</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">History & Civics</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Maths</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Physics</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Telugu</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Total</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Average</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                                <tr>
+                                    <td className="border">Grade</td>
+                                    <td>50</td>
+                                    <td>53</td>
+                                    <td>50</td>
+                                    <td>35</td>
+                                    <td>50</td>
+                                    <td>40</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

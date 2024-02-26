@@ -37,12 +37,21 @@ const Skin = () => {
                 <h4 className="font-semibold text-lg">Facilities</h4>
             </div>
             <div className="panel">
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between pb-5 mb-4 border-b-2 ">
                     <h5 className="font-semibold text-lg dark:text-white-light">Media</h5>
                     <div>
+                        <select name="Select Category" defaultValue="Select Category" className="w-18 h-10 p-2 mr-2 border rounded-md ">
+                            <option value="Select Category">Select Category</option>
+                            <option value="Audio">Audio</option>
+                            <option value="Video">Video</option>
+                            <option value="Image">Image</option>
+                        </select>
                         <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                         <button className="text-white bg-blue-500 m-2 p-2 rounded-md">Go</button>
                     </div>
+                </div>
+                <div>
+                    <p className="text-base font-semibold">No Related data available</p>
                 </div>
             </div>
         </div>

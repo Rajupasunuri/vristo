@@ -165,12 +165,15 @@ interface Language {
 }
 interface User {
     name: string;
-    id: string;
+
     email: string;
-    mobile: string;
-    role: string;
-    img_url: string;
-    User: {};
+    phone: string;
+    district: string;
+    country: string;
+    section: string;
+    state: string;
+    address: string;
+    // User: {};
 }
 
 interface ThemeConfigState {
@@ -229,7 +232,7 @@ const defaultState: ThemeConfigState = {
 
 const initialState: ThemeConfigState = {
     ...defaultState,
-    user: null,
+    user: localStorage.getItem('userdata') || themeConfig.user,
     //localStorage.getItem(aid)|| themeConfig.user,
     theme: localStorage.getItem('theme') || themeConfig.theme,
     menu: localStorage.getItem('menu') || themeConfig.menu,
@@ -334,10 +337,13 @@ const themeConfigSlice = createSlice({
         },
         fetchUserSuccess(state, action: PayloadAction<any>) {
             console.log('action is:', action);
+            console.log('action.payload', action.payload);
+            console.log('before.state', state.user);
             state.user = action.payload;
-            console.log('stateuser', state.user);
+            console.log('state.user', state.user);
+            //console.log('stateuser', state.user);
             localStorage.setItem('user', JSON.stringify(action.payload));
-            localStorage.setItem('raju', action.payload);
+            localStorage.setItem('userdata', action.payload);
             //localStorage.setItem('rajuuserData', JSON.stringify(action.payload));
             localStorage.setItem('isLoggedinuser', 'true');
         },
@@ -347,9 +353,9 @@ const themeConfigSlice = createSlice({
             localStorage.setItem('isLoggedinuser', 'false');
             localStorage.setItem('user', '');
         },
-        logout1: (state) => {
+        signin: (state) => {
             state.isLoggedinuser = true;
-            //state.user = null;
+            // state.user = action.payload;
             localStorage.setItem('isLoggedinuser', 'true');
             //localStorage.setItem('user', '');
         },
@@ -371,7 +377,7 @@ export const {
     setPageTitle,
     fetchUserSuccess,
     logout,
-    logout1,
+    signin,
 } = themeConfigSlice.actions;
 
 export const selectAuth = (state: { auth: ThemeConfigState }) => state.auth;

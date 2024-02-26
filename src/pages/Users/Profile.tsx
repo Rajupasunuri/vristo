@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, useParams, Link } from 'react-router-do
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
-import { setPageTitle } from '../../store/themeConfigSlice';
+import { fetchUserSuccess, setPageTitle } from '../../store/themeConfigSlice';
 import { SetStateAction, useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconCoffee from '../../components/Icon/IconCoffee';
@@ -37,6 +37,35 @@ import { Center } from '@mantine/core';
 
 const Profile = () => {
     const dispatch = useDispatch();
+    const dispatch1 = useDispatch();
+    const user1 = useSelector((state: IRootState) => state.themeConfig.user);
+    let name1;
+    let section1;
+    let phone1;
+    let state2;
+    let district1;
+    let country1;
+    let address1;
+    let email1;
+
+    if (user1 !== null) {
+        if (typeof user1 === 'string') {
+            const user = JSON.parse(user1);
+            const { email, name, phone, district, section, state, country, address } = user;
+            name1 = name;
+            section1 = section;
+            phone1 = phone;
+            address1 = address;
+            country1 = country;
+            state2 = state;
+            district1 = district;
+            console.log('hvbjsdncnxjvxnvzzzzz', user);
+        }
+
+        // const user = JSON.parse(user1);
+        // console.log('hvbjsdncnxjvxnvzzzzz', user.email);
+    }
+
     const [itempageabout, setItemPageAbout] = useState('Add  User | Management');
     const [itemlablename, setItemLablename] = useState(' Manager Name');
     const [tname, setTname] = useState('u');
@@ -107,6 +136,7 @@ const Profile = () => {
     const [confirm, setConfirm] = useState('');
     const [length, setlength] = useState('');
     const [passvalid, setpassvalid] = useState('');
+    const [change, setchange] = useState(0);
 
     useEffect(() => {
         // Retrieve the image URL from local storage when the component mounts
@@ -117,11 +147,73 @@ const Profile = () => {
         }
     });
 
+    const handleSubmit = async (e: any) => {
+        e.preventDefault();
+        const data = new FormData();
+
+        data.append('name', formData.name);
+        data.append('section', formData.section);
+        data.append('address', formData.address);
+        data.append('phoneNumber', formData.phoneNumber);
+        data.append('state', formData.state);
+        //data.append('image', formData.image);
+        data.append('district', formData.district);
+        data.append('country', formData.country);
+        data.append('email', formData.email);
+
+        try {
+            const l2 = localStorage.getItem('uId');
+            const res = await axios.post(`http://localhost:8081/upload?username=${l2}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            setchange(Math.random());
+            console.log('Data uploaded successfully', res.data);
+            toast.success('Profile Udated Successfully');
+            setprofilebox(true);
+            setprofileinfobox(true);
+            setprofilerequestbox(false);
+            // window.location.reload();
+            // console.log('data', res.data.data[0]);
+            // const s1 = res.data.data[0].phone;
+            //localStorage.setItem('phone1', s1);
+
+            // localStorage.setItem('profileImage', res.data.data[0].image);
+            // localStorage.setItem('section', res.data.data[0].section);
+            // localStorage.setItem('name', res.data.data[0].name);
+            // localStorage.setItem('phone', res.data.data[0].phone);
+            // localStorage.setItem('state', res.data.data[0].state);
+            // localStorage.setItem('district', res.data.data[0].district);
+            // localStorage.setItem('country', res.data.data[0].country);
+            // localStorage.setItem('email', res.data.data[0].email);
+            // localStorage.setItem('address', res.data.data[0].address);
+
+            // setImg(res.data.data[0].image);
+            // setName(res.data.data[0].name);
+
+            // setSection(res.data.data[0].section);
+
+            // setState1(res.data.data[0].state);
+            // setDistrict(res.data.data[0].district);
+            // setCountry(res.data.data[0].country);
+            // setEmail(res.data.data[0].email);
+            // setAddress(res.data.data[0].address);
+            // setFormData({ ...formData, [e.target.name]: e.target.value });
+        } catch (err) {
+            console.error('Error uploading data:', err);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const username = localStorage.getItem('uId');
                 const res2 = await axios.get(`http://localhost:8081/data?username=${username}`);
+                const jsonData = JSON.stringify(res2.data[0]);
+                console.log('fetch', jsonData);
+                dispatch1(fetchUserSuccess(jsonData));
                 console.log('profile', res2.data);
                 setNew1(res2.data[0].name);
                 setAddress(res2.data[0].address);
@@ -137,7 +229,7 @@ const Profile = () => {
         };
 
         fetchData();
-    }, []);
+    }, [change]);
     const handleChange10 = (e: any) => {
         setData2({ ...data2, [e.target.name]: e.target.value });
         setmatch('');
@@ -279,84 +371,6 @@ const Profile = () => {
             }
         }
     };
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        const data = new FormData();
-        data.append('name', formData.name);
-        data.append('section', formData.section);
-        data.append('address', formData.address);
-        data.append('phoneNumber', formData.phoneNumber);
-        data.append('state', formData.state);
-        //data.append('image', formData.image);
-        data.append('district', formData.district);
-        data.append('country', formData.country);
-        data.append('email', formData.email);
-
-        try {
-            const l2 = localStorage.getItem('uId');
-            const res = await axios.post(`http://localhost:8081/upload?username=${l2}`, data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log('Data uploaded successfully');
-            toast.success('Profile Udated Successfully');
-            setprofilebox(true);
-            setprofileinfobox(true);
-            setprofilerequestbox(false);
-            // console.log('data', res.data.data[0]);
-            // const s1 = res.data.data[0].phone;
-            //localStorage.setItem('phone1', s1);
-
-            // localStorage.setItem('profileImage', res.data.data[0].image);
-            // localStorage.setItem('section', res.data.data[0].section);
-            // localStorage.setItem('name', res.data.data[0].name);
-            // localStorage.setItem('phone', res.data.data[0].phone);
-            // localStorage.setItem('state', res.data.data[0].state);
-            // localStorage.setItem('district', res.data.data[0].district);
-            // localStorage.setItem('country', res.data.data[0].country);
-            // localStorage.setItem('email', res.data.data[0].email);
-            // localStorage.setItem('address', res.data.data[0].address);
-
-            // setImg(res.data.data[0].image);
-            // setName(res.data.data[0].name);
-
-            // setSection(res.data.data[0].section);
-
-            // setState1(res.data.data[0].state);
-            // setDistrict(res.data.data[0].district);
-            // setCountry(res.data.data[0].country);
-            // setEmail(res.data.data[0].email);
-            // setAddress(res.data.data[0].address);
-            // setFormData({ ...formData, [e.target.name]: e.target.value });
-        } catch (err) {
-            console.error('Error uploading data:', err);
-        }
-    };
-    // useEffect(() => {
-    //     handleGetkeys();
-    //     if (chpwd) {
-    //         handlePwd();
-    //     } else {
-    //         handleProfileinfo();
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-    //     axios
-    //         .get('http://localhost:8081/data')
-    //         .then((res) => {
-    //             console.log('data2', res.data);
-    //         })
-    //         .catch((err) => {
-    //             console.log('errored occured');
-    //         });
-    // }, []);
-
-    //   const handleBkey = () => {
-    //     localStorage.setItem('uuid', '');
-    //     history.push('/users');
-    //   };
 
     const handleProfileRequest = () => {
         setprofilebox(false);
@@ -561,16 +575,16 @@ const Profile = () => {
                                     imgh={250}
                                 ></Uploadfile> */}
                                             {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
-                                            <p className="font-semibold text-primary  text-xl">{new1}</p>
+                                            <p className="font-semibold text-primary  text-xl">{name1}</p>
                                         </div>
                                         <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
                                             <li className="flex items-center gap-2">Class: Class 1</li>
-                                            <li className="flex items-center gap-2">Section: {section}</li>
+                                            <li className="flex items-center gap-2">Section: {section1}</li>
 
                                             <li className="flex items-center gap-2">
                                                 <IconPhone />
                                                 <span className="whitespace-nowrap" dir="ltr">
-                                                    {phone}
+                                                    {phone1}
                                                 </span>
                                             </li>
                                             <li className="flex items-center gap-2">
@@ -590,7 +604,7 @@ const Profile = () => {
                                     </div>
                                     <div className="mb-5">
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                            <table className="whitespace-nowrap">
+                                            <table className="table-hover table-striped">
                                                 <thead>
                                                     <tr>
                                                         {/* <th colSpan={2} className="text-center col-span">
@@ -603,49 +617,60 @@ const Profile = () => {
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
-                                                        <td>Father Name</td>
+                                                        <td style={{ width: '200px' }}>Father Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Ramesh</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Rani</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father's Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother's Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
 
                                                     <tr>
                                                         <td>Father Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Ramesh</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Address</td>
-                                                        <td>{address}</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{address1}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>District</td>
-                                                        <td>{district}</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{district1}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>State</td>
-                                                        <td>{state1}</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{state2}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Country</td>
-                                                        <td>{country}</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -656,7 +681,7 @@ const Profile = () => {
                                     </div>
                                     <div className="mb-5">
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                            <table className="whitespace-nowrap">
+                                            <table className="table-hover table-striped">
                                                 <thead>
                                                     <tr>
                                                         {/* <th colSpan={2} className="text-center col-span">
@@ -669,32 +694,39 @@ const Profile = () => {
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
-                                                        <td>Father Name</td>
+                                                        <td style={{ width: '200px' }}>Father Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Ramesh</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Rani</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father's Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother's Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
 
                                                     <tr>
                                                         <td>Father Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td>Ramesh</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                 </tbody>

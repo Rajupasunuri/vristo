@@ -16,15 +16,9 @@ const AccountSetting = () => {
     const dispatch = useDispatch();
 
     const user = useSelector((state: IRootState) => state.themeConfig.user);
-    let yes;
-    let yes1;
-    let yes2;
-    let yes3;
+
     if (user !== null) {
-        yes = user.email;
-        yes1 = user.name;
-        yes2 = user.mobile;
-        yes3 = user.role;
+        const { email, name, phone, district, section, state, country, address } = user;
         //console.log("hvbjsdncnxjvxnv",user);
     }
     useEffect(() => {
@@ -64,7 +58,7 @@ const AccountSetting = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="profession">Profession</label>
-                                        <input id="profession" type="text" placeholder="" value={yes3} className="form-input" />
+                                        <input id="profession" type="text" placeholder="" value=" " className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="country">Country</label>
@@ -89,11 +83,11 @@ const AccountSetting = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="phone">Phone</label>
-                                        <input id="phone" type="text" placeholder="" value={yes2} className="form-input" />
+                                        <input id="phone" type="text" placeholder="" value=" " className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="email">Email</label>
-                                        <input id="email" type="email" placeholder="" value={yes} className="form-input" />
+                                        <input id="email" type="email" placeholder="" value=" " className="form-input" />
                                     </div>
                                     <div>
                                         <label htmlFor="web">Website</label>

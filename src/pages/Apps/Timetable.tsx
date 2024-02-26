@@ -357,7 +357,7 @@ const Tabs = () => {
                     </div>
                     <div className="mb-5 w-full">
                         <Tab.Group>
-                            <Tab.List className="mt-3 flex flex-wrap ">
+                            <Tab.List className="mt-3 flex flex-wrap  w-full ">
                                 <Tab as={Fragment}>
                                     {({ selected }) => (
                                         <button

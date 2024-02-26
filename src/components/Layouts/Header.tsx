@@ -1043,18 +1043,38 @@ import IconMenuMore from '../Icon/Menu/IconMenuMore';
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment } from '@fullcalendar/core/preact';
 import IconX from '../Icon/IconX';
+import { Section } from '@mantine/core/lib/AppShell/HorizontalSection/Section/Section';
 const Header = () => {
     const location = useLocation();
     const [modal20, setModal20] = useState<boolean>(false);
     const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
-    const user = useSelector((state: IRootState) => state.themeConfig.user);
-    let yes;
-    let yes1;
-    if (user !== null) {
-        yes = user.email;
-        yes1 = user.name;
-        console.log('hvbjsdncnxjvxnv', user.email);
+    // const user = useSelector((state: IRootState) => state.themeConfig.user);
+    const user1 = useSelector((state: IRootState) => state.themeConfig.user);
+
+    let y1;
+    let section1;
+    if (user1 != null) {
+        //y1 = user1.name;
+
+        if (typeof user1 === 'string') {
+            console.log('hvbjsdncnxjvxnvzzzzz', user1);
+            const user = JSON.parse(user1);
+            const { email, name, phone, district, section, state, country, address } = user;
+            y1 = name;
+            section1 = section;
+            console.log('hvbjsdncnxjvxnvzzzzz1', y1);
+        }
     }
+
+    // let yes;
+    // let yes1;
+    // if (user !== null && isLoggedinuser) {
+    //     yes = user.email;
+    //     yes1 = user.name;
+    //     console.log('hvbjsdncnxjvxnv', user);
+
+    //     console.log(user.name);
+    // }
 
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -1276,11 +1296,11 @@ const Header = () => {
                                             <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
                                             <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 className="text-base">
-                                                    Joe Doe
+                                                    {y1}
                                                     {/* <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span> */}
                                                 </h4>
                                                 <h5 className="text-sm">
-                                                    Class 1<span className="text-xs bg-success-light rounded text-black px-1 ltr:ml-2 rtl:ml-2">A</span>
+                                                    Class 1<span className="text-xs bg-success-light rounded text-black px-1 ltr:ml-2 rtl:ml-2">{section1}</span>
                                                 </h5>
                                             </div>
                                         </div>

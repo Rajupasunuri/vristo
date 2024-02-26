@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { IRootState, rootReducer } from '../../store/index';
-import { logout1, setPageTitle, toggleRTL } from '../../store/themeConfigSlice';
+import { setPageTitle, signin, toggleRTL } from '../../store/themeConfigSlice';
 //import { fetchUserSuccess } from '../../store/userSlice';
 import Dropdown from '../../components/Dropdown';
 import i18next, { use } from 'i18next';
@@ -67,7 +67,7 @@ const LoginBoxed = () => {
     //const {auth}=useselector;
     //console.log('authtype',typeof(auth))
 
-    //const dispatch1=useDispatch();
+    const dispatch1 = useDispatch();
 
     const [mobilebox, setMobilebox] = useState(true);
     const [mobileerror, setMobileerror] = useState('');
@@ -88,7 +88,7 @@ const LoginBoxed = () => {
                 console.log('Login Successfully', res.data.token);
                 console.log('response', res);
                 toast('Logged in Successfully');
-                dispatch(logout1());
+                dispatch(signin());
                 navigate('/dashboard');
                 setUserPass('');
                 localStorage.setItem('uId', user1);
@@ -106,6 +106,10 @@ const LoginBoxed = () => {
                         localStorage.setItem('country', res.data[0].country);
                         localStorage.setItem('email', res.data[0].email);
                         localStorage.setItem('address', res.data[0].address);
+                        const jsonData = JSON.stringify(res.data[0]);
+                        dispatch1(fetchUserSuccess(jsonData));
+                        //dispatch(signin());
+                        //localStorage.setItem('user', JSON.parse(jsonData));
                     })
                     .catch((err) => console.log('errors', err));
             })
