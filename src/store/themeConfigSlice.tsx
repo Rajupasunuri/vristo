@@ -194,7 +194,7 @@ interface ThemeConfigState {
     isLoggedinuser: boolean;
     user: User | null; // Adjust the type according to your user object structure
 }
-
+//co
 const defaultState: ThemeConfigState = {
     isDarkMode: false,
     mainLayout: 'app',
