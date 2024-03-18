@@ -791,7 +791,7 @@ const Crypto = () => {
         <div>
             <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
-                    <Link to="/" className="text-primary hover:underline">
+                    <Link to="/dashboard" className="text-primary hover:underline">
                         Dashboard
                     </Link>
                 </li>
@@ -801,9 +801,8 @@ const Crypto = () => {
             </ul>
             <div className="flex flex-col xl:flex-row gap-5 relative mt-5">
                 <div
-                    className={`${
-                        isShowCryptoMenu ? '!block h-full xl:h-auto' : ''
-                    } panel absolute xl:relative p-0 flex-none w-80 border-0 overflow-y-auto z-10 xl:block divide-y divide-[#ebedf2] dark:divide-[#191e3a] hidden`}
+                    className={`${isShowCryptoMenu ? '!block h-full xl:h-auto' : ''
+                        } panel absolute xl:relative p-0 flex-none w-80 border-0 overflow-y-auto z-10 xl:block divide-y divide-[#ebedf2] dark:divide-[#191e3a] hidden`}
                 >
                     {coins.map((item) => {
                         return (

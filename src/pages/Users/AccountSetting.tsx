@@ -15,12 +15,7 @@ import IconGithub from '../../components/Icon/IconGithub';
 const AccountSetting = () => {
     const dispatch = useDispatch();
 
-    const user = useSelector((state: IRootState) => state.themeConfig.user);
 
-    if (user !== null) {
-        const { email, name, phone, district, section, state, country, address } = user;
-        //console.log("hvbjsdncnxjvxnv",user);
-    }
     useEffect(() => {
         dispatch(setPageTitle('Account Setting'));
     });

@@ -693,7 +693,7 @@ const Index = () => {
         <div>
             {/* <ul className="flex space-x-2 rtl:space-x-reverse">
                 <li>
-                    <Link to="/" className="text-primary hover:underline">
+                    <Link to="/dashboard" className="text-primary hover:underline">
                         Dashboard
                     </Link>
                 </li> */}
@@ -921,7 +921,7 @@ const Index = () => {
                             </div>
                         </PerfectScrollbar>
                         <div className="border-t border-white-light dark:border-white/10">
-                            <Link to="/" className=" font-semibold group hover:text-primary p-4 flex items-center justify-center group">
+                            <Link to="/dashboard" className=" font-semibold group hover:text-primary p-4 flex items-center justify-center group">
                                 View All
                                 <IconArrowLeft className="rtl:rotate-180 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition duration-300 ltr:ml-1 rtl:mr-1" />
                             </Link>
@@ -1206,7 +1206,7 @@ const Index = () => {
                                         <td>$60.09</td>
                                         <td>170</td>
                                         <td>
-                                            <Link className="text-danger flex items-center" to="/">
+                                            <Link className="text-danger flex items-center" to="/dashboard">
                                                 <IconMultipleForwardRight className="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
                                                 Direct
                                             </Link>
@@ -1225,7 +1225,7 @@ const Index = () => {
                                         <td>$47.09</td>
                                         <td>130</td>
                                         <td>
-                                            <Link className="text-success flex items-center" to="/">
+                                            <Link className="text-success flex items-center" to="/dashboard">
                                                 <IconMultipleForwardRight className="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
                                                 Google
                                             </Link>
@@ -1244,7 +1244,7 @@ const Index = () => {
                                         <td>$20.00</td>
                                         <td>66</td>
                                         <td>
-                                            <Link className="text-warning flex items-center" to="/">
+                                            <Link className="text-warning flex items-center" to="/dashboard">
                                                 <IconMultipleForwardRight className="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
                                                 Ads
                                             </Link>
@@ -1263,7 +1263,7 @@ const Index = () => {
                                         <td>$33.00</td>
                                         <td>35</td>
                                         <td>
-                                            <Link className="text-secondary flex items-center" to="/">
+                                            <Link className="text-secondary flex items-center" to="/dashboard">
                                                 <IconMultipleForwardRight className="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
                                                 Email
                                             </Link>
@@ -1282,7 +1282,7 @@ const Index = () => {
                                         <td>$26.04</td>
                                         <td>30</td>
                                         <td>
-                                            <Link className="text-primary flex items-center" to="/">
+                                            <Link className="text-primary flex items-center" to="/dashboard">
                                                 <IconMultipleForwardRight className="rtl:rotate-180 ltr:mr-1 rtl:ml-1" />
                                                 Referral
                                             </Link>

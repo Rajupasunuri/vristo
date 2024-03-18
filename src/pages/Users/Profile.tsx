@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, useParams, Link } from 'react-router-do
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import Dropdown from '../../components/Dropdown';
-import { fetchUserSuccess, setPageTitle } from '../../store/themeConfigSlice';
+import { setPageTitle } from '../../store/themeConfigSlice';
 import { SetStateAction, useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconCoffee from '../../components/Icon/IconCoffee';
@@ -22,7 +22,7 @@ import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 //import CropImgUpload from '../Pages/cropimg';
 import axios from 'axios';
 //import {u=U_URL}
-import { U_URL } from '../Apps/query';
+import { MY_PROFILE_URL } from '../Apps/query';
 import Select from 'react-select';
 import swal from 'sweetalert';
 import { Alert, Row, Col, Card, CardBody, CardTitle, CardImg, CardText, CardSubtitle, Modal, Button, FormGroup, InputGroup, Label, Table } from 'reactstrap';
@@ -34,11 +34,30 @@ import state from 'sweetalert/typings/modules/state';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Center } from '@mantine/core';
+import { FaEnvelope, FaPhone, FaLock } from 'react-icons/fa6';
 
 const Profile = () => {
     const dispatch = useDispatch();
     const dispatch1 = useDispatch();
-    const user1 = useSelector((state: IRootState) => state.themeConfig.user);
+    const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
+
+    const schoolyearID = useSelector((state: IRootState) => state.themeConfig.schoolyearID);
+    const studentID = useSelector((state: IRootState) => state.themeConfig.studentID);
+    //const school_address = useSelector((state: IRootState) => state.themeConfig.school_address);
+    const school_phone = useSelector((state: IRootState) => state.themeConfig.school_phone);
+    const school_email = useSelector((state: IRootState) => state.themeConfig.school_email);
+    const classesID = useSelector((state: IRootState) => state.themeConfig.classesID);
+    const sectionID = useSelector((state: IRootState) => state.themeConfig.sectionID);
+    const sectionname = useSelector((state: IRootState) => state.themeConfig.sectionname);
+    const classname = useSelector((state: IRootState) => state.themeConfig.classname);
+    const std_name = useSelector((state: IRootState) => state.themeConfig.std_name);
+    const std_email = useSelector((state: IRootState) => state.themeConfig.std_email);
+    const std_phone = useSelector((state: IRootState) => state.themeConfig.std_phone);
+    const std_roll = useSelector((state: IRootState) => state.themeConfig.std_roll);
+    const std_photo = useSelector((state: IRootState) => state.themeConfig.std_photo);
+    const std_dob = useSelector((state: IRootState) => state.themeConfig.std_dob);
+    const std_regno = useSelector((state: IRootState) => state.themeConfig.std_regno);
+
     let name1;
     let section1;
     let phone1;
@@ -47,49 +66,6 @@ const Profile = () => {
     let country1;
     let address1;
     let email1;
-
-    if (user1 !== null) {
-        if (typeof user1 === 'string') {
-            const user = JSON.parse(user1);
-            const { email, name, phone, district, section, state, country, address } = user;
-            name1 = name;
-            section1 = section;
-            phone1 = phone;
-            address1 = address;
-            country1 = country;
-            state2 = state;
-            district1 = district;
-            console.log('hvbjsdncnxjvxnvzzzzz', user);
-        }
-
-        // const user = JSON.parse(user1);
-        // console.log('hvbjsdncnxjvxnvzzzzz', user.email);
-    }
-
-    const [itempageabout, setItemPageAbout] = useState('Add  User | Management');
-    const [itemlablename, setItemLablename] = useState(' Manager Name');
-    const [tname, setTname] = useState('u');
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertType, setAlertType] = useState('');
-    const [alertText, setAlertText] = useState('');
-    const [selectUsertype, setSelectUsertype] = useState([
-        {
-            value: '',
-            label: <div>Select Venue Type</div>,
-        },
-    ]);
-    const [itemvalue, setItemValue] = useState('');
-    const [cuMobile, setCuMobile] = useState('');
-    const [cuEmail, setCuEmail] = useState('');
-    const [cuImageUrl, setCuImageUrl] = useState('');
-    const [usertypeValue, setUsertypeValue] = useState('');
-    const [venueName, setVenueName] = useState('');
-    const [venueDescription, setVenueDescription] = useState('');
-    const [venueAddress, setVenueAddress] = useState('');
-    const [hlatlong, setHlatlong] = useState('');
-    const [openingTime, setOpeningTime] = useState('');
-    const [closingTime, setClosingTime] = useState('');
-    const [timings, setTimings] = useState('');
 
     const [editMode, setEditMode] = useState(false);
     const [editId, setEditId] = useState('');
@@ -138,6 +114,32 @@ const Profile = () => {
     const [passvalid, setpassvalid] = useState('');
     const [change, setchange] = useState(0);
 
+    const [fatherEmail, setfatherEmail] = useState('');
+    const [fatherName, setfatherName] = useState('');
+    const [fatherPhone, setfatherPhone] = useState('');
+    const [fatherProfess, setfatherProfess] = useState('');
+    const [fatherQuali, setfatherQuali] = useState('');
+    const [guardian_email, setguardian_email] = useState('');
+    const [guardian_name, setguardian_name] = useState('');
+    const [guardian_phone, setguardian_phone] = useState('');
+    const [guardian_profession, setguardian_profession] = useState('');
+    const [guardian_qualification, setguardian_qualification] = useState('');
+    const [guardian_relationship, setguardian_relationship] = useState('');
+    const [identification_mark, setidentification_mark] = useState('');
+    const [mother_email, setmother_email] = useState('');
+    const [mother_name, setmother_name] = useState('');
+    const [mother_phone, setmother_phone] = useState('');
+    const [mother_profession, setmother_profession] = useState('');
+    const [mother_qualification, setmother_qualification] = useState('');
+    const [phonestd, setphonestd] = useState('');
+    const [registerNO, setregisterNO] = useState('');
+    const [roll, setroll] = useState('');
+    const [secondary_phone, setsecondary_phone] = useState('');
+    const [sex, setsex] = useState('');
+    const [namestd, setnamestd] = useState('');
+    const [dob, setdob] = useState('');
+    const [doa, setdoa] = useState('');
+
     useEffect(() => {
         // Retrieve the image URL from local storage when the component mounts
         const storedImg = localStorage.getItem('profileImage');
@@ -145,8 +147,68 @@ const Profile = () => {
         if (storedImg) {
             setImg(storedImg);
         }
+        if (isLoggedinuser) {
+            getProfile();
+        }
     });
 
+    const getProfile = async () => {
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.token,
+        };
+
+        const postData = {
+            studentID: localStorage.studentID,
+            schoolID: localStorage.schoolID,
+            parentID: localStorage.parentID,
+        };
+
+        axios
+            .post(MY_PROFILE_URL, postData, {
+                headers: headers,
+            })
+            .then((response) => {
+                console.log('Response is ', response.data);
+                // console.log(response.data.message);
+                if (response.data.error) {
+                    // setUsererror(response.data.message);
+                } else {
+                    const profiledtls = response.data.data;
+                    console.log('profiledtls:', profiledtls);
+
+                    setfatherEmail(response.data.data.father_email);
+                    setfatherName(response.data.data.father_name);
+                    setfatherPhone(response.data.data.father_phone);
+                    setfatherProfess(response.data.data.father_profession);
+                    setfatherQuali(response.data.data.father_qualification);
+                    setguardian_email(response.data.data.guardian_email);
+                    setguardian_name(response.data.data.guardian_name);
+                    setguardian_phone(response.data.data.guardian_phone);
+                    setguardian_profession(response.data.data.guardian_profession);
+                    setguardian_qualification(response.data.data.guardian_qualification);
+                    setguardian_relationship(response.data.data.guardian_relationship);
+                    setidentification_mark(response.data.data.identification_mark);
+                    setmother_email(response.data.data.mother_email);
+                    setmother_name(response.data.data.mother_name);
+                    setmother_phone(response.data.data.mother_phone);
+                    setmother_profession(response.data.data.mother_profession);
+                    setmother_qualification(response.data.data.mother_qualification);
+                    setphonestd(response.data.data.phone);
+                    setregisterNO(response.data.data.registerNO);
+                    setroll(response.data.data.roll);
+                    setsecondary_phone(response.data.data.secondary_phone);
+                    setsex(response.data.data.sex);
+                    setdob(response.data.data.dob);
+                    setdoa(response.data.data.doa);
+                    setnamestd(response.data.data.name);
+                    // navigate('/dashboard');
+                }
+            })
+            .catch((error) => {
+                console.log('Error is ', error.response.data);
+            });
+    };
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         const data = new FormData();
@@ -213,7 +275,7 @@ const Profile = () => {
                 const res2 = await axios.get(`http://localhost:8081/data?username=${username}`);
                 const jsonData = JSON.stringify(res2.data[0]);
                 console.log('fetch', jsonData);
-                dispatch1(fetchUserSuccess(jsonData));
+                // dispatch1(fetchUserSuccess(jsonData));
                 console.log('profile', res2.data);
                 setNew1(res2.data[0].name);
                 setAddress(res2.data[0].address);
@@ -391,152 +453,6 @@ const Profile = () => {
         setPasssucc(false);
     };
 
-    // const handleGetkeys = () => {
-    //     const headers = {
-    //         'Content-Type': 'application/json',
-    //         Authorization: localStorage.token,
-    //     };
-
-    //     const postData = {
-    //         uid: localStorage.usercode,
-    //         table: tname,
-    //         id: localStorage.uuid,
-    //     };
-
-    //     const getuurl = U_URL + 'getudetails';
-    //     axios
-    //         .post(getuurl, postData, { headers: headers })
-    //         .then((response) => {
-    //             console.log('response', response.data);
-    //             if (response.status === 400) {
-    //             }
-    //             if (!response.data.error) {
-    //                 localStorage.setItem('token', response.data.token);
-    //                 const cudata = response.data.allitems;
-    //                 const allusertypes = [...response.data.usertypes];
-
-    //                 if (localStorage.uuid) {
-    //                     setEditMode(true);
-    //                     setEditId(cudata.id);
-    //                     setItemValue(cudata.itemname);
-    //                     setCuMobile(cudata.cu_mobile);
-    //                     setCuEmail(cudata.cu_email);
-    //                     setCuImageUrl(cudata.cu_image_url);
-    //                     setShowAlert(false);
-    //                     setSelectUsertype(allusertypes);
-    //                 } else {
-    //                     setEditMode(false);
-    //                     setSelectUsertype(allusertypes);
-    //                 }
-    //             }
-    //         })
-    //         .catch((error) => {
-    //             console.log('error', error);
-    //         });
-    // };
-
-    // const handleValidSubmit = (
-    //     event: { preventDefault: () => void },
-    //     values: { item: string; venue_name: any; cu_mobile: any; cu_email: any; venue_description: any; venue_address: any; hlatlong: any; opening_time: any; closing_time: any; timings: any }
-    // ) => {
-    //     event.preventDefault();
-    //     console.log('values', values);
-    //     let noerrors = false;
-    //     const headers = {
-    //         'Content-Type': 'application/json',
-    //         Authorization: localStorage.token,
-    //     };
-    //     let addkeyurl = U_URL + 'additemcu';
-    //     let postData;
-
-    //     if (editMode) {
-    //         if (!localStorage.cu_image_url) {
-    //             swal('Select Profile Picture', {
-    //                 icon: 'warning',
-    //             });
-    //         } else {
-    //             noerrors = true;
-    //         }
-    //     } else {
-    //         if (!localStorage.venue_logo || !localStorage.cu_image_url || !localStorage.venue_building || !localStorage.venue_banner || !usertypeValue) {
-    //             swal('Please fill all required fields', {
-    //                 icon: 'warning',
-    //             });
-    //         } else {
-    //             noerrors = true;
-    //         }
-    //     }
-
-    //     if (noerrors) {
-    //         if (editMode) {
-    //             addkeyurl = U_URL + 'edititemcu';
-    //             postData = {
-    //                 itemid: editId,
-    //                 item: values.item,
-    //                 uid: localStorage.usercode,
-    //                 table: tname,
-    //                 venue_name: values.venue_name,
-    //                 cu_mobile: values.cu_mobile,
-    //                 cu_email: values.cu_email,
-    //                 cu_image_url: localStorage.cu_image_url,
-    //             };
-    //         } else {
-    //             postData = {
-    //                 item: values.item,
-    //                 uid: localStorage.usercode,
-    //                 table: tname,
-    //                 usertype: usertypeValue,
-    //                 venue_name: values.venue_name,
-    //                 cu_mobile: values.cu_mobile,
-    //                 cu_email: values.cu_email,
-    //                 venue_description: values.venue_description,
-    //                 venue_address: values.venue_address,
-    //                 hlatlong: values.hlatlong,
-    //                 opening_time: values.opening_time,
-    //                 closing_time: values.closing_time,
-    //                 timings: values.timings,
-    //                 cu_image_url: localStorage.cu_image_url,
-    //                 venue_logo: localStorage.venue_logo,
-    //                 venue_building: localStorage.venue_building,
-    //                 venue_banner: localStorage.venue_banner,
-    //             };
-    //         }
-
-    //         axios
-    //             .post(addkeyurl, postData, { headers: headers })
-    //             .then((response) => {
-    //                 console.log(response.data.message);
-    //                 if (response.data.error) {
-    //                     setShowAlert(true);
-    //                     setAlertType('warning');
-    //                     setAlertText(response.data.message);
-    //                 } else {
-    //                     setShowAlert(false);
-    //                     setAlertType('warning');
-    //                     setAlertText('');
-    //                     localStorage.setItem('token', response.data.token);
-
-    //                     swal(values.item + ' ' + response.data.message, {
-    //                         icon: 'success',
-    //                     });
-    //                     //  history.push('/users');
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 console.log('Error is ', error);
-    //                 setShowAlert(true);
-    //                 setAlertType('danger');
-    //                 setAlertText('Failed Try Again Later!');
-    //             });
-    //     }
-    // };
-
-    // const handleSelectUsertypeChange = (selectedOption: { value: SetStateAction<string> }) => {
-    //     console.log('selectedOption', selectedOption);
-    //     setUsertypeValue(selectedOption.value);
-    // };
-    const user = useSelector((state: IRootState) => state.themeConfig.user);
-
     useEffect(() => {
         dispatch(setPageTitle('Profile'));
     });
@@ -575,22 +491,32 @@ const Profile = () => {
                                     imgh={250}
                                 ></Uploadfile> */}
                                             {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
-                                            <p className="font-semibold text-primary  text-xl">{name1}</p>
+                                            <p className="font-semibold text-primary  text-md">{std_name}</p>
                                         </div>
                                         <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-                                            <li className="flex items-center gap-2">Class: Class 1</li>
-                                            <li className="flex items-center gap-2">Section: {section1}</li>
+                                            <li className="flex items-center gap-2">Class: {classname}</li>
+                                            <li className="flex items-center gap-2">Section: {sectionname}</li>
+                                            <li className="flex items-center gap-2">Section-ID: {sectionID}</li>
+                                            <li className="flex items-center gap-2">Roll No: {std_roll}</li>
+                                            <li className="flex items-center gap-2">Registration-ID: {std_regno}</li>
 
                                             <li className="flex items-center gap-2">
-                                                <IconPhone />
+                                                <FaPhone />
                                                 <span className="whitespace-nowrap" dir="ltr">
-                                                    {phone1}
+                                                    {std_phone}
                                                 </span>
                                             </li>
                                             <li className="flex items-center gap-2">
+                                                <FaEnvelope />
+
+                                                <span className="whitespace-nowrap" dir="ltr">
+                                                    {std_email}
+                                                </span>
+                                            </li>
+                                            <li className="flex items-center  gap-2">
                                                 <span onClick={handlePwd} className="flex gap-2">
-                                                    <IconLock />
-                                                    <div className=" active:bg-gray-400 border-blue-400 border text-blue-400 sm:p-1 rounded-md hover:bg-blue-400 hover:text-white sm:text-xs p-1 cursor-pointer">
+                                                    <FaLock className="mt-2" />
+                                                    <div className=" active:bg-gray-400 border-blue-400 border text-blue-400 sm:p-0.5 rounded-md hover:bg-blue-400 hover:text-white sm:text-xs p-1 cursor-pointer">
                                                         Change Password
                                                     </div>
                                                 </span>
@@ -600,7 +526,7 @@ const Profile = () => {
                                 </div>
                                 <div className="panel lg:col-span-2 xl:col-span-3">
                                     <div className="mb-5">
-                                        <h5 className="font-semibold text-lg dark:text-white-light">General Information</h5>
+                                        <h5 className="font-semibold text-lg dark:text-white-light">Student Information</h5>
                                     </div>
                                     <div className="mb-5">
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
@@ -617,67 +543,127 @@ const Profile = () => {
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>Father Name</td>
+                                                        <td style={{ width: '200px' }}>Student Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Ramesh</td>
+                                                        <td>{namestd}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Mother Name</td>
+                                                        <td>Date of Birth</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Rani</td>
+                                                        <td>{dob}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Father's Profession</td>
+                                                        <td>Gender</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{sex}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Mother's Profession</td>
+                                                        <td>Admission No</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
 
                                                     <tr>
-                                                        <td>Father Name</td>
+                                                        <td>Date of Admission</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Ramesh</td>
+                                                        <td>{doa}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Guardian Name</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Guardian Profession</td>
+                                                        <td>Class</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Address</td>
+                                                        <td>Section</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{address1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>District</td>
+                                                        <td>Roll No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{district1}</td>
+                                                        <td>{roll}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>State</td>
+                                                        <td>Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{state2}</td>
+                                                        <td>{phonestd}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Country</td>
+                                                        <td>Secondary Phone No</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{secondary_phone}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Aadhar No</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Student Aadhar Photo</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Class of Admission</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Tongue</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nationality</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Category</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Religion</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{country1}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Caste</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Sub-Caste</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Place of Birth</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Hospital Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Ration Card No</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Blood Group</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                     <div className="mb-5">
-                                        <h5 className="font-semibold text-lg dark:text-white-light">Parents Information</h5>
+                                        <h5 className="font-semibold text-lg dark:text-white-light">Father Details</h5>
                                     </div>
                                     <div className="mb-5">
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
@@ -696,36 +682,161 @@ const Profile = () => {
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Father Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Ramesh</td>
+                                                        <td>{fatherName}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Mother Name</td>
+                                                        <td>Father Profession</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Rani</td>
+                                                        <td>{fatherProfess}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Father's Profession</td>
+                                                        <td>Father Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{fatherPhone}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Mother's Profession</td>
+                                                        <td>Father Aadhar No</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
 
                                                     <tr>
-                                                        <td>Father Name</td>
+                                                        <td>Father Qualification</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>Ramesh</td>
+                                                        <td>{fatherQuali}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Guardian Name</td>
+                                                        <td>Father Email</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{fatherEmail}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Annual Income</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Guardian Profession</td>
+                                                        <td>Father Aadhar Copy</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div className="mb-5">
+                                        <h5 className="font-semibold text-lg dark:text-white-light">Mother Details</h5>
+                                    </div>
+                                    <div className="mb-5">
+                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                            <table className="table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        {/* <th colSpan={2} className="text-center col-span">
+                                                Projects
+                                            </th> */}
+                                                        {/* <th>Progress</th> */}
+                                                        {/* <th>Task Done</th>
+                                            <th className="text-center">Time</th> */}
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="dark:text-white-dark border-1.5">
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>Mother Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{mother_name}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Profession</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{mother_profession}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Phone No</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{mother_phone}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Aadhar No</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Mother Qualification</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{mother_qualification}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Email</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{mother_email}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Office Address</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Mother Aadhar Copy</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div className="mb-5">
+                                        <h5 className="font-semibold text-lg dark:text-white-light">Guardian Details</h5>
+                                    </div>
+                                    <div className="mb-5">
+                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                            <table className="table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        {/* <th colSpan={2} className="text-center col-span">
+                                                Projects
+                                            </th> */}
+                                                        {/* <th>Progress</th> */}
+                                                        {/* <th>Task Done</th>
+                                            <th className="text-center">Time</th> */}
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="dark:text-white-dark border-1.5">
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>Guardian Name</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{guardian_name}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Guardian Relationship</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Guardian Phone </td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{guardian_phone}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Guardian Aadhar No</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Guardian Qualification</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{guardian_qualification}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Guardian Email</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{guardian_email}</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td>Guardian Aadhar Copy</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td></td>
                                                     </tr>
