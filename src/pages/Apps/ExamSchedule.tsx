@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { FaRegPlusSquare } from 'react-icons/fa';
 import IconEye from '../../components/Icon/IconEye';
@@ -9,6 +9,8 @@ import TableDialog1 from './TableDialog1';
 import TableDialog2 from './TableDialog2';
 import TableDialog3 from './TableDialog3';
 import TableDialog4 from './TableDialog4';
+import { MY_DASHBOARD_URL } from './query';
+import axios from 'axios';
 
 const tableData = [
     {
@@ -84,6 +86,38 @@ const Tables = () => {
         }
     };
     const [modal10, setModal10] = useState(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
 
     return (
         <div className="space-y-6">

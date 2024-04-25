@@ -21,6 +21,8 @@ import ReactPlayer from 'react-player';
 import img from '/public/crown-logo.png';
 import html2canvas from 'html2canvas';
 import React from 'react';
+import { MY_DASHBOARD_URL } from './query';
+import axios from 'axios';
 //import print from '/public/Application.pdf';
 
 const tableData = [
@@ -78,6 +80,39 @@ const Tables = () => {
 
     const imgRef = React.createRef<HTMLImageElement>();
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
+
     const handleDownload = () => {
         const imageElement = imgRef.current;
 
@@ -113,6 +148,7 @@ const Tables = () => {
         link.click();
         document.body.removeChild(link);
     };
+
     return (
         <div className="space-y-6">
             {/* Simple */}

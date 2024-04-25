@@ -1,232 +1,211 @@
-import { Link, NavLink } from 'react-router-dom';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useState, useEffect } from 'react';
-import sortBy from 'lodash/sortBy';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
-import { setPageTitle } from '../../store/themeConfigSlice';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconPlus from '../../components/Icon/IconPlus';
-import IconEdit from '../../components/Icon/IconEdit';
-import IconEye from '../../components/Icon/IconEye';
+import React, { useEffect, useState } from 'react';
+
 import Tippy from '@tippyjs/react';
-//import { MdCurrencyRupee } from 'react-icons/md';
+
+import axios from 'axios';
+import { MY_INVOICES_URL, MY_INVOICES_YEARS_URL } from './query';
+
+import { NavLink } from 'react-router-dom';
+
+import { setPageTitle } from '../../store/themeConfigSlice';
+import { useDispatch } from 'react-redux';
 
 const List = () => {
     const dispatch = useDispatch();
+
     useEffect(() => {
         dispatch(setPageTitle('Invoice List'));
     });
-    const [items, setItems] = useState([
-        {
-            id: 1,
-            invoice: '081451',
-            feeamount: '2275.45',
-            feetype: '3rd Term',
-
-            discount: '',
-            afterdiscount: '',
-            date: '15 Dec 2020',
-            amount: '2275.45',
-            status: { tooltip: 'Paid', color: 'success' },
-            profile: 'profile-1.jpeg',
-            paid: '',
-        },
-        {
-            id: 2,
-            invoice: '081452',
-            feeamount: '2275.45',
-            feetype: '2nd Term',
-
-            discount: '',
-            afterdiscount: '',
-            date: '20 Dec 2020',
-            amount: '1044.00',
-            status: { tooltip: 'Paid', color: 'success' },
-            profile: 'profile-1.jpeg',
-            paid: '',
-        },
-        {
-            id: 3,
-            invoice: '081681',
-            feeamount: '2275.45',
-            feetype: '1st Term',
-            discount: '',
-            afterdiscount: '',
-            date: '27 Dec 2020',
-            amount: '20.00',
-            status: { tooltip: 'Pending', color: 'danger' },
-            profile: 'profile-1.jpeg',
-            paid: '',
-        },
-    ]);
-
-    const deleteRow = (id: any = null) => {
-        if (window.confirm('Are you sure want to delete selected row ?')) {
-            if (id) {
-                setRecords(items.filter((user) => user.id !== id));
-                setInitialRecords(items.filter((user) => user.id !== id));
-                setItems(items.filter((user) => user.id !== id));
-                setSearch('');
-                setSelectedRecords([]);
-            } else {
-                let selectedRows = selectedRecords || [];
-                const ids = selectedRows.map((d: any) => {
-                    return d.id;
+    const [invoYears, setInvoYears] = useState([]);
+    const [schoolyearID, setSchoolyearID] = useState(localStorage.schoolyearID);
+    const [yearStudentID, setYearStudentID] = useState(localStorage.studentID);
+    const [invoiceData, setInvoiceData] = useState<any>([]);
+    const [inoviceIdV, setInvoiceIDV] = useState('');
+    const [invoLoader, setInvoLoader] = useState(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: schoolyearID,
+                    // yearstudentID: 177398,
+                    admno: localStorage.std_regno,
+                };
+                const response = await axios.post(MY_INVOICES_URL, postData, {
+                    headers: headers,
                 });
-                const result = items.filter((d) => !ids.includes(d.id as never));
-                setRecords(result);
-                setInitialRecords(result);
-                setItems(result);
-                setSearch('');
-                setSelectedRecords([]);
-                setPage(1);
+
+                console.log('invoices', response);
+                setInvoYears(response.data.data.invo_years);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                //setInvoLoader(true);
             }
+        };
+
+        fetchData();
+    }, [schoolyearID]);
+
+    useEffect(() => {
+        const fetchYearInvoices = async () => {
+            try {
+                setInvoLoader(true);
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    yearstudentID: yearStudentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: schoolyearID,
+
+                    admno: localStorage.std_regno,
+                };
+                console.log('yearstdid', yearStudentID);
+
+                const response = await axios.post(MY_INVOICES_YEARS_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('year invoices', response);
+                setInvoiceData(response.data.data.invoices);
+                setInvoLoader(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setInvoLoader(true);
+            }
+        };
+
+        fetchYearInvoices();
+    }, [yearStudentID]);
+
+    const handleInvoice = (id: any) => {
+        localStorage.setItem('InvoiceIDV', id);
+    };
+    const loadyearinvo = (schyearid: any, yearstdid: any) => {
+        if (schoolyearID == schyearid) {
+        } else {
+            // console.log('changed', yearstdid);
+            setSchoolyearID(schyearid);
+            setYearStudentID(yearstdid);
         }
     };
 
-    const [page, setPage] = useState(1);
-    const PAGE_SIZES = [10, 20, 30, 50, 100];
-    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState(sortBy(items, 'invoice'));
-    const [records, setRecords] = useState(initialRecords);
-    const [selectedRecords, setSelectedRecords] = useState<any>([]);
-
-    const [search, setSearch] = useState('');
-    const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-        columnAccessor: 'firstName',
-        direction: 'asc',
-    });
-
-    useEffect(() => {
-        setPage(1);
-        /* eslint-disable react-hooks/exhaustive-deps */
-    }, [pageSize]);
-
-    useEffect(() => {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize;
-        setRecords([...initialRecords.slice(from, to)]);
-    }, [page, pageSize, initialRecords]);
-
-    useEffect(() => {
-        setInitialRecords(() => {
-            return items.filter((item) => {
-                return (
-                    item.invoice.toLowerCase().includes(search.toLowerCase()) ||
-                    item.feetype.toLowerCase().includes(search.toLowerCase()) ||
-                    item.discount.toLowerCase().includes(search.toLowerCase()) ||
-                    item.date.toLowerCase().includes(search.toLowerCase()) ||
-                    item.amount.toLowerCase().includes(search.toLowerCase()) ||
-                    item.status.tooltip.toLowerCase().includes(search.toLowerCase())
-                );
-            });
-        });
-    }, [search]);
-
-    useEffect(() => {
-        const data2 = sortBy(initialRecords, sortStatus.columnAccessor);
-        setRecords(sortStatus.direction === 'desc' ? data2.reverse() : data2);
-        setPage(1);
-    }, [sortStatus]);
-
     return (
-        <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
-            <div className="invoice-table">
-                <div className="mb-4.5 px-5 flex md:items-center md:flex-row flex-col gap-5">
-                    <div className="ltr:ml-auto rtl:mr-auto">
-                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                    </div>
+        <>
+            {invoLoader ? (
+                <div className="h-screen flex items-center justify-center">
+                    <span className="animate-[spin_3s_linear_infinite] border-8 border-r-warning border-l-primary border-t-danger border-b-success rounded-full w-14 h-14 inline-block align-middle m-auto"></span>
                 </div>
+            ) : (
+                <div className="panel ">
+                    <div className="flex  panel items-center justify-between pb-5 mb-4 border-b-2 overflow-x-auto space-x-1.5">
+                        {invoYears.map((year: any, index) => (
+                            <div key={index}>
+                                <button
+                                    className={`btn whitespace-nowrap ${schoolyearID == year.schoolyearID ? 'btn-info' : 'btn-outline-info'}`}
+                                    onClick={() => loadyearinvo(year.schoolyearID, year.studentID)}
+                                >
+                                    {year.schoolyear}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
 
-                <div className="datatables pagination-padding">
-                    <DataTable
-                        className="whitespace-nowrap table-hover invoice-table"
-                        records={records}
-                        columns={[
-                            {
-                                accessor: 'id',
-                                title: 'SL.NO',
-                            },
-                            {
-                                accessor: 'invoice',
+                    <div className="  card-container">
+                        {invoiceData.map((invoice: any) => (
+                            <div key={invoice.invoiceID} className=" mb-4 ">
+                                <div className=" panel card-body flex flex-col space-y-2">
+                                    <div className="mb-5 ">
+                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                            <table className="table-hover table-striped">
+                                                <thead>
+                                                    <tr></tr>
+                                                </thead>
+                                                <tbody className="dark:text-white-dark border-1.5 ">
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>FEE TYPE</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> {invoice.fee_term}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }} className="whitespace-nowrap">
+                                                            FEE AMOUNT
+                                                        </td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> ₹{invoice.amount}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>DISCOUNT</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> ₹{invoice.discount}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>AFTER DISCOUNT</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> ₹{invoice.after_concession}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>PAID</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> ₹{invoice.paidamount}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>DUE AMOUNT</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td> ₹{invoice.amount_due}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>STATUS</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>
+                                                            {invoice.paidstatus === 0 ? (
+                                                                <span className="text-red-600 bg-red-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap">Not Paid</span>
+                                                            ) : invoice.paidstatus === 1 ? (
+                                                                <span className="text-green-600 bg-green-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap">Partially Paid</span>
+                                                            ) : (
+                                                                <span className="text-green-600 bg-green-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap"> Paid</span>
+                                                            )}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style={{ width: '200px' }}>DUE DATE</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td className="whitespace-nowrap"> {invoice.due_date}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
 
-                                render: ({ invoice }) => (
-                                    <NavLink to="/apps/invoice/preview">
-                                        <div className="text-primary underline hover:no-underline font-semibold">{`#${invoice}`}</div>
-                                    </NavLink>
-                                ),
-                            },
-                            {
-                                accessor: 'feetype',
-                                title: 'FEE TYPE',
-                            },
-                            {
-                                accessor: 'feeamount',
-                                title: 'FEE AMOUNT',
-                            },
-                            {
-                                accessor: 'discount',
-                                title: 'Discount',
-                            },
-                            {
-                                accessor: 'afterdiscount',
-                                title: 'AfterDiscount',
-                            },
-                            {
-                                accessor: 'paid',
-                            },
-
-                            {
-                                accessor: 'amount',
-                                title: 'Due Amount',
-                                titleClassName: 'text-right',
-                                render: ({ amount, id }) => <div className="text-right font-semibold">{`$${amount}`}</div>,
-                            },
-                            {
-                                accessor: 'status',
-
-                                render: ({ status }) => <span className={`badge badge-outline-${status.color} `}>{status.tooltip}</span>,
-                            },
-                            {
-                                accessor: 'date',
-                                title: 'Due Date',
-                            },
-                            {
-                                accessor: 'action',
-                                title: 'Actions',
-                                sortable: false,
-                                textAlignment: 'center',
-                                render: ({ id, status: rowStatus }) => (
-                                    <div className="flex gap-4 items-center w-max mx-auto">
-                                        <Tippy className="bg-black text-white" content={rowStatus.tooltip === 'Paid' ? 'View' : 'Pay Now'}>
-                                            <NavLink to="/preview" className="flex hover:text-primary">
-                                                <IconEye />
+                                    <div className=" flex justify-end">
+                                        <Tippy className="bg-black text-white" content={invoice.paidstatus === 0 || invoice.paidstatus === 1 ? 'Pay Now' : 'View'}>
+                                            <NavLink to="/preview" onClick={() => handleInvoice(invoice.invoiceID)} className="flex hover:text-primary">
+                                                {invoice.paidstatus === 0 || invoice.paidstatus === 1 ? (
+                                                    <button type="button" className="btn btn-secondary btn-sm ">
+                                                        Pay Now
+                                                    </button>
+                                                ) : (
+                                                    <button type="button" className="btn btn-secondary btn-sm">
+                                                        View
+                                                    </button>
+                                                )}
                                             </NavLink>
                                         </Tippy>
-                                        {/* <NavLink to="" className="flex"> */}
-
-                                        {/* </NavLink> */}
                                     </div>
-                                ),
-                            },
-                        ]}
-                        highlightOnHover
-                        totalRecords={initialRecords.length}
-                        recordsPerPage={pageSize}
-                        page={page}
-                        onPageChange={(p) => setPage(p)}
-                        recordsPerPageOptions={PAGE_SIZES}
-                        onRecordsPerPageChange={setPageSize}
-                        sortStatus={sortStatus}
-                        onSortStatusChange={setSortStatus}
-                        selectedRecords={selectedRecords}
-                        onSelectedRecordsChange={setSelectedRecords}
-                        paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
-            </div>
-        </div>
+            )}
+        </>
     );
 };
 

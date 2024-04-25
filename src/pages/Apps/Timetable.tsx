@@ -16,6 +16,8 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import Dropdown from '../../components/Dropdown';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
+import axios from 'axios';
+import { MY_DASHBOARD_URL } from './query';
 
 const Tabs = () => {
     const dispatch = useDispatch();
@@ -348,6 +350,39 @@ const Tabs = () => {
         },
     ];
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
+
     return (
         <div>
             <div className="space-y-8 pt-5">
@@ -357,7 +392,7 @@ const Tabs = () => {
                     </div>
                     <div className="mb-5 w-full">
                         <Tab.Group>
-                            <Tab.List className="mt-3 flex flex-wrap  w-full ">
+                            <Tab.List className="mt-3 flex flex-wrap  w-full  ">
                                 <Tab as={Fragment}>
                                     {({ selected }) => (
                                         <button

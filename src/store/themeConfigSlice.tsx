@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import i18next from 'i18next';
 import themeConfig from '../theme.config';
+import { persistor } from '.';
 
 interface Language {
     code: string;
     name: string;
 }
-
 
 interface ThemeConfigState {
     isDarkMode: boolean;
@@ -50,7 +50,6 @@ interface ThemeConfigState {
     std_photo: string;
     std_dob: string;
     std_regno: string;
-
 }
 //co
 const defaultState: ThemeConfigState = {
@@ -65,9 +64,7 @@ const defaultState: ThemeConfigState = {
     locale: 'en',
     sidebar: false,
     pageTitle: '',
-    languageList: [
-        { code: 'en', name: 'English' },
-    ],
+    languageList: [{ code: 'en', name: 'English' }],
     semidark: false,
     //user: null,
     isLoggedinuser: false,
@@ -99,7 +96,6 @@ const defaultState: ThemeConfigState = {
     std_photo: '',
     std_dob: '',
     std_regno: '',
-
 };
 
 const initialState: ThemeConfigState = {
@@ -256,27 +252,27 @@ const themeConfigSlice = createSlice({
             console.log('toggleStudentLoginDtls payload', payload);
             console.log('toggleStudentLoginDtls state', state);
 
-            localStorage.setItem("schoolyearID", studentdtls.schoolyearID);
-            localStorage.setItem("studentID", studentdtls.studentID);
-            localStorage.setItem("parentID", studentdtls.parentID);
-            localStorage.setItem("package_type", studentdtls.package_type);
-            localStorage.setItem("school_appname", studentdtls.school_appname);
-            localStorage.setItem("school_phone", studentdtls.school_phone);
-            localStorage.setItem("school_addphone", studentdtls.school_addphone);
-            localStorage.setItem("school_email", studentdtls.school_email);
-            localStorage.setItem("invoice_type", studentdtls.invoice_type);
-            localStorage.setItem("classesID", studentdtls.classesID);
-            localStorage.setItem("sectionID", studentdtls.sectionID);
-            localStorage.setItem("classname", studentdtls.classname);
-            localStorage.setItem("sectionname", studentdtls.sectionname);
-            localStorage.setItem("user_type", studentdtls.user_type);
-            localStorage.setItem("std_name", studentdtls.std_name);
-            localStorage.setItem("std_email", studentdtls.std_email);
-            localStorage.setItem("std_phone", studentdtls.std_phone);
-            localStorage.setItem("std_roll", studentdtls.std_roll);
-            localStorage.setItem("std_photo", studentdtls.std_photo);
-            localStorage.setItem("std_dob", studentdtls.std_dob);
-            localStorage.setItem("std_regno", studentdtls.std_regno);
+            localStorage.setItem('schoolyearID', studentdtls.schoolyearID);
+            localStorage.setItem('studentID', studentdtls.studentID);
+            localStorage.setItem('parentID', studentdtls.parentID);
+            localStorage.setItem('package_type', studentdtls.package_type);
+            localStorage.setItem('school_appname', studentdtls.school_appname);
+            localStorage.setItem('school_phone', studentdtls.school_phone);
+            localStorage.setItem('school_addphone', studentdtls.school_addphone);
+            localStorage.setItem('school_email', studentdtls.school_email);
+            localStorage.setItem('invoice_type', studentdtls.invoice_type);
+            localStorage.setItem('classesID', studentdtls.classesID);
+            localStorage.setItem('sectionID', studentdtls.sectionID);
+            localStorage.setItem('classname', studentdtls.classname);
+            localStorage.setItem('sectionname', studentdtls.sectionname);
+            localStorage.setItem('user_type', studentdtls.user_type);
+            localStorage.setItem('std_name', studentdtls.std_name);
+            // localStorage.setItem('std_email', studentdtls.std_email);
+            localStorage.setItem('std_phone', studentdtls.std_phone);
+            localStorage.setItem('std_roll', studentdtls.std_roll);
+            localStorage.setItem('std_photo', studentdtls.std_photo);
+            localStorage.setItem('std_dob', studentdtls.std_dob);
+            localStorage.setItem('std_regno', studentdtls.std_regno);
 
             state.schoolyearID = studentdtls.schoolyearID;
             state.studentID = studentdtls.id;
@@ -301,12 +297,6 @@ const themeConfigSlice = createSlice({
             state.std_photo = studentdtls.std_photo;
             state.std_dob = studentdtls.std_dob;
             state.std_regno = studentdtls.std_regno;
-
-
-
-
-
-
         },
         setStudentLoginDtls(state, action: PayloadAction<any>) {
             // console.log('action is:', action);
@@ -337,33 +327,40 @@ const themeConfigSlice = createSlice({
             state.std_regno = studentdtls.std_regno;
             state.isLoggedinuser = true;
 
-
-
-            localStorage.setItem("schoolyearID", studentdtls.schoolyearID);
-            localStorage.setItem("studentID", studentdtls.studentID);
-            localStorage.setItem("parentID", studentdtls.parentID);
-            localStorage.setItem("package_type", studentdtls.package_type);
-            localStorage.setItem("std_leave_apply", studentdtls.std_leave_apply);
-            localStorage.setItem("receipt_logo", studentdtls.receipt_logo);
-            localStorage.setItem("school_appname", studentdtls.school_appname);
-            localStorage.setItem("school_phone", studentdtls.school_phone);
-            localStorage.setItem("school_addphone", studentdtls.school_addphone);
-            localStorage.setItem("school_email", studentdtls.school_email);
-            localStorage.setItem("invoice_type", studentdtls.invoice_type);
-            localStorage.setItem("classesID", studentdtls.classesID);
-            localStorage.setItem("sectionID", studentdtls.sectionID);
-            localStorage.setItem("classname", studentdtls.classname);
-            localStorage.setItem("sectionname", studentdtls.sectionname);
-            localStorage.setItem("user_type", studentdtls.user_type);
-            localStorage.setItem("std_name", studentdtls.std_name);
-            localStorage.setItem("std_email", studentdtls.std_email);
-            localStorage.setItem("std_phone", studentdtls.std_phone);
-            localStorage.setItem("std_roll", studentdtls.std_roll);
-            localStorage.setItem("std_photo", studentdtls.std_photo);
-            localStorage.setItem("std_dob", studentdtls.std_dob);
-            localStorage.setItem("std_regno", studentdtls.std_regno);
+            localStorage.setItem('schoolyearID', studentdtls.schoolyearID);
+            localStorage.setItem('studentID', studentdtls.studentID);
+            localStorage.setItem('parentID', studentdtls.parentID);
+            localStorage.setItem('package_type', studentdtls.package_type);
+            localStorage.setItem('std_leave_apply', studentdtls.std_leave_apply);
+            localStorage.setItem('receipt_logo', studentdtls.receipt_logo);
+            localStorage.setItem('school_appname', studentdtls.school_appname);
+            localStorage.setItem('school_phone', studentdtls.school_phone);
+            localStorage.setItem('school_addphone', studentdtls.school_addphone);
+            localStorage.setItem('school_email', studentdtls.school_email);
+            localStorage.setItem('invoice_type', studentdtls.invoice_type);
+            localStorage.setItem('classesID', studentdtls.classesID);
+            localStorage.setItem('sectionID', studentdtls.sectionID);
+            localStorage.setItem('classname', studentdtls.classname);
+            localStorage.setItem('sectionname', studentdtls.sectionname);
+            localStorage.setItem('user_type', studentdtls.user_type);
+            localStorage.setItem('std_name', studentdtls.std_name);
+            //localStorage.setItem('std_email', studentdtls.std_email);
+            localStorage.setItem('std_phone', studentdtls.std_phone);
+            localStorage.setItem('std_roll', studentdtls.std_roll);
+            localStorage.setItem('std_photo', studentdtls.std_photo);
+            localStorage.setItem('std_dob', studentdtls.std_dob);
+            localStorage.setItem('std_regno', studentdtls.std_regno);
             localStorage.setItem('isLoggedinuser', 'true');
             localStorage.setItem('token', studentdtls.token);
+        },
+        setUpdateDtls(state, action: PayloadAction<any>) {
+            let update = action.payload;
+            state.std_email = update.email;
+            state.std_phone = update.phone;
+            //persistor.persist();
+            //localStorage.setItem('std_email', update.email);
+            localStorage.setItem('std_phone', update.phone);
+            console.log('persist local', localStorage.getItem(`persist:root`));
         },
         setSchoolDtls(state, action: PayloadAction<any>) {
             state.schdtls = action.payload;
@@ -404,8 +401,6 @@ const themeConfigSlice = createSlice({
             localStorage.setItem('std_dob', '');
             localStorage.setItem('std_regno', '');
         },
-
-
     },
 });
 
@@ -428,6 +423,7 @@ export const {
     toggleStudentLoginDtls,
     setSchoolDtls,
     logout,
+    setUpdateDtls,
 } = themeConfigSlice.actions;
 
 export const selectAuth = (state: { auth: ThemeConfigState }) => state.auth;

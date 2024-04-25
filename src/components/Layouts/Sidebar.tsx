@@ -97,12 +97,14 @@ const Sidebar = () => {
                         </button>
                     </div>
                     <PerfectScrollbar className="h-[calc(100vh-80px)] relative">
-                        <ul className="relative font-semibold space-y-0.5 p-4 py-0">
-
+                        <ul className="relative font-semibold space-y-0.5 p-4 py-0 ">
                             <li>
-                                <NavLink to="/users/profile" className="flex items-center px-4 py-4">
+                                <p className="font-bold space-y-0.5 p-4 py-0 text-xs">{themeConfig.std_name}</p>
+                                <NavLink to="/users/profile" className="flex items-center px-4 py-1">
                                     <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
-                                    <p className="font-semibold space-y-0.5 p-4 py-0">{themeConfig.std_name} <hr />Class: {themeConfig.classname}:{themeConfig.sectionname}  <hr /> AdmNo: {themeConfig.std_regno}</p>
+                                    <p className="font-semibold space-y-0.5 p-4 py-0 text-xs">
+                                        Class: {themeConfig.classname}:{themeConfig.sectionname} <hr /> AdmNo: {themeConfig.std_regno}
+                                    </p>
                                 </NavLink>
                             </li>
                             <li className="menu nav-item">
@@ -229,17 +231,15 @@ const Sidebar = () => {
                                         </li> */}
 
                                         <li>
-                                            <div onMouseLeave={() => handleHover(null)}>
-                                                <NavLink to="" onMouseOver={() => handleHover('gallery')}>
-                                                    {t('Gallery')}
-                                                </NavLink>
-                                                {currentMenu === 'facilities' && isHovering === 'gallery' && (
+                                            <div>
+                                                <NavLink to="/media">{t('Gallery')}</NavLink>
+                                                {/* {currentMenu === 'facilities' && isHovering === 'gallery' && (
                                                     <ul className="sub-menu text-gray-500">
                                                         <li className="pl-8">
                                                             <NavLink to="/media">{t('Media')}</NavLink>
                                                         </li>
                                                     </ul>
-                                                )}
+                                                )} */}
                                             </div>
                                         </li>
 
@@ -257,9 +257,9 @@ const Sidebar = () => {
                                                         <li className="pl-8">
                                                             <NavLink to="/books">{t('Books')}</NavLink>
                                                         </li>
-                                                        <li className="pl-8">
+                                                        {/* <li className="pl-8">
                                                             <NavLink to="/books-issued">{t('Books Issued')}</NavLink>
-                                                        </li>
+                                                        </li> */}
                                                     </ul>
                                                 )}
                                             </div>
@@ -306,7 +306,7 @@ const Sidebar = () => {
                                 </AnimateHeight>
                             </li>
                             <li className="menu nav-item">
-                                <button type="button" >
+                                <button type="button">
                                     <div className="flex items-center">
                                         <NavLink to="/logout" className="flex items-center justify-start text-danger">
                                             <IconLogout className="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" />
@@ -315,7 +315,6 @@ const Sidebar = () => {
                                     </div>
                                 </button>
                             </li>
-
                         </ul>
                     </PerfectScrollbar>
                 </div>

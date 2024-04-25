@@ -7,6 +7,8 @@ import ReactApexChart from 'react-apexcharts';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
 import IconCode from '../../components/Icon/IconCode';
+import { MY_DASHBOARD_URL } from './query';
+import axios from 'axios';
 
 const Charts = () => {
     const dispatch = useDispatch();
@@ -22,6 +24,39 @@ const Charts = () => {
             setCodeArr([...codeArr, name]);
         }
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
 
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;

@@ -17,137 +17,186 @@ import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import IconEye from '../../components/Icon/IconEye';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { MY_BOOKS_URL, MY_DASHBOARD_URL, MY_ISSUED_BOOKS_URL } from './query';
+import DataTable from 'react-data-table-component';
+import moment from 'moment';
 
-const tableData = [
-    {
-        id: 1,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
+import { FaEye } from 'react-icons/fa6';
 
-        status: '',
-        action: '',
-    },
-    {
-        id: 2,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 3,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 4,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 5,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 6,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 7,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 8,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 9,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-    {
-        id: 10,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-];
-const tableData1 = [
-    {
-        id: 1,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-    },
-];
+interface BOOKS {
+    author: string;
+    book: string;
+    quantity: string;
+    rack: string;
+    subject_code: string;
+    status: string;
+}
+interface BOOKSISSUED {
+    author: string;
+    book: string;
+    quantity: string;
+    rack: string;
+    serial_no: string;
+    status: string;
+    due_date: string;
+}
 const Tables = () => {
+    const [modal10, setModal10] = useState(false);
+    const [Books, setBooks] = useState(true);
+    const [Issue, setIssue] = useState(false);
+    const [modalNotice, setmodalNotice] = useState(false);
+    const [modalContent, setModalContent] = useState({ title: '', notice: '' });
+    const [dataBooks, setdataBooks] = useState<BOOKS[]>([]);
+    const [filterBooks, setfilterBooks] = useState<BOOKS[]>([]);
+    const [dataBooksIssued, setdataBooksIssued] = useState<BOOKSISSUED[]>([]);
+    const [filterBooksIssued, setfilterBooksIssued] = useState<BOOKSISSUED[]>([]);
+    const [search, setSearch] = useState('');
+    const columnbooks: any = [
+        {
+            name: 'SL.NO',
+            selector: (row: BOOKS, index: number) => index + 1,
+        },
+        {
+            name: 'BOOK NAME',
+            selector: (row: BOOKS) => row.book,
+        },
+        {
+            name: 'AUTHOR',
+            selector: (row: BOOKS) => row.author,
+        },
+        {
+            name: 'SUBJECT CODE',
+            selector: (row: BOOKS) => row.subject_code,
+        },
+        {
+            name: 'QUANTITY',
+            selector: (row: BOOKS) => row.quantity,
+        },
+        {
+            name: 'RACK NO',
+            selector: (row: BOOKS) => row.rack,
+        },
+        {
+            name: 'STATUS',
+            selector: (row: BOOKS) => row.status,
+        },
+
+        {
+            name: 'Action',
+            cell: (row: any) => (
+                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
+                    <FaEye />
+                </button>
+            ),
+        },
+    ];
+
+    const columnbooksissued: any = [
+        {
+            name: 'SL.NO',
+            selector: (row: BOOKSISSUED, index: number) => index + 1,
+        },
+        {
+            name: 'ISSUED BOOK',
+            selector: (row: BOOKSISSUED) => row.book,
+        },
+        {
+            name: 'SERIAL NO',
+            selector: (row: BOOKSISSUED) => row.serial_no,
+        },
+        {
+            name: 'DUE DATE',
+            selector: (row: BOOKSISSUED) => formatDate(row.due_date),
+        },
+
+        {
+            name: 'STATUS',
+            selector: (row: BOOKSISSUED) => row.status,
+        },
+    ];
+
+    const handlecoledit = async (row: any) => {
+        setModalContent({ title: row.title, notice: row.notice });
+        setmodalNotice(true);
+    };
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tables'));
     });
+
+    useEffect(() => {
+        if (Issue) {
+            const fetchBookIssue = async () => {
+                try {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        Authorization: localStorage.token,
+                    };
+                    const postData = {
+                        studentID: localStorage.studentID,
+                        schoolID: localStorage.schoolID,
+                        stdadm: localStorage.std_regno,
+                        schoolyearID: localStorage.schoolyearID,
+                    };
+                    const response = await axios.post(MY_ISSUED_BOOKS_URL, postData, {
+                        headers: headers,
+                    });
+
+                    console.log('issuedbooks', response);
+                    setdataBooksIssued(response.data.data.issuedbooks);
+                    setfilterBooksIssued(response.data.data.issuedbooks);
+                    // if (response.data.error) {
+                    //     // setUsererror(response.data.message);
+                    // } else {
+                    //     const profiledtls = response.data.data;
+                    //     console.log('profiledtls:', profiledtls);
+
+                    //     // setProfile(profiledtls);
+                    // }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            // Call the fetchData function when the component mounts
+            fetchBookIssue();
+        }
+    }, [Issue]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_BOOKS_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('books', response);
+                setdataBooks(response.data.data.books);
+                setfilterBooks(response.data.data.books);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const [tabs, setTabs] = useState<string[]>([]);
@@ -158,9 +207,7 @@ const Tables = () => {
             setTabs([...tabs, name]);
         }
     };
-    const [modal10, setModal10] = useState(false);
-    const [Books, setBooks] = useState(true);
-    const [Issue, setIssue] = useState(false);
+
     const handleBooks = () => {
         setBooks(false);
         setIssue(true);
@@ -169,6 +216,21 @@ const Tables = () => {
         setBooks(true);
         setIssue(false);
     };
+    const tableHeaderstyle = {
+        headCells: {
+            style: {
+                fontWeight: 'bold',
+                fontSize: '14px',
+                backgroundColor: '#ccc',
+            },
+        },
+    };
+
+    function formatDate(date: any): string {
+        if (!date || typeof date !== 'string') return 'Invalid Date';
+        const formattedDate = moment(date).format('DD:MM:YYYY'); // Using Moment.js to format the date
+        return formattedDate;
+    }
     return (
         <div className="space-y-6">
             {/* Simple */}
@@ -187,92 +249,27 @@ const Tables = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive mb-5">
-                            <table className="table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>SL.NO</th>
-                                        <th>BOOK NAME</th>
-                                        <th>AUTHOR</th>
-                                        <th>SUBJECT CODE</th>
-                                        <th>QUANTITY</th>
-
-                                        <th>RACK NO</th>
-
-                                        <th>STATUS</th>
-                                        <th className="text-center">ACTION</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tableData.map((data) => {
-                                        return (
-                                            <tr key={data.id}>
-                                                <td>{data.id}</td>
-                                                <td>
-                                                    <div className="whitespace-nowrap">{data.book}</div>
-                                                </td>
-                                                <td>{data.author}</td>
-                                                <td>{data.subjectCode}</td>
-                                                <td>{data.quantity}</td>
-                                                <td>{data.rack}</td>
-
-                                                <td>
-                                                    <span className="bg-gray-200 text-blue-800 p-1 rounded-md">Available</span>
-                                                </td>
-                                                <td>
-                                                    <div>
-                                                        <button onClick={() => setModal10(true)} type="button" className="border border-blue-400 rounded-md">
-                                                            <IconEye />
-                                                        </button>
-                                                        <Transition appear show={modal10} as={Fragment}>
-                                                            <Dialog as="div" open={modal10} onClose={() => setModal10(false)}>
-                                                                <Transition.Child
-                                                                    as={Fragment}
-                                                                    enter="ease-out duration-300"
-                                                                    enterFrom="opacity-0"
-                                                                    enterTo="opacity-100"
-                                                                    leave="ease-in duration-200"
-                                                                    leaveFrom="opacity-100"
-                                                                    leaveTo="opacity-0"
-                                                                >
-                                                                    <div className="fixed inset-0" />
-                                                                </Transition.Child>
-                                                                <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-black/10">
-                                                                    <div className="flex min-h-screen items-start justify-center px-4">
-                                                                        <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
-                                                                            <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
-                                                                                <h5 className="text-lg font-bold">Book School Hotel</h5>
-                                                                                <button onClick={() => setModal10(false)} type="button" className="text-white-dark hover:text-dark">
-                                                                                    <IconX />
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="p-5 ">
-                                                                                <div className="font-bold flex items-center justify-center">School Hostel</div>
-                                                                                <div className="font-bold flex items-center justify-center">Combine Hostel</div>
-                                                                                <div className="font-bold flex items-center justify-center">Balaji Hostel</div>
-                                                                            </div>
-                                                                            <div className="mb-5 mr-0 ml-6 flex items-center ">
-                                                                                <div className="max-w-[19rem] w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-white-light dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                                                                                    <div className="py-7 px-6">
-                                                                                        <h5 className="text-[#3b3f5c] text-xl font-semibold mb-4 dark:text-white-light border-b">Simple</h5>
-                                                                                        <p className="text-white-dark">No Of Rooms:30</p>
-                                                                                        <p className="text-white-dark">Max. Members per Rooms:5</p>
-                                                                                        <p className="text-white-dark">Members filled:38</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </Dialog.Panel>
-                                                                    </div>
-                                                                </div>
-                                                            </Dialog>
-                                                        </Transition>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                        <div className="mb-5">
+                            <div className="space-y-6">
+                                {/* Skin: Striped  */}
+                                <div className="panel">
+                                    <div className="datatables">
+                                        <DataTable
+                                            customStyles={tableHeaderstyle}
+                                            columns={columnbooks}
+                                            data={filterBooks}
+                                            pagination
+                                            fixedHeader
+                                            highlightOnHover
+                                            subHeader
+                                            striped
+                                            subHeaderComponent={
+                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </>
@@ -289,36 +286,99 @@ const Tables = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive mb-5">
-                            <table className="table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>SL.NO</th>
-                                        <th>ISSUED BOOK</th>
-                                        <th>SERIAL NO</th>
-                                        <th>DUE DATE</th>
-
-                                        <th>STATUS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tableData1.map((data) => {
-                                        return (
-                                            <>
-                                                <tr>
-                                                    <td colSpan={5} className="font-bold text-base text-center m-2 bg-white ">
-                                                        <h2 className="flex justify-center items-center">No Data Available In Table</h2>
-                                                    </td>
-                                                </tr>
-                                            </>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                        <div className="mb-5">
+                            <div className="space-y-6">
+                                {/* Skin: Striped  */}
+                                <div className="panel">
+                                    <div className="datatables">
+                                        <DataTable
+                                            customStyles={tableHeaderstyle}
+                                            columns={columnbooksissued}
+                                            data={filterBooksIssued}
+                                            pagination
+                                            fixedHeader
+                                            highlightOnHover
+                                            subHeader
+                                            striped
+                                            subHeaderComponent={
+                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                            }
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </>
             ) : null}
+
+            <Transition appear show={modalNotice} as={Fragment}>
+                <Dialog as="div" open={modalNotice} onClose={() => setmodalNotice(false)} className="sm:w-[300px] w-[100px]">
+                    <Transition.Child as={Fragment} enter="ease-out duration-10" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-black/20">
+                        <div className="flex min-h-screen items-start justify-center px-4">
+                            <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
+                                    <h5 className="text-md font-bold">{/* {Notices && modalContent.title} {Events && 'Event Details'} {Holidays && 'Holiday Details'} */}Book - English</h5>
+                                    <button onClick={() => setmodalNotice(false)} type="button" className="text-white-dark hover:text-dark">
+                                        <IconX />
+                                    </button>
+                                </div>
+
+                                <div className="flex items-center justify-between  bg-white px-5 py-3 dark:bg-white border-b">
+                                    <h5 className="text-sm ">
+                                        {/* {Notices && modalContent.notice} */}
+                                        {Books && (
+                                            <>
+                                                <div className="panel lg:col-span-2 xl:col-span-3">
+                                                    <div className="mb-5">
+                                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                                            <table className="whitespace-nowrap">
+                                                                <thead>
+                                                                    <tr></tr>
+                                                                </thead>
+                                                                <tbody className="dark:text-white-dark border-1.5 w-screen">
+                                                                    <tr>
+                                                                        <td className="w-screen">Book Name</td>
+                                                                        <td className="w-[800px]">:</td>
+                                                                        <td>Ramesh</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Description</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>Rani</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Subject</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>21-11-2023</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Serial No</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </h5>
+                                </div>
+                                <div className="flex justify-end items-end m-4 ">
+                                    <button className="p-2 bg-gray-300 rounded-md" onClick={() => setmodalNotice(false)}>
+                                        Close
+                                    </button>
+                                </div>
+                            </Dialog.Panel>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </div>
     );
 };

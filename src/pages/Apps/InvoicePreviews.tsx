@@ -12,6 +12,8 @@ import { useReactToPrint } from 'react-to-print';
 import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
 
+import jsPDF from 'jspdf';
+
 const Preview = () => {
     const dispatch = useDispatch();
     useEffect(() => {
@@ -80,6 +82,26 @@ const Preview = () => {
             console.error('Input element is null.');
         }
     };
+    const downloadPDF = () => {
+        const input = document.getElementById('table-container');
+        if (!input) {
+            console.error("Element with ID 'table-container' not found.");
+            return;
+        }
+
+        html2canvas(input, { scale: 2 }).then((canvas) => {
+            const pdf = new jsPDF('p', 'mm', 'a4'); // Changed document size to A4
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 210; // A4 width in mm
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            // Ensure canvas size is adjusted to fit the entire table
+            const pdfHeight = (imgHeight * 210) / imgWidth;
+            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, pdfHeight); // Adjusted image placement and size for A4
+
+            pdf.save('table.pdf');
+        });
+    };
 
     return (
         <div>
@@ -89,89 +111,73 @@ const Preview = () => {
                     Print
                 </button>
 
-                <button type="button" onClick={downloadPdf} className="btn btn-success gap-2">
+                <button type="button" onClick={downloadPDF} className="btn btn-success gap-2">
                     <IconDownload />
                     Download PDF
                 </button>
-
-                <Link to="/invoice" className="btn btn-secondary gap-2">
-                    Invoice List
-                </Link>
             </div>
+            <div className="text-2xl font-semibold uppercase mb-4">Invoice</div>
             <div className="panel" ref={pdfref}>
-                <div className="flex justify-between flex-wrap gap-4 px-4">
-                    <div className="text-2xl font-semibold uppercase">Invoice</div>
+                <div className="flex justify-between flex-wrap gap-4 px-4"></div>
+                <div className="flex justify-between">
                     <div className="shrink-0">
-                        <img src="/assets/images/crown-logo.png" alt="img" className=" w-30 h-12   ltr:ml-auto rtl:mr-auto" />
+                        <img src={localStorage.school_logo} alt="img" className=" w-30 h-12   ltr:ml-auto rtl:mr-auto" />
                     </div>
-                </div>
-                <div className="ltr:text-right rtl:text-left px-4">
                     <div className="space-y-1 mt-6 text-white-dark">
                         <div>Date:{local}</div>
                     </div>
                 </div>
 
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
-                <div className="flex justify-between lg:flex-row flex-col gap-6 flex-wrap">
-                    <div className="flex-1">
-                        <div className="space-y-1 text-white-dark">
-                            <div>
-                                School: <span className="">DEMO</span>
-                            </div>
 
-                            <div>
-                                Address:
-                                <span>
-                                    <div>GKR Towers,Guntur,Andhra </div>
-                                    <div>Pradesh:522034</div>
-                                    <div></div>
-                                </span>
-                            </div>
-                            <div>
-                                Phone No: <span className="">9160797103</span>
-                            </div>
-                            <div>
-                                Email: <span className="">abc@gmail.com</span>
-                            </div>
+                <div className="flex justify-between mt-3">
+                    <div className="flex flex-col">
+                        <div>
+                            <strong>School</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: LFselearn
+                        </div>
+                        <div className="relative">
+                            <strong>Address</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
+                            <span className="">Affiliated to the council </span>
+                        </div>
+                        <div>
+                            <strong>Phone No</strong>&nbsp;&nbsp;&nbsp;: 1234567543
+                        </div>
+                        <div>
+                            <strong>Email</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: A
                         </div>
                     </div>
-                    <div className="flex justify-between sm:flex-row flex-col gap-6 lg:w-2/3">
-                        <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Name :</div>
-                                <div>Rakesh</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Class:</div>
-                                <div>VII</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Section:</div>
-                                <div>A</div>
-                            </div>
+                    <div className="flex flex-col">
+                        <div>
+                            <strong> Name</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Michael Doe
                         </div>
-                        <div className="xl:1/3 lg:w-2/5 sm:w-1/2">
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark ">Invoice :</div>
-                                <div className="whitespace-nowrap">#403862</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Status:</div>
-                                <div className=" border border-red-500 bg-red-300 p-2 py-0.5 rounded-md">Not Paid</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Roll No:</div>
-                                <div>8</div>
-                            </div>
-                            <div className="flex items-center w-full justify-between mb-2">
-                                <div className="text-white-dark">Registration No:</div>
-                                <div>56</div>
-                            </div>
+                        <div>
+                            <strong>Class</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Emily Doe
+                        </div>
+                        <div>
+                            <strong>Section</strong>&nbsp;&nbsp;&nbsp;&nbsp;: john.doe@example.com
+                        </div>
+                    </div>
+                    <div className="flex flex-col">
+                        <div>
+                            <strong>Date</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {local}
+                        </div>
+                        <div>
+                            <strong>Invoice</strong>&nbsp;&nbsp;&nbsp;: 54321
+                        </div>
+                        <div>
+                            <strong>Status</strong>&nbsp;&nbsp;&nbsp;&nbsp;: paid
+                        </div>
+                        <div>
+                            <strong>Roll No</strong>&nbsp;&nbsp;&nbsp;: 12
+                        </div>
+                        <div>
+                            <strong>Reg No</strong>&nbsp;&nbsp;&nbsp;: 123-456
                         </div>
                     </div>
                 </div>
+
                 <div className="table-responsive mt-6">
-                    <table className="table-striped">
+                    <table className="">
                         <thead>
                             <tr>
                                 {columns.map((column) => {
@@ -202,20 +208,28 @@ const Preview = () => {
                     <div></div>
                     <div className="ltr:text-right rtl:text-left space-y-2">
                         <div className="flex items-center">
-                            <div className="flex-1">Subtotal</div>
-                            <div className="w-[37%]">$3255</div>
+                            <div className="flex-1">School Fee</div>
+                            <div className="w-[37%]">₹67577</div>
                         </div>
                         <div className="flex items-center">
-                            <div className="flex-1">Tax</div>
-                            <div className="w-[37%]">$700</div>
-                        </div>
-                        <div className="flex items-center">
-                            <div className="flex-1">Shipping Rate</div>
-                            <div className="w-[37%]">$0</div>
+                            <div className="flex-1">Sub Total</div>
+                            <div className="w-[37%]">₹67577</div>
                         </div>
                         <div className="flex items-center">
                             <div className="flex-1">Discount</div>
-                            <div className="w-[37%]">$10</div>
+                            <div className="w-[37%]">₹67577</div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="flex-1">Amount After Discount</div>
+                            <div className="w-[37%]">₹67577</div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="flex-1">Paid Amount</div>
+                            <div className="w-[37%]">₹67577</div>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="flex-1">Due Amount</div>
+                            <div className="w-[37%]">₹67577</div>
                         </div>
                         <div className="flex items-center font-semibold text-lg">
                             <div className="flex-1">Grand Total</div>

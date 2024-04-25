@@ -45,9 +45,8 @@ const LoginBoxed = () => {
         password: '',
     });
 
-
     // Event handler for form field changes
-    const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const handleInputChange = (e: { target: { name: any; value: any } }) => {
         const { name, value } = e.target;
         console.log(name, value);
         // Update the form data with the new value
@@ -62,7 +61,7 @@ const LoginBoxed = () => {
     };
 
     // Form submission handler
-    const submitForm = (e: { preventDefault: () => void; }) => {
+    const submitForm = (e: { preventDefault: () => void }) => {
         e.preventDefault();
         // Validate the form data
         const username = formData.username.trim();
@@ -76,7 +75,6 @@ const LoginBoxed = () => {
         } else if (!username && password) {
             setUsererror('username is required');
         } else if (username && password) {
-
             if (username.length < 2) {
                 setUsererror('username is Invalid');
             } else if (password.length < 5) {
@@ -89,7 +87,6 @@ const LoginBoxed = () => {
                 // Perform form submission logic here
                 const headers = {
                     'Content-Type': 'application/json',
-                    Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJudG9rZW4iOiJ0b2tlbnN1cmVzaCIsImlhdCI6MTcxMDU3MTEyOH0.qJnWuOTxTlyP6ovtwtNVzKHN9woUrbIh8wngTEyC2nE',
                 };
                 // const headers = {
                 //     'Content-Type': 'application/json',
@@ -126,35 +123,20 @@ const LoginBoxed = () => {
                         } else {
                             const studentdtls = response.data.data;
                             console.log('studentdtls:', studentdtls);
-                            // console.log('Form submitted:', formData); 
-
-
+                            // console.log('Form submitted:', formData);
 
                             // localStorage.setItem("token", response.data.token);
                             dispatch(setStudentLoginDtls(studentdtls));
                             // navigate('/dashboard');
-
                         }
                     })
                     .catch((error) => {
                         console.log('Error is ', error.response.data);
                         setPasserror(error.response.data.message);
                     });
-
-
-
             }
-
         }
-
-
-    }
-
-
-
-
-
-
+    };
 
     return (
         <div>
@@ -163,11 +145,9 @@ const LoginBoxed = () => {
                     <div className="mb-5">
                         <img src={localStorage.school_logo} className="mx-auto w-12 sm:w-16 md:w-24 lg:w-32 xl:w-40" alt="Image Description" />
 
-
                         <p className="text-base font-bold leading-normal text-white-dark">{school_name}</p>
                     </div>
                     <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
-
                         <div>
                             <label htmlFor="username">Username</label>
                             <div className="relative text-white-dark">
@@ -182,7 +162,6 @@ const LoginBoxed = () => {
                                     onChange={handleInputChange}
                                     pattern="\S+$"
                                 />
-
 
                                 <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                     <IconMail fill={true} />
@@ -210,18 +189,12 @@ const LoginBoxed = () => {
                             </div>
                         </div>
 
-
-
                         <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                             Sign in
                         </button>
                     </form>
-
-
-
                 </div>
             </div>
-
 
             <ToastContainer position="top-center" autoClose={2000} />
         </div>

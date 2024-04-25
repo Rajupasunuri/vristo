@@ -9,6 +9,8 @@ import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { MY_DASHBOARD_URL } from './query';
+import axios from 'axios';
 
 const rowData = [
     {
@@ -532,6 +534,39 @@ const Export = () => {
     useEffect(() => {
         setPage(1);
     }, [pageSize]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const from = (page - 1) * pageSize;

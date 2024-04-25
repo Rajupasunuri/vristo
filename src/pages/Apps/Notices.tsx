@@ -14,47 +14,291 @@ import IconSettings from '../../components/Icon/IconSettings';
 import Tippy from '@tippyjs/react';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import TalentShow from './TalentShow';
-import { DataTable } from 'mantine-datatable';
+import DataTable from 'react-data-table-component';
 import IconEye from '../../components/Icon/IconEye';
+import axios from 'axios';
+import { MY_DASHBOARD_URL, MY_EVENTS_URL, MY_HOLIDAYS_URL, MY_NOTICES_URL } from './query';
+import moment from 'moment';
+import { Transition, Dialog } from '@headlessui/react';
+import IconX from '../../components/Icon/IconX';
+import { FaEye } from 'react-icons/fa6';
 
-const rowData = [
-    {
-        id: 1,
-        examtitle: '7th Physics',
-        action: <button></button>,
-        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Date Expired</div>,
-        type: 'offline',
-        started: '+1 (821) 447-3782',
-        finished: '',
-        duration: '00:45',
-        subject: 'Physics',
-        examdate: '14 Oct 2023',
-        time: '10:30AM-10:50AM',
-        question: '15',
-        marks: '15',
-    },
-    {
-        id: 2,
-        action: <button></button>,
-        status: <div className="bg-red-300 pl-4 py-1 pr-1 rounded-md text-red-600">Not Started</div>,
-        type: 'offline',
-        started: '+1 (821) 447-3782',
-        finished: '',
-        examtitle: '7th Maths',
-        duration: '00:45',
-        subject: 'Maths',
-        examdate: '14 Oct 2023',
-        time: '10:51AM-11:11AM',
-        question: '10',
-        marks: '10',
-    },
-];
+interface RowData {
+    _id: any;
+    date: string;
+    title: string;
+    notice: string;
+}
+
+interface EventsData {
+    fdate: string;
+    tdate: string;
+    title: string;
+}
+
+interface HolidayData {
+    fdate: string;
+    tdate: string;
+    title: string;
+    holidayID: string;
+}
 
 const Tabs = () => {
+    const [Notices, setNotices] = useState(true);
+    const [Events, setEvents] = useState(false);
+    const [Holidays, setHolidays] = useState(false);
+    const [data, setData] = useState<RowData[]>([]);
+    const [filter, setFilter] = useState<RowData[]>([]);
+    const [datapast, setDatapast] = useState<RowData[]>([]);
+    const [filterpast, setFilterpast] = useState<RowData[]>([]);
+    const [dataEvents, setDataEvents] = useState<EventsData[]>([]);
+    const [filterEvents, setFilterEvents] = useState<EventsData[]>([]);
+    const [dataHoliday, setDataHoliday] = useState<HolidayData[]>([]);
+    const [filterHoliday, setFilterHoliday] = useState<HolidayData[]>([]);
+    const [modalNotice, setmodalNotice] = useState(false);
+    const [modalContent, setModalContent] = useState({ title: '', notice: '' });
+
+    const currentPage = 1; // Current page number
+    const rowsPerPage = 10;
+
+    useEffect(() => {
+        if (Events) {
+            const fetchEventsData = async () => {
+                try {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        Authorization: localStorage.token,
+                    };
+                    const postData = {
+                        studentID: localStorage.studentID,
+                        schoolID: localStorage.schoolID,
+                        sectionID: localStorage.sectionID,
+                        classesID: localStorage.classesID,
+                        schoolyearID: localStorage.schoolyearID,
+                    };
+                    const response = await axios.post(MY_EVENTS_URL, postData, {
+                        headers: headers,
+                    });
+
+                    console.log('Events', response);
+                    setDataEvents(response.data.data.events);
+                    setFilterEvents(response.data.data.events);
+                    // if (response.data.error) {
+                    //     // setUsererror(response.data.message);
+                    // } else {
+                    //     const profiledtls = response.data.data;
+                    //     console.log('profiledtls:', profiledtls);
+
+                    //     // setProfile(profiledtls);
+                    // }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            // Call the fetchData function when the component mounts
+            fetchEventsData();
+        }
+    }, [Events]);
+    useEffect(() => {
+        if (Holidays) {
+            const fetchHolidaysData = async () => {
+                try {
+                    const headers = {
+                        'Content-Type': 'application/json',
+                        Authorization: localStorage.token,
+                    };
+                    const postData = {
+                        studentID: localStorage.studentID,
+                        schoolID: localStorage.schoolID,
+                        sectionID: localStorage.sectionID,
+                        classesID: localStorage.classesID,
+                        schoolyearID: localStorage.schoolyearID,
+                    };
+                    const response = await axios.post(MY_HOLIDAYS_URL, postData, {
+                        headers: headers,
+                    });
+
+                    console.log('Holidays', response);
+                    setDataHoliday(response.data.data.holidays);
+                    setFilterHoliday(response.data.data.holidays);
+                    // if (response.data.error) {
+                    //     // setUsererror(response.data.message);
+                    // } else {
+                    //     const profiledtls = response.data.data;
+                    //     console.log('profiledtls:', profiledtls);
+
+                    //     // setProfile(profiledtls);
+                    // }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
+            };
+
+            // Call the fetchData function when the component mounts
+            fetchHolidaysData();
+        }
+    }, [Holidays]);
+    const columns: any = [
+        {
+            name: '#',
+            selector: (row: RowData, index: number) => index + 1,
+        },
+        {
+            name: 'DATE',
+            selector: (row: RowData) => formatDate(row.date),
+        },
+        {
+            name: 'TITLE',
+            selector: (row: RowData) => row.title,
+        },
+
+        {
+            name: 'Action',
+            cell: (row: any) => (
+                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
+                    <FaEye />
+                </button>
+            ),
+        },
+    ];
+    const columnspast: any = [
+        {
+            name: '#',
+            selector: (row: RowData, index: number) => index + 1,
+        },
+        {
+            name: 'DATE',
+            selector: (row: RowData) => formatDate(row.date),
+        },
+        {
+            name: 'TITLE',
+            selector: (row: RowData) => row.title,
+        },
+
+        {
+            name: 'Action',
+            cell: (row: any) => (
+                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
+                    <FaEye />
+                </button>
+            ),
+        },
+    ];
+    const columnsevents: any = [
+        {
+            name: '#',
+            selector: (row: EventsData, index: number) => index + 1,
+        },
+        {
+            name: 'DATE',
+            selector: (row: EventsData) => `${formatDate(row.fdate)} - ${formatDate(row.tdate)}`,
+        },
+        {
+            name: 'TITLE',
+            selector: (row: EventsData) => row.title,
+        },
+
+        {
+            name: 'DETAILS',
+            cell: (row: any) => (
+                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
+                    <FaEye />
+                </button>
+            ),
+        },
+    ];
+
+    const columnsholiday: any = [
+        {
+            name: '#',
+            selector: (row: HolidayData, index: number) => index + 1,
+        },
+        {
+            name: 'TITLE',
+            selector: (row: HolidayData) => row.title,
+        },
+        {
+            name: 'DATE',
+            selector: (row: HolidayData) => `${formatDate(row.fdate)} - ${formatDate(row.tdate)}`,
+        },
+
+        {
+            name: 'Action',
+            cell: (row: any) => (
+                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
+                    <FaEye />
+                </button>
+            ),
+        },
+    ];
+
+    function formatDate(date: any): string {
+        if (!date || typeof date !== 'string') return 'Invalid Date';
+        const formattedDate = moment(date).format('DD:MM:YYYY'); // Using Moment.js to format the date
+        return formattedDate;
+    }
+
+    const tableHeaderstyle = {
+        headCells: {
+            style: {
+                fontWeight: 'bold',
+                fontSize: '14px',
+                backgroundColor: '#ccc',
+            },
+        },
+    };
+
+    const handlecoledit = async (row: any) => {
+        setModalContent({ title: row.title, notice: row.notice });
+        setmodalNotice(true);
+    };
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    sectionID: localStorage.sectionID,
+                    classesID: localStorage.classesID,
+                    schoolyearID: localStorage.schoolyearID,
+                };
+                const response = await axios.post(MY_NOTICES_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('Notices', response.data.data.notices);
+                setData(response.data.data.notices);
+                setFilter(response.data.data.notices);
+                console.log('Past Notices', response.data.data.pastnotices);
+                setDatapast(response.data.data.pastnotices);
+                setFilterpast(response.data.data.pastnotices);
+
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
     const [tabs, setTabs] = useState<string[]>([]);
     const toggleCode = (name: string) => {
         if (tabs.includes(name)) {
@@ -72,7 +316,7 @@ const Tabs = () => {
     //Skin: Striped
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState(rowData);
+    const [initialRecords, setInitialRecords] = useState();
     const [recordsData, setRecordsData] = useState(initialRecords);
 
     const [search, setSearch] = useState('');
@@ -81,30 +325,24 @@ const Tabs = () => {
         setPage(1);
     }, [pageSize]);
 
-    useEffect(() => {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize;
-        setRecordsData([...initialRecords.slice(from, to)]);
-    }, [page, pageSize, initialRecords]);
+    // useEffect(() => {
+    //     const from = (page - 1) * pageSize;
+    //     const to = from + pageSize;
+    //     setRecordsData([...initialRecords.slice(from, to)]);
+    // }, [page, pageSize, initialRecords]);
 
-    useEffect(() => {
-        setInitialRecords(() => {
-            return rowData.filter((item) => {
-                return (
-                    item.id.toString().includes(search.toLowerCase()) ||
-                    //item.action.toLowerCase().includes(search.toLowerCase()) ||
-                    // item.status.toLowerCase().includes(search.toLowerCase()) ||
-                    item.type.toLowerCase().includes(search.toLowerCase()) ||
-                    item.started.toLowerCase().includes(search.toLowerCase())
-                );
-            });
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
-
-    const [Notices, setNotices] = useState(true);
-    const [Events, setEvents] = useState(false);
-    const [Holidays, setHolidays] = useState(false);
+    // useEffect(() => {
+    //     setInitialRecords(() => {
+    //         return rowData.filter((item) => {
+    //             return item.id.toString().includes(search.toLowerCase());
+    //             //item.action.toLowerCase().includes(search.toLowerCase()) ||
+    //             // item.status.toLowerCase().includes(search.toLowerCase()) ||
+    //             //item.type.toLowerCase().includes(search.toLowerCase()) ||
+    //             //item.started.toLowerCase().includes(search.toLowerCase())
+    //         });
+    //     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [search]);
 
     const handleNotices = () => {
         setNotices(true);
@@ -127,7 +365,6 @@ const Tabs = () => {
             <h2 className="font-bold text-lg">Announcements</h2>
             {Notices ? (
                 <>
-                    {' '}
                     <div className="space-y-8 pt-5">
                         <div className="panel" id="icon">
                             <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
@@ -174,42 +411,20 @@ const Tabs = () => {
                                             <div className="space-y-6">
                                                 {/* Skin: Striped  */}
                                                 <div className="panel">
-                                                    <div className="flex items-center justify-end mb-5">
-                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                                    </div>
                                                     <div className="datatables">
                                                         <DataTable
+                                                            customStyles={tableHeaderstyle}
+                                                            columns={columns}
+                                                            data={filter}
+                                                            pagination
+                                                            fixedHeader
+                                                            selectableRowsHighlight
+                                                            highlightOnHover
+                                                            subHeader
                                                             striped
-                                                            className="whitespace-nowrap table-striped"
-                                                            // records={recordsData}
-                                                            columns={[
-                                                                { accessor: 'id', title: '#' },
-                                                                { accessor: 'examtitle', title: 'DATE' },
-                                                                { accessor: 'subject', title: 'TITLE' },
-                                                                { accessor: 'examdate', title: 'NOTICE' },
-
-                                                                {
-                                                                    accessor: 'action',
-                                                                    title: 'ACTION',
-                                                                    render: () => (
-                                                                        <div className="flex items-center w-max mx-auto">
-                                                                            <Tippy content="Delete">
-                                                                                <button type="button" className="border border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                                    <IconEye />
-                                                                                </button>
-                                                                            </Tippy>
-                                                                        </div>
-                                                                    ),
-                                                                },
-                                                            ]}
-                                                            totalRecords={initialRecords.length}
-                                                            recordsPerPage={pageSize}
-                                                            page={page}
-                                                            onPageChange={(p) => setPage(p)}
-                                                            recordsPerPageOptions={PAGE_SIZES}
-                                                            onRecordsPerPageChange={setPageSize}
-                                                            minHeight={200}
-                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                            subHeaderComponent={
+                                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                            }
                                                         />
                                                     </div>
                                                 </div>
@@ -219,42 +434,19 @@ const Tabs = () => {
                                             <div className="space-y-6">
                                                 {/* Skin: Striped  */}
                                                 <div className="panel">
-                                                    <div className="flex items-center justify-end mb-5">
-                                                        <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                                    </div>
                                                     <div className="datatables">
                                                         <DataTable
+                                                            customStyles={tableHeaderstyle}
+                                                            columns={columnspast}
+                                                            data={filterpast}
+                                                            pagination
+                                                            fixedHeader
+                                                            highlightOnHover
+                                                            subHeader
                                                             striped
-                                                            className="whitespace-nowrap table-striped"
-                                                            records={recordsData}
-                                                            columns={[
-                                                                { accessor: 'id', title: '#' },
-                                                                { accessor: 'examtitle', title: 'DATE' },
-                                                                { accessor: 'subject', title: 'TITLE' },
-                                                                { accessor: 'examdate', title: 'NOTICE' },
-
-                                                                {
-                                                                    accessor: 'action',
-                                                                    title: 'ACTION',
-                                                                    render: () => (
-                                                                        <div className="flex  justify-start text-center pl-3 ">
-                                                                            <Tippy content="Delete" className="flex justify-start">
-                                                                                <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                                    <IconEye />
-                                                                                </button>
-                                                                            </Tippy>
-                                                                        </div>
-                                                                    ),
-                                                                },
-                                                            ]}
-                                                            totalRecords={initialRecords.length}
-                                                            recordsPerPage={pageSize}
-                                                            page={page}
-                                                            onPageChange={(p) => setPage(p)}
-                                                            recordsPerPageOptions={PAGE_SIZES}
-                                                            onRecordsPerPageChange={setPageSize}
-                                                            minHeight={200}
-                                                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                            subHeaderComponent={
+                                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                            }
                                                         />
                                                     </div>
                                                 </div>
@@ -292,42 +484,19 @@ const Tabs = () => {
                                 <div className="space-y-6">
                                     {/* Skin: Striped  */}
                                     <div className="panel">
-                                        <div className="flex items-center justify-end mb-5">
-                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        </div>
                                         <div className="datatables">
                                             <DataTable
+                                                customStyles={tableHeaderstyle}
+                                                columns={columnsholiday}
+                                                data={filterHoliday}
+                                                pagination
+                                                fixedHeader
+                                                highlightOnHover
+                                                subHeader
                                                 striped
-                                                className="whitespace-nowrap table-striped"
-                                                records={recordsData}
-                                                columns={[
-                                                    { accessor: 'id', title: '#' },
-
-                                                    { accessor: 'subject', title: 'TITLE' },
-                                                    { accessor: 'examdate', title: 'DATE' },
-
-                                                    {
-                                                        accessor: 'action',
-                                                        title: 'ACTION',
-                                                        render: () => (
-                                                            <div className="flex  justify-start text-center pl-3 ">
-                                                                <Tippy content="Delete" className="flex justify-start">
-                                                                    <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                        <IconEye />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </div>
-                                                        ),
-                                                    },
-                                                ]}
-                                                totalRecords={initialRecords.length}
-                                                recordsPerPage={pageSize}
-                                                page={page}
-                                                onPageChange={(p) => setPage(p)}
-                                                recordsPerPageOptions={PAGE_SIZES}
-                                                onRecordsPerPageChange={setPageSize}
-                                                minHeight={200}
-                                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                subHeaderComponent={
+                                                    <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                }
                                             />
                                         </div>
                                     </div>
@@ -360,41 +529,19 @@ const Tabs = () => {
                                 <div className="space-y-6">
                                     {/* Skin: Striped  */}
                                     <div className="panel">
-                                        <div className="flex items-center justify-end mb-5">
-                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        </div>
                                         <div className="datatables">
                                             <DataTable
+                                                customStyles={tableHeaderstyle}
+                                                columns={columnsevents}
+                                                data={filterEvents}
+                                                pagination
+                                                fixedHeader
+                                                highlightOnHover
+                                                subHeader
                                                 striped
-                                                className="whitespace-nowrap table-striped"
-                                                records={recordsData}
-                                                columns={[
-                                                    { accessor: 'id', title: '#' },
-                                                    { accessor: 'examtitle', title: 'DATE' },
-                                                    { accessor: 'subject', title: 'TITLE' },
-
-                                                    {
-                                                        accessor: 'action',
-                                                        title: 'DETAILS',
-                                                        render: () => (
-                                                            <div className="flex  justify-start text-center pl-3 ">
-                                                                <Tippy content="Delete" className="flex justify-start">
-                                                                    <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                        <IconEye />
-                                                                    </button>
-                                                                </Tippy>
-                                                            </div>
-                                                        ),
-                                                    },
-                                                ]}
-                                                totalRecords={initialRecords.length}
-                                                recordsPerPage={pageSize}
-                                                page={page}
-                                                onPageChange={(p) => setPage(p)}
-                                                recordsPerPageOptions={PAGE_SIZES}
-                                                onRecordsPerPageChange={setPageSize}
-                                                minHeight={200}
-                                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                                                subHeaderComponent={
+                                                    <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                                                }
                                             />
                                         </div>
                                     </div>
@@ -404,6 +551,113 @@ const Tabs = () => {
                     </div>
                 </>
             ) : null}
+
+            <Transition appear show={modalNotice} as={Fragment}>
+                <Dialog as="div" open={modalNotice} onClose={() => setmodalNotice(false)} className="sm:w-[300px] w-[100px]">
+                    <Transition.Child as={Fragment} enter="ease-out duration-10" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0" />
+                    </Transition.Child>
+                    <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-black/20">
+                        <div className="flex min-h-screen items-start justify-center px-4">
+                            <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
+                                    <h5 className="text-md font-bold">
+                                        {Notices && modalContent.title} {Events && 'Event Details'} {Holidays && 'Holiday Details'}
+                                    </h5>
+                                    <button onClick={() => setmodalNotice(false)} type="button" className="text-white-dark hover:text-dark">
+                                        <IconX />
+                                    </button>
+                                </div>
+
+                                <div className="flex items-center justify-between  bg-white px-5 py-3 dark:bg-white border-b">
+                                    <h5 className="text-sm ">
+                                        {Notices && modalContent.notice}
+                                        {Events && (
+                                            <>
+                                                <div className="panel lg:col-span-2 xl:col-span-3">
+                                                    <div className="mb-5">
+                                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                                            <table className="whitespace-nowrap">
+                                                                <thead>
+                                                                    <tr></tr>
+                                                                </thead>
+                                                                <tbody className="dark:text-white-dark border-1.5 w-screen">
+                                                                    <tr>
+                                                                        <td className="w-screen">Title</td>
+                                                                        <td className="w-[800px]">:</td>
+                                                                        <td>Ramesh</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Event Date</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>Rani</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Time</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>21-11-2023</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Details</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                        {Holidays && (
+                                            <>
+                                                <div className="panel lg:col-span-2 xl:col-span-3">
+                                                    <div className="mb-5">
+                                                        <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                                            <table className="whitespace-nowrap">
+                                                                <thead>
+                                                                    <tr></tr>
+                                                                </thead>
+                                                                <tbody className="dark:text-white-dark border-1.5 w-screen">
+                                                                    <tr>
+                                                                        <td className="w-screen">Title</td>
+                                                                        <td className="w-[800px]">:</td>
+                                                                        <td>Ramesh</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Event Date</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>Rani</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Time</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td>21-11-2023</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Details</td>
+                                                                        <td className="w-[10px]">:</td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </h5>
+                                </div>
+                                <div className="flex justify-end items-end m-4 ">
+                                    <button className="p-2 bg-gray-300 rounded-md" onClick={() => setmodalNotice(false)}>
+                                        Close
+                                    </button>
+                                </div>
+                            </Dialog.Panel>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
         </div>
     );
 };

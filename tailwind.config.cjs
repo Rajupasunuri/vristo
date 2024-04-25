@@ -98,3 +98,14 @@ module.exports = {
         rotateX,
     ],
 };
+module.exports.extend = {
+    ...module.exports.extend,
+    typography: ({ addBase }) => {
+        addBase({
+            '.custom-text-size': {
+                fontSize: '0.5rem',
+                // You can add more customizations here if needed
+            },
+        });
+    },
+};

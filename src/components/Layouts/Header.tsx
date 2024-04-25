@@ -40,23 +40,6 @@ import { Section } from '@mantine/core/lib/AppShell/HorizontalSection/Section/Se
 const Header = () => {
     const location = useLocation();
 
-
-
-
-
-
-
-
-    // let yes;
-    // let yes1;
-    // if (user !== null && isLoggedinuser) {
-    //     yes = user.email;
-    //     yes1 = user.name;
-    //     console.log('hvbjsdncnxjvxnv', user);
-
-    //     console.log(user.name);
-    // }
-
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
         if (selector) {
@@ -170,18 +153,6 @@ const Header = () => {
 
                     <div className="sm:flex-1 ltr:sm:ml-0 ltr:ml-auto sm:rtl:mr-0 rtl:mr-auto flex items-center space-x-1.5 lg:space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
                         <div className="sm:ltr:mr-auto sm:rtl:ml-auto" style={{ border: '1px solid red' }}></div>
-                        {/* <ul className="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
-                            <li>
-                                <Link to="/timetable" className="block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
-                                    <IconCalendar />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/homework" className="block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60">
-                                    <IconEdit />
-                                </Link>
-                            </li>
-                        </ul> */}
 
                         <div className="dropdown shrink-0">
                             <Dropdown

@@ -19,6 +19,8 @@ import IconEye from '../../components/Icon/IconEye';
 import IconPlus from '../../components/Icon/IconPlus';
 import EditorMce from './EditorMce';
 import Picker from './Picker';
+import { MY_DASHBOARD_URL } from './query';
+import axios from 'axios';
 
 const rowData = [
     {
@@ -70,6 +72,39 @@ const Tabs = () => {
     useEffect(() => {
         dispatch(setPageTitle('Skin Tables'));
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
 
     //Skin: Striped

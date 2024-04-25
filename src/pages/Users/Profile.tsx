@@ -1,71 +1,30 @@
-import { BrowserRouter as Router, Route, useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { IRootState } from '../../store';
-import Dropdown from '../../components/Dropdown';
-import { setPageTitle } from '../../store/themeConfigSlice';
-import { SetStateAction, useEffect, useState } from 'react';
+import { setPageTitle, setUpdateDtls } from '../../store/themeConfigSlice';
+import { useEffect, useState } from 'react';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
-import IconCoffee from '../../components/Icon/IconCoffee';
-import IconCalendar from '../../components/Icon/IconCalendar';
-import IconMapPin from '../../components/Icon/IconMapPin';
-import IconMail from '../../components/Icon/IconMail';
-import IconPhone from '../../components/Icon/IconPhone';
-import IconTwitter from '../../components/Icon/IconTwitter';
-import IconDribbble from '../../components/Icon/IconDribbble';
-import IconGithub from '../../components/Icon/IconGithub';
-import IconShoppingBag from '../../components/Icon/IconShoppingBag';
-import IconTag from '../../components/Icon/IconTag';
-import IconCreditCard from '../../components/Icon/IconCreditCard';
-import IconClock from '../../components/Icon/IconClock';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 //import CropImg from '../Pages/cropimg';
 //import CropImgUpload from '../Pages/cropimg';
 import axios from 'axios';
 //import {u=U_URL}
-import { MY_PROFILE_URL } from '../Apps/query';
-import Select from 'react-select';
-import swal from 'sweetalert';
-import { Alert, Row, Col, Card, CardBody, CardTitle, CardImg, CardText, CardSubtitle, Modal, Button, FormGroup, InputGroup, Label, Table } from 'reactstrap';
+import { MY_PROFILE_URL, MY_PROFILE_EDIT_URL } from '../Apps/query';
 //import UploadAvtar from './UploadAvtar';
-import Uploadfile from './cropimg';
 import IconLock from '../../components/Icon/IconLock';
 import Tippy from '@tippyjs/react';
-import state from 'sweetalert/typings/modules/state';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Center } from '@mantine/core';
 import { FaEnvelope, FaPhone, FaLock } from 'react-icons/fa6';
 
 const Profile = () => {
     const dispatch = useDispatch();
-    const dispatch1 = useDispatch();
+    const navigate = useNavigate();
+
     const isLoggedinuser = useSelector((state: IRootState) => state.themeConfig.isLoggedinuser);
 
-    const schoolyearID = useSelector((state: IRootState) => state.themeConfig.schoolyearID);
-    const studentID = useSelector((state: IRootState) => state.themeConfig.studentID);
-    //const school_address = useSelector((state: IRootState) => state.themeConfig.school_address);
-    const school_phone = useSelector((state: IRootState) => state.themeConfig.school_phone);
-    const school_email = useSelector((state: IRootState) => state.themeConfig.school_email);
-    const classesID = useSelector((state: IRootState) => state.themeConfig.classesID);
-    const sectionID = useSelector((state: IRootState) => state.themeConfig.sectionID);
-    const sectionname = useSelector((state: IRootState) => state.themeConfig.sectionname);
-    const classname = useSelector((state: IRootState) => state.themeConfig.classname);
-    const std_name = useSelector((state: IRootState) => state.themeConfig.std_name);
-    const std_email = useSelector((state: IRootState) => state.themeConfig.std_email);
-    const std_phone = useSelector((state: IRootState) => state.themeConfig.std_phone);
-    const std_roll = useSelector((state: IRootState) => state.themeConfig.std_roll);
-    const std_photo = useSelector((state: IRootState) => state.themeConfig.std_photo);
-    const std_dob = useSelector((state: IRootState) => state.themeConfig.std_dob);
-    const std_regno = useSelector((state: IRootState) => state.themeConfig.std_regno);
-
-    let name1;
-    let section1;
-    let phone1;
-    let state2;
-    let district1;
-    let country1;
-    let address1;
-    let email1;
+    const studentdtls = useSelector((state: IRootState) => state.themeConfig);
+    const studentdtls1 = useSelector((state: IRootState) => state.themeConfig.std_email);
 
     const [editMode, setEditMode] = useState(false);
     const [editId, setEditId] = useState('');
@@ -98,7 +57,33 @@ const Profile = () => {
     });
 
     const [img, setImg] = useState('');
-    const [name, setName] = useState('');
+
+    const [profile, setProfile] = useState({
+        name: '',
+        sex: '',
+        phone: '',
+        registerNO: '',
+        doa: '',
+        roll: '',
+        mother_email: '',
+        mother_name: '',
+        mother_phone: '',
+        mother_profession: '',
+        mother_qualification: '',
+        father_email: '',
+        father_name: '',
+        father_phone: '',
+        father_profession: '',
+        father_qualification: '',
+        guardian_email: '',
+        guardian_name: '',
+        guardian_phone: '',
+        guardian_profession: '',
+        guardian_qualification: '',
+        guardian_relationship: '',
+        secondary_phone: '',
+        dob: '',
+    });
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
     const [section, setSection] = useState('');
@@ -113,34 +98,20 @@ const Profile = () => {
     const [length, setlength] = useState('');
     const [passvalid, setpassvalid] = useState('');
     const [change, setchange] = useState(0);
-
-    const [fatherEmail, setfatherEmail] = useState('');
-    const [fatherName, setfatherName] = useState('');
-    const [fatherPhone, setfatherPhone] = useState('');
-    const [fatherProfess, setfatherProfess] = useState('');
-    const [fatherQuali, setfatherQuali] = useState('');
-    const [guardian_email, setguardian_email] = useState('');
-    const [guardian_name, setguardian_name] = useState('');
-    const [guardian_phone, setguardian_phone] = useState('');
-    const [guardian_profession, setguardian_profession] = useState('');
-    const [guardian_qualification, setguardian_qualification] = useState('');
-    const [guardian_relationship, setguardian_relationship] = useState('');
-    const [identification_mark, setidentification_mark] = useState('');
-    const [mother_email, setmother_email] = useState('');
-    const [mother_name, setmother_name] = useState('');
-    const [mother_phone, setmother_phone] = useState('');
-    const [mother_profession, setmother_profession] = useState('');
-    const [mother_qualification, setmother_qualification] = useState('');
-    const [phonestd, setphonestd] = useState('');
-    const [registerNO, setregisterNO] = useState('');
-    const [roll, setroll] = useState('');
-    const [secondary_phone, setsecondary_phone] = useState('');
-    const [sex, setsex] = useState('');
-    const [namestd, setnamestd] = useState('');
-    const [dob, setdob] = useState('');
-    const [doa, setdoa] = useState('');
+    const [pEditErr, setPEditErr] = useState('');
+    const [changedph, setchangedph] = useState('');
+    const [changedem, setchangedem] = useState('');
+    const [changedstate, setchangedstate] = useState('');
+    const [changeddist, setchangeddist] = useState('');
+    const [changedadd, setchangedadd] = useState('');
+    const [addresserr, setAddressErr] = useState('');
+    const [stateerr, setStateErr] = useState('');
+    const [emailerr, setEmailErr] = useState('');
+    const [phoneerr, setPhoneErr] = useState('');
+    const [disterr, setDistErr] = useState('');
 
     useEffect(() => {
+        dispatch(setPageTitle('Student Profile'));
         // Retrieve the image URL from local storage when the component mounts
         const storedImg = localStorage.getItem('profileImage');
 
@@ -148,150 +119,132 @@ const Profile = () => {
             setImg(storedImg);
         }
         if (isLoggedinuser) {
-            getProfile();
+        } else {
+            navigate('/');
+            console.log('isloggedin Profile', isLoggedinuser);
         }
+        // getProfile();
     });
-
-    const getProfile = async () => {
-        const headers = {
-            'Content-Type': 'application/json',
-            Authorization: localStorage.token,
-        };
-
-        const postData = {
-            studentID: localStorage.studentID,
-            schoolID: localStorage.schoolID,
-            parentID: localStorage.parentID,
-        };
-
-        axios
-            .post(MY_PROFILE_URL, postData, {
-                headers: headers,
-            })
-            .then((response) => {
-                console.log('Response is ', response.data);
-                // console.log(response.data.message);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    parentID: localStorage.parentID,
+                };
+                const response = await axios.post(MY_PROFILE_URL, postData, {
+                    headers: headers,
+                });
                 if (response.data.error) {
                     // setUsererror(response.data.message);
                 } else {
                     const profiledtls = response.data.data;
                     console.log('profiledtls:', profiledtls);
 
-                    setfatherEmail(response.data.data.father_email);
-                    setfatherName(response.data.data.father_name);
-                    setfatherPhone(response.data.data.father_phone);
-                    setfatherProfess(response.data.data.father_profession);
-                    setfatherQuali(response.data.data.father_qualification);
-                    setguardian_email(response.data.data.guardian_email);
-                    setguardian_name(response.data.data.guardian_name);
-                    setguardian_phone(response.data.data.guardian_phone);
-                    setguardian_profession(response.data.data.guardian_profession);
-                    setguardian_qualification(response.data.data.guardian_qualification);
-                    setguardian_relationship(response.data.data.guardian_relationship);
-                    setidentification_mark(response.data.data.identification_mark);
-                    setmother_email(response.data.data.mother_email);
-                    setmother_name(response.data.data.mother_name);
-                    setmother_phone(response.data.data.mother_phone);
-                    setmother_profession(response.data.data.mother_profession);
-                    setmother_qualification(response.data.data.mother_qualification);
-                    setphonestd(response.data.data.phone);
-                    setregisterNO(response.data.data.registerNO);
-                    setroll(response.data.data.roll);
-                    setsecondary_phone(response.data.data.secondary_phone);
-                    setsex(response.data.data.sex);
-                    setdob(response.data.data.dob);
-                    setdoa(response.data.data.doa);
-                    setnamestd(response.data.data.name);
+                    setFormData({ ...formData, district: profiledtls.district, phoneNumber: profiledtls.phone, state: profiledtls.state, address: profiledtls.address, email: profiledtls.email });
+
+                    setchangedph(profiledtls.phone);
+                    setchangedem(profiledtls.email);
+                    setchangedadd(profiledtls.address);
+                    setchangeddist(profiledtls.district);
+                    setchangedstate(profiledtls.state);
+
+                    dispatch(setUpdateDtls(profiledtls));
+
+                    setProfile(profiledtls);
+
                     // navigate('/dashboard');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+
+        return () => {
+            // Cancel the API request using Axios cancel token mechanism
+            // This prevents the component from updating state after unmounting
+            // This is optional but recommended to prevent memory leaks and avoid unnecessary network requests
+            const CancelToken = axios.CancelToken;
+            const source = CancelToken.source();
+            console.log('Canceling request: Component unmounted');
+            source.cancel('Component unmounted');
+        };
+    }, [profilebox, profileinfobox]);
+    console.log('profiledtls profile:', profile);
+
+    const handleSubmit = (e: { preventDefault: () => void }) => {
+        e.preventDefault();
+
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.token,
+        };
+
+        const postData = {
+            name: formData.name,
+            section: formData.section,
+            address: formData.address,
+            phoneNumber: formData.phoneNumber,
+            state: formData.state,
+            district: formData.district,
+            country: formData.country,
+            email: formData.email,
+            studentID: localStorage.studentID,
+            schoolID: localStorage.schoolID,
+            // parentID: localStorage.parentID,
+        };
+        const loginurl = MY_PROFILE_EDIT_URL;
+        axios
+            .post(loginurl, postData, {
+                headers: headers,
+            })
+            .then((response) => {
+                console.log('Response is----- ', response.data.message);
+                if (!response.data.error) {
+                    toast.success('Profile Edited Successfully');
+                    handleProfileinfo();
+                }
+                if (response.data.error) {
+                    var errors = response.data.message;
+                    errors.forEach((error: any) => {
+                        switch (error.path) {
+                            case 'address':
+                                setAddressErr(error.msg);
+                                break;
+                            case 'state':
+                                setStateErr(error.msg);
+                                break;
+                            case 'district':
+                                setDistErr(error.msg);
+                                break;
+                            case 'email':
+                                setEmailErr(error.msg);
+                                break;
+                            case 'phoneNumber':
+                                setPhoneErr(error.msg);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
                 }
             })
             .catch((error) => {
                 console.log('Error is ', error.response.data);
+                if (error.data.error) {
+                    setPEditErr(error.data.message);
+                }
             });
     };
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        const data = new FormData();
 
-        data.append('name', formData.name);
-        data.append('section', formData.section);
-        data.append('address', formData.address);
-        data.append('phoneNumber', formData.phoneNumber);
-        data.append('state', formData.state);
-        //data.append('image', formData.image);
-        data.append('district', formData.district);
-        data.append('country', formData.country);
-        data.append('email', formData.email);
-
-        try {
-            const l2 = localStorage.getItem('uId');
-            const res = await axios.post(`http://localhost:8081/upload?username=${l2}`, data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            setchange(Math.random());
-            console.log('Data uploaded successfully', res.data);
-            toast.success('Profile Udated Successfully');
-            setprofilebox(true);
-            setprofileinfobox(true);
-            setprofilerequestbox(false);
-            // window.location.reload();
-            // console.log('data', res.data.data[0]);
-            // const s1 = res.data.data[0].phone;
-            //localStorage.setItem('phone1', s1);
-
-            // localStorage.setItem('profileImage', res.data.data[0].image);
-            // localStorage.setItem('section', res.data.data[0].section);
-            // localStorage.setItem('name', res.data.data[0].name);
-            // localStorage.setItem('phone', res.data.data[0].phone);
-            // localStorage.setItem('state', res.data.data[0].state);
-            // localStorage.setItem('district', res.data.data[0].district);
-            // localStorage.setItem('country', res.data.data[0].country);
-            // localStorage.setItem('email', res.data.data[0].email);
-            // localStorage.setItem('address', res.data.data[0].address);
-
-            // setImg(res.data.data[0].image);
-            // setName(res.data.data[0].name);
-
-            // setSection(res.data.data[0].section);
-
-            // setState1(res.data.data[0].state);
-            // setDistrict(res.data.data[0].district);
-            // setCountry(res.data.data[0].country);
-            // setEmail(res.data.data[0].email);
-            // setAddress(res.data.data[0].address);
-            // setFormData({ ...formData, [e.target.name]: e.target.value });
-        } catch (err) {
-            console.error('Error uploading data:', err);
-        }
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const username = localStorage.getItem('uId');
-                const res2 = await axios.get(`http://localhost:8081/data?username=${username}`);
-                const jsonData = JSON.stringify(res2.data[0]);
-                console.log('fetch', jsonData);
-                // dispatch1(fetchUserSuccess(jsonData));
-                console.log('profile', res2.data);
-                setNew1(res2.data[0].name);
-                setAddress(res2.data[0].address);
-                setPhone(res2.data[0].phone);
-                setSection(res2.data[0].section);
-                setState1(res2.data[0].state);
-                setDistrict(res2.data[0].district);
-                setCountry(res2.data[0].country);
-                setEmail(res2.data[0].email);
-            } catch (err) {
-                console.error('Error getting data:', err);
-            }
-        };
-
-        fetchData();
-    }, [change]);
     const handleChange10 = (e: any) => {
         setData2({ ...data2, [e.target.name]: e.target.value });
         setmatch('');
@@ -306,87 +259,30 @@ const Profile = () => {
 
         //setCurr(e.target.value);
     };
-    console.log('password', data2.current);
-    const handleChange11 = (e: any) => {
-        setData2({ ...data2, [e.target.name]: e.target.value });
 
-        setNewpass(e.target.value);
-    };
-    const handleChange12 = (e: any) => {
-        setData2({ ...data2, [e.target.name]: e.target.value });
-
-        setConfirm(e.target.value);
-    };
     const handleChange = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        //if (e.target.name === 'phone') setchangedph('');
+        if (e.target.name === 'email') {
+            setchangedem('');
+            setEmailErr('');
         }
-        setNew1(e.target.value);
-    };
-    const handleChange1 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'phoneNumber') {
+            setchangedph('');
+            setPhoneErr('');
         }
-
-        setAddress(e.target.value);
-    };
-    const handleChange2 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'address') {
+            setchangedadd('');
+            setAddressErr('');
         }
-
-        setPhone(e.target.value);
-    };
-    const handleChange3 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'state') {
+            setchangedstate('');
+            setStateErr('');
         }
-
-        setSection(e.target.value);
-    };
-    const handleChange4 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        if (e.target.name === 'district') {
+            setchangeddist('');
+            setDistErr('');
         }
-
-        setState1(e.target.value);
-    };
-    const handleChange5 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
-        }
-
-        setDistrict(e.target.value);
-    };
-    const handleChange6 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
-        }
-
-        setCountry(e.target.value);
-    };
-    const handleChange7 = (e: any) => {
-        if (e.target.name === 'image') {
-            setFormData({ ...formData, image: e.target.files[0] });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
-        }
-
-        setEmail(e.target.value);
     };
 
     const handlePassCh = async (e: any) => {
@@ -453,10 +349,6 @@ const Profile = () => {
         setPasssucc(false);
     };
 
-    useEffect(() => {
-        dispatch(setPageTitle('Profile'));
-    });
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     return (
         <div>
             <h2 className="font-bold text-lg">Student Profile</h2>
@@ -491,26 +383,26 @@ const Profile = () => {
                                     imgh={250}
                                 ></Uploadfile> */}
                                             {/* <CropImgUpload imgsrc="path/to/image.jpg" className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgcropw={1} imgcroph={1} imgw={250} imgh={250} /> */}
-                                            <p className="font-semibold text-primary  text-md">{std_name}</p>
+                                            <p className="font-semibold text-primary  text-md">{studentdtls.std_name}</p>
                                         </div>
                                         <ul className="mt-5 flex flex-col max-w-[160px] m-auto space-y-4 font-semibold text-white-dark">
-                                            <li className="flex items-center gap-2">Class: {classname}</li>
-                                            <li className="flex items-center gap-2">Section: {sectionname}</li>
-                                            <li className="flex items-center gap-2">Section-ID: {sectionID}</li>
-                                            <li className="flex items-center gap-2">Roll No: {std_roll}</li>
-                                            <li className="flex items-center gap-2">Registration-ID: {std_regno}</li>
+                                            <li className="flex items-center gap-2">Class: {studentdtls.classname}</li>
+                                            <li className="flex items-center gap-2">Section: {studentdtls.sectionname}</li>
+                                            <li className="flex items-center gap-2">Section-ID: {studentdtls.sectionID}</li>
+                                            <li className="flex items-center gap-2">Roll No: {studentdtls.std_roll}</li>
+                                            <li className="flex items-center gap-2">Registration-ID: {studentdtls.std_regno}</li>
 
                                             <li className="flex items-center gap-2">
                                                 <FaPhone />
                                                 <span className="whitespace-nowrap" dir="ltr">
-                                                    {std_phone}
+                                                    {studentdtls.std_phone}
                                                 </span>
                                             </li>
                                             <li className="flex items-center gap-2">
                                                 <FaEnvelope />
 
-                                                <span className="whitespace-nowrap" dir="ltr">
-                                                    {std_email}
+                                                <span className="md:whitespace-nowrap whitespace-wrap" dir="ltr">
+                                                    {studentdtls.std_email}
                                                 </span>
                                             </li>
                                             <li className="flex items-center  gap-2">
@@ -545,28 +437,28 @@ const Profile = () => {
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Student Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{namestd}</td>
+                                                        <td>{profile.name}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Date of Birth</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{dob}</td>
+                                                        <td>{profile.dob}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Gender</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{sex}</td>
+                                                        <td>{profile.sex}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Admission No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{profile.registerNO}</td>
                                                     </tr>
 
                                                     <tr>
                                                         <td>Date of Admission</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{doa}</td>
+                                                        <td>{profile.doa}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Class</td>
@@ -581,52 +473,52 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Roll No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{roll}</td>
+                                                        <td>{profile.roll}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{phonestd}</td>
+                                                        <td>{profile.phone}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Secondary Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{secondary_phone}</td>
+                                                        <td>{profile.secondary_phone}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Aadhar No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Student Aadhar Photo</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Class of Admission</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Tongue</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Nationality</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Category</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Religion</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{country1}</td>
+                                                        <td></td>
                                                     </tr>
                                                     <tr>
                                                         <td>Caste</td>
@@ -682,17 +574,17 @@ const Profile = () => {
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Father Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{fatherName}</td>
+                                                        <td>{profile.father_name}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father Profession</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{fatherProfess}</td>
+                                                        <td>{profile.father_profession}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{fatherPhone}</td>
+                                                        <td>{profile.father_phone}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father Aadhar No</td>
@@ -703,12 +595,12 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Father Qualification</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{fatherQuali}</td>
+                                                        <td>{profile.father_qualification}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Father Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{fatherEmail}</td>
+                                                        <td>{profile.father_email}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Annual Income</td>
@@ -744,17 +636,17 @@ const Profile = () => {
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Mother Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{mother_name}</td>
+                                                        <td>{profile.mother_name}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Profession</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{mother_profession}</td>
+                                                        <td>{profile.mother_profession}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Phone No</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{mother_phone}</td>
+                                                        <td>{profile.mother_phone}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Aadhar No</td>
@@ -765,12 +657,12 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Mother Qualification</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{mother_qualification}</td>
+                                                        <td>{profile.mother_qualification}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{mother_email}</td>
+                                                        <td>{profile.mother_email}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Mother Office Address</td>
@@ -806,17 +698,17 @@ const Profile = () => {
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Guardian Name</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{guardian_name}</td>
+                                                        <td>{profile.guardian_name}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Relationship</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{profile.guardian_relationship}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Phone </td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{guardian_phone}</td>
+                                                        <td>{profile.guardian_phone}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Aadhar No</td>
@@ -827,12 +719,12 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Guardian Qualification</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{guardian_qualification}</td>
+                                                        <td>{profile.guardian_qualification}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Guardian Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td>{guardian_email}</td>
+                                                        <td>{profile.guardian_email}</td>
                                                     </tr>
 
                                                     <tr>
@@ -929,8 +821,9 @@ const Profile = () => {
                             </ul>
                         </div>
                         <div className="panel lg:col-span-2 xl:col-span-3">
-                            <div className="mb-5">
+                            <div className="mb-5 flex space-x-20">
                                 <h5 className="font-semibold text-lg dark:text-white-light">Edit Profile</h5>
+                                <p className="font-semibold text-lg dark:text-white-light text-red-500">{pEditErr}</p>
                             </div>
                             <div>
                                 <form className="   p-4 mb-5  " onSubmit={handleSubmit}>
@@ -950,16 +843,8 @@ const Profile = () => {
                                         </div>
                                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                             <div>
-                                                <label htmlFor="name">Full Name</label>
-                                                <input id="name" type="text" placeholder="" name="name" value={new1} onChange={handleChange} className="form-input" readOnly={false} />
-                                            </div>
-                                            <div>
-                                                <label htmlFor="section">Section</label>
-                                                <input id="section" type="text" placeholder="" name="section" value={section} onChange={handleChange3} className="form-input" />
-                                            </div>
-                                            <div>
                                                 <label htmlFor="country">Country</label>
-                                                <select defaultValue="India" id="country" name="country" value={country} onChange={handleChange6} className="form-select text-white-dark">
+                                                <select defaultValue="India" id="country" name="country" value={formData.country} onChange={handleChange} className="form-select text-white-dark">
                                                     <option value="All Countries">All Countries</option>
                                                     <option value="United States">United States</option>
                                                     <option value="India">India</option>
@@ -972,23 +857,73 @@ const Profile = () => {
                                             </div>
                                             <div>
                                                 <label htmlFor="address">Address</label>
-                                                <input id="address" type="text-space" placeholder="" name="address" value={address} onChange={handleChange1} className="form-input" />
+                                                <input
+                                                    id="address"
+                                                    type="text-space"
+                                                    placeholder=""
+                                                    name="address"
+                                                    value={formData.address || changedadd}
+                                                    onChange={handleChange}
+                                                    className="form-input"
+                                                />
+                                                {addresserr && <span className="text-red-500">{addresserr}</span>}
                                             </div>
+
                                             <div>
                                                 <label htmlFor="district">District/City</label>
-                                                <input id="district" type="text" placeholder="" name="district" value={district} onChange={handleChange5} className="form-input" />
+                                                <input
+                                                    id="district"
+                                                    type="text"
+                                                    placeholder=""
+                                                    name="district"
+                                                    value={formData.district || changeddist}
+                                                    onChange={handleChange}
+                                                    className="form-input"
+                                                    required
+                                                />
+                                                {disterr && <span className="text-red-500">{disterr}</span>}
                                             </div>
                                             <div>
                                                 <label htmlFor="state">State</label>
-                                                <input id="state" type="text" placeholder="" name="state" value={state1} onChange={handleChange4} className="form-input" />
+                                                <input
+                                                    id="state"
+                                                    type="text"
+                                                    placeholder=""
+                                                    name="state"
+                                                    value={formData.state || changedstate}
+                                                    onChange={handleChange}
+                                                    className="form-input"
+                                                    required
+                                                />
+                                                {stateerr && <span className="text-red-500">{stateerr}</span>}
                                             </div>
                                             <div>
                                                 <label htmlFor="email">Email</label>
-                                                <input id="email" type="email" placeholder="" value={email} name="email" onChange={handleChange7} className="form-input" />
+                                                <input
+                                                    id="email"
+                                                    type="email"
+                                                    placeholder=""
+                                                    required
+                                                    value={formData.email || changedem}
+                                                    name="email"
+                                                    onChange={handleChange}
+                                                    className="form-input"
+                                                />
+                                                {emailerr && <span className="text-red-500">{emailerr}</span>}
                                             </div>
                                             <div>
                                                 <label htmlFor="phone">Phone</label>
-                                                <input id="phone" type="text" placeholder="" name="phoneNumber" value={phone} onChange={handleChange2} className="form-input" />
+                                                <input
+                                                    id="phone"
+                                                    required
+                                                    type="text"
+                                                    placeholder=""
+                                                    name="phoneNumber"
+                                                    value={formData.phoneNumber || changedph}
+                                                    onChange={handleChange}
+                                                    className="form-input"
+                                                />
+                                                {phoneerr && <span className="text-red-500">{phoneerr}</span>}
                                             </div>
                                             {/* <div>
                                                 <label className="inline-flex cursor-pointer">

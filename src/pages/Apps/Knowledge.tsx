@@ -26,6 +26,8 @@ import ModalK2 from './Modal2';
 import ModalK3 from './Modal3';
 import IconGrid from '../../components/Icon/IconGrid';
 import IconList from '../../components/Icon/IconList';
+import axios from 'axios';
+import { MY_DASHBOARD_URL } from './query';
 //import {FaYoutube} from 'react-icons';
 
 const tableData = [
@@ -72,6 +74,39 @@ const Tabs = () => {
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                };
+                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('dashboard', response);
+                // if (response.data.error) {
+                //     // setUsererror(response.data.message);
+                // } else {
+                //     const profiledtls = response.data.data;
+                //     console.log('profiledtls:', profiledtls);
+
+                //     // setProfile(profiledtls);
+                // }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, []);
     const [tabs, setTabs] = useState<string[]>([]);
     const toggleCode = (name: string) => {
         if (tabs.includes(name)) {
