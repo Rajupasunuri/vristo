@@ -5,7 +5,7 @@ import Tippy from '@tippyjs/react';
 import axios from 'axios';
 import { MY_INVOICES_URL, MY_INVOICES_YEARS_URL } from './query';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useDispatch } from 'react-redux';
@@ -22,6 +22,7 @@ const List = () => {
     const [invoiceData, setInvoiceData] = useState<any>([]);
     const [inoviceIdV, setInvoiceIDV] = useState('');
     const [invoLoader, setInvoLoader] = useState(false);
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -65,7 +66,7 @@ const List = () => {
                     schoolID: localStorage.schoolID,
                     schoolyearID: schoolyearID,
 
-                    admno: localStorage.std_regno,
+                    // admno: localStorage.std_regno,
                 };
                 console.log('yearstdid', yearStudentID);
 
@@ -85,8 +86,12 @@ const List = () => {
         fetchYearInvoices();
     }, [yearStudentID]);
 
-    const handleInvoice = (id: any) => {
-        localStorage.setItem('InvoiceIDV', id);
+    const handleInvoice = (id: any, paidstatus: any) => {
+        localStorage.setItem('InvoiceID', id);
+        localStorage.setItem('yearStudentID', yearStudentID);
+        localStorage.setItem('tempschoolYearID', schoolyearID);
+        localStorage.setItem('paidstatus', paidstatus);
+        navigate('/preview');
     };
     const loadyearinvo = (schyearid: any, yearstdid: any) => {
         if (schoolyearID == schyearid) {
@@ -130,52 +135,52 @@ const List = () => {
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5 ">
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>FEE TYPE</td>
+                                                        <td style={{ width: '200px' }}>Term</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> {invoice.fee_term}</td>
                                                     </tr>
                                                     <tr>
                                                         <td style={{ width: '200px' }} className="whitespace-nowrap">
-                                                            FEE AMOUNT
+                                                            Fee Amount
                                                         </td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.amount}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>DISCOUNT</td>
+                                                        <td style={{ width: '200px' }}>Discount</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.discount}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>AFTER DISCOUNT</td>
+                                                        <td style={{ width: '200px' }}>After Discount</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.after_concession}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>PAID</td>
+                                                        <td style={{ width: '200px' }}>Paid</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.paidamount}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>DUE AMOUNT</td>
+                                                        <td style={{ width: '200px' }}>Due Amount</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.amount_due}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>STATUS</td>
+                                                        <td style={{ width: '200px' }}>Status</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>
                                                             {invoice.paidstatus === 0 ? (
                                                                 <span className="text-red-600 bg-red-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap">Not Paid</span>
                                                             ) : invoice.paidstatus === 1 ? (
-                                                                <span className="text-green-600 bg-green-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap">Partially Paid</span>
+                                                                <span className="text-yellow-600 bg-yellow-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap">Partially Paid</span>
                                                             ) : (
                                                                 <span className="text-green-600 bg-green-300 p-0.5 px-4 rounded-sm  text-center whitespace-nowrap"> Paid</span>
                                                             )}
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>DUE DATE</td>
+                                                        <td style={{ width: '200px' }}>Due Date</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td className="whitespace-nowrap"> {invoice.due_date}</td>
                                                     </tr>
@@ -186,7 +191,7 @@ const List = () => {
 
                                     <div className=" flex justify-end">
                                         <Tippy className="bg-black text-white" content={invoice.paidstatus === 0 || invoice.paidstatus === 1 ? 'Pay Now' : 'View'}>
-                                            <NavLink to="/preview" onClick={() => handleInvoice(invoice.invoiceID)} className="flex hover:text-primary">
+                                            <button onClick={() => handleInvoice(invoice.invoiceID, invoice.paidstatus)} className="flex hover:text-primary">
                                                 {invoice.paidstatus === 0 || invoice.paidstatus === 1 ? (
                                                     <button type="button" className="btn btn-secondary btn-sm ">
                                                         Pay Now
@@ -196,7 +201,7 @@ const List = () => {
                                                         View
                                                     </button>
                                                 )}
-                                            </NavLink>
+                                            </button>
                                         </Tippy>
                                     </div>
                                 </div>

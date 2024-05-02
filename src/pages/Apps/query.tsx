@@ -11,8 +11,13 @@ export const MY_MEDIA_URL = MY_API_URL + 'media/';
 export const MY_EVENTS_URL = MY_API_URL + 'events/';
 export const MY_INVOICES_URL = MY_API_URL + 'invoices/';
 export const MY_INVOICES_YEARS_URL = MY_API_URL + 'year_invoices/';
-export const MY_DICTIONARY_URL = MY_API_URL + 'Dictionary/';
+export const MY_INVOICE_URL = MY_API_URL + 'invoice/';
+export const MY_IMG_URL = MY_API_URL + 'uploadMultiple/';
+export const MY_ASSIGNMENTS_URL = MY_API_URL + 'assignments/';
+export const MY_ASSIGNMENT_FILE_URL = MY_API_URL + 'assignment_file/';
+export const MY_DICTIONARY_URL = MY_API_URL + 'dictionary/';
 export const MY_YEAR_MEDIA_URL = MY_API_URL + 'year_media/';
+export const MY_YEAR_PAYMENTS_URL = MY_API_URL + 'payments/';
 export const MY_CAT_MEDIA_URL = MY_API_URL + 'cat_media/';
 export const MY_ISSUED_BOOKS_URL = MY_API_URL + 'issuedbooks/';
 export const MY_BOOKS_URL = MY_API_URL + 'books/';
@@ -23,5 +28,3 @@ export const NO_IMG = MY_API_URL + 'images/no-img.png';
 export const SQ_IMG = MY_API_URL + 'images/sq-img.jpg';
 export const V_IMG = MY_API_URL + 'images/v-img.jpg';
 export const H_IMG = MY_API_URL + 'images/h-img.jpg';
-
-//https://stdapi.crownelearn.com/

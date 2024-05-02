@@ -21,8 +21,12 @@ import ReactPlayer from 'react-player';
 import img from '/public/crown-logo.png';
 import html2canvas from 'html2canvas';
 import React from 'react';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DASHBOARD_URL, MY_IMG_URL } from './query';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { FaEye, FaUpload } from 'react-icons/fa6';
+import { preventDefault } from '@fullcalendar/core/internal';
+
 //import print from '/public/Application.pdf';
 
 const tableData = [
@@ -63,6 +67,8 @@ const tableData = [
 
 const Tables = () => {
     const dispatch = useDispatch();
+    const [file, setFile] = useState<any>([]);
+    const [selectedFiles, setSelectedFiles] = useState([]);
     useEffect(() => {
         dispatch(setPageTitle('Tables'));
     });
@@ -77,6 +83,7 @@ const Tables = () => {
         }
     };
     const [modal10, setModal10] = useState(false);
+    const [assignments, setAssignments] = useState<any>([]);
 
     const imgRef = React.createRef<HTMLImageElement>();
 
@@ -90,20 +97,17 @@ const Tables = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    sectionID: localStorage.sectionID,
+                    classesID: localStorage.classesID,
+                    schoolyearID: localStorage.schoolyearID,
+                    //admno: localStorage.std_regno,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_ASSIGNMENTS_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('assignments', response);
+                setAssignments(response.data.data.assignments);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -149,13 +153,92 @@ const Tables = () => {
         document.body.removeChild(link);
     };
 
+    const downloadFile = () => {
+        const url = 'https://example.com/your-file-url'; // Replace this URL with your file URL
+        const link = document.createElement('a');
+        link.href = url;
+        // link.setAttribute('download', true);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+    // const handlefile = (event: any) => {
+    //     //setFile(event.target.files[0]);
+    //     setFile(Array.from(event.target.files));
+    // };
+
+    // const handleupload = async (e: any) => {
+    //     e.preventDefault();
+
+    //     const formData = new FormData();
+    //     file.forEach((file: any) => {
+    //         formData.append('files', file);
+    //     });
+    //     try {
+    //         const response = await axios.post(MY_IMG_URL, formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data',
+    //             },
+    //         });
+    //         console.log('Files uploaded successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error uploading files:', error);
+    //     }
+    // };
+
+    const handleFileChange = (e: any) => {
+        setSelectedFiles(Array.from(e.target.files));
+    };
+
+    const handleFormSubmit = async (e: any) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await axios.post(MY_IMG_URL, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            console.log('Upload successful:', response.data);
+        } catch (error) {
+            console.error('Error uploading files:', error);
+        }
+    };
+
+    const handleFileDownload = async (assgnID: any, ext: any, title: any) => {
+        const assigntitle = title.toLowerCase();
+        try {
+            // Replace 'YOUR_BUCKET_NAME' and 'YOUR_OBJECT_KEY' with your S3 bucket name and object key
+            const response = await axios.get(MY_ASSIGNMENT_FILE_URL + localStorage.schoolID + '/' + localStorage.studentID + '/' + assgnID, {
+                responseType: 'blob',
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            console.log('url', url);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${assigntitle}.${ext}`); // Specify the desired file name
+            document.body.appendChild(link);
+            link.click();
+        } catch (error) {
+            console.error('Error downloading file:', error);
+        }
+    };
     return (
         <div className="space-y-6">
+            <form onSubmit={handleFormSubmit}>
+                <input type="file" onChange={handleFileChange} multiple />
+                <button>upload</button>
+            </form>
             {/* Simple */}
 
             {/* Hover Table  */}
             <h3 className="font-bold text-lg">Assignments</h3>
-            <div className="panel">
+            {/* <div className="panel">
                 <div className="table-responsive mb-5">
                     <table className="table-hover">
                         <thead>
@@ -221,17 +304,7 @@ const Tables = () => {
                                                                             <IconX />
                                                                         </button>
                                                                     </div>
-                                                                    {/* <iframe
-                                                                        width="560"
-                                                                        height="315"
-                                                                        // src="https://www.youtube.com/embed/N2d7puNyPqw"
-                                                                        src=".././public/assets/crown-logo.png"
-                                                                        title="Video Title"
-                                                                        //  frameBorder="0"
-
-                                                                        allowFullScreen
-                                                                        className="p-6 w-full "
-                                                                    ></iframe> */}
+                                                                   
                                                                     <ReactPlayer
                                                                         url="https://youtu.be/N2d7puNyPqw?si=fKY2WghPTEFRzlpR"
                                                                         controls
@@ -266,6 +339,70 @@ const Tables = () => {
                                                 </Transition>
                                             </div>
                                         </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </div> */}
+
+            <div className="panel h-full w-full">
+                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Top Selling Product</h5> */}</div>
+                <div className="table-responsive">
+                    <table>
+                        <thead>
+                            <tr className="border-b-0">
+                                <th className="ltr:rounded-l-md rtl:rounded-r-md">Sl.No</th>
+                                <th className="whitespace-nowrap">Created Date</th>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th className="ltr:rounded-r-md rtl:rounded-l-md whitespace-nowrap">Last Date</th>
+                                <th>
+                                    <IconDownload />
+                                </th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {assignments.map((assign: any, index: number) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{assign.created_on}</td>
+                                        <td className="whitespace-nowrap">{assign.title}</td>
+                                        <td className="whitespace-nowrap">{assign.subject_name}</td>
+                                        <td className="whitespace-nowrap">{assign.deadlinedate}</td>
+                                        <td>
+                                            <button onClick={() => handleFileDownload(assign.assignmentID, assign.fileExt, assign.title)}>
+                                                <IconDownload />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span
+                                                className={`whitespace-nowrap p-1 rounded-md ${
+                                                    assign.astatus === 'Date Expired'
+                                                        ? '  bg-red-200 text-red-400'
+                                                        : assign.astatus === 'Submitted'
+                                                        ? 'bg-blue-200 text-blue-400'
+                                                        : ' bg-orange-200  text-orange-400'
+                                                }`}
+                                            >
+                                                {assign.astatus}
+                                            </span>
+                                        </td>
+                                        <td className="flex space-x-1">
+                                            <button type="button" onClick={downloadFile} className=" rounded-md">
+                                                <FaEye className="text-blue-400 w-8 h-4" />
+                                            </button>
+                                            {assign.ddays > 0 && assign.astatus != 'Submitted' ? (
+                                                <button type="button" className="btn btn-secondary btn-sm">
+                                                    <FaUpload className="mr-2" /> Upload
+                                                </button>
+                                            ) : assign.astatus === 'Submitted' ? null : null}
+                                        </td>
+                                        <td></td>
                                     </tr>
                                 );
                             })}

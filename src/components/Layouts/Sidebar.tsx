@@ -199,9 +199,9 @@ const Sidebar = () => {
                                         <li>
                                             <NavLink to="/invoice">{t('Invoice')}</NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/fines">{t('Fines')}</NavLink>
-                                        </li>
+                                        </li> */}
                                         <li>
                                             <NavLink to="/payment-history">{t('Payment History')}</NavLink>
                                         </li>
@@ -249,28 +249,16 @@ const Sidebar = () => {
 
                                         <li>
                                             <div onMouseLeave={() => handleHover(null)}>
-                                                <NavLink to="" onMouseOver={() => handleHover('library')}>
-                                                    {t('Library')}
-                                                </NavLink>
-                                                {currentMenu === 'facilities' && isHovering === 'library' && (
-                                                    <ul className="sub-menu text-gray-500">
-                                                        <li className="pl-8">
-                                                            <NavLink to="/books">{t('Books')}</NavLink>
-                                                        </li>
-                                                        {/* <li className="pl-8">
-                                                            <NavLink to="/books-issued">{t('Books Issued')}</NavLink>
-                                                        </li> */}
-                                                    </ul>
-                                                )}
+                                                <NavLink to="/books">{t('Books')}</NavLink>
                                             </div>
                                         </li>
 
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/transport">{t('Transport')}</NavLink>
                                         </li>
                                         <li>
                                             <NavLink to="/hostel">{t('Hostel')}</NavLink>
-                                        </li>
+                                        </li> */}
                                     </ul>
                                 </AnimateHeight>
                             </li>

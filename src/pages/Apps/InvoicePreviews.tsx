@@ -1,5 +1,5 @@
-import { useEffect, useRef, RefObject } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useRef, RefObject, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconSend from '../../components/Icon/IconSend';
@@ -11,11 +11,18 @@ import IconAt from '../../components/Icon/IconAt';
 import { useReactToPrint } from 'react-to-print';
 import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
+import { IRootState } from '../../store';
 
 import jsPDF from 'jspdf';
+import { MY_INVOICE_URL } from './query';
+import axios from 'axios';
 
 const Preview = () => {
+    const studentdtls = useSelector((state: IRootState) => state.themeConfig);
     const dispatch = useDispatch();
+    const [invoice, setInvoice] = useState<any>([]);
+    const [payment, setPayment] = useState<any>([]);
+
     useEffect(() => {
         dispatch(setPageTitle('Invoice Preview'));
     });
@@ -23,40 +30,41 @@ const Preview = () => {
         window.print();
     };
 
-    const items = [
-        {
-            id: 1,
-            title: '3rd Term',
-            quantity: 1,
-            price: '120',
-            amount: '120',
-        },
-    ];
+    useEffect(() => {
+        const fetchYearInvoices = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    yearstudentID: localStorage.yearStudentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.tempschoolYearID,
+                    invoiceID: localStorage.InvoiceID,
 
-    const columns = [
-        {
-            key: 'id',
-            label: 'S.NO',
-        },
-        {
-            key: 'title',
-            label: 'Fee Type',
-        },
-        {
-            key: 'quantity',
-            label: 'Fee Amount',
-        },
-        {
-            key: 'price',
-            label: 'Discount',
-            class: 'ltr:text-right rtl:text-left',
-        },
-        {
-            key: 'amount',
-            label: 'AMOUNT',
-            class: 'ltr:text-right rtl:text-left',
-        },
-    ];
+                    // admno: localStorage.std_regno,
+                };
+                //console.log('yearstdid', yearStudentID);
+
+                const response = await axios.post(MY_INVOICE_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('preview_invoice', response);
+                setInvoice(response.data.data.invoice);
+                setPayment(response.data.data.payments);
+
+                //  setInvoiceData(response.data.data.invoices);
+                //  setInvoLoader(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchYearInvoices();
+    }, []);
 
     const pdfref: RefObject<HTMLDivElement> = useRef(null);
 
@@ -131,47 +139,49 @@ const Preview = () => {
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
 
                 <div className="flex justify-between mt-3">
-                    <div className="flex flex-col">
+                    <div className="flex flex-col space-y-2">
                         <div>
-                            <strong>School</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: LFselearn
+                            <strong>School</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {studentdtls.school_name}
                         </div>
                         <div className="relative">
                             <strong>Address</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:
-                            <span className="">Affiliated to the council </span>
+                            <span className=""> </span>
                         </div>
                         <div>
-                            <strong>Phone No</strong>&nbsp;&nbsp;&nbsp;: 1234567543
+                            <strong>Phone No</strong>&nbsp;&nbsp;&nbsp;: {studentdtls.school_phone}
                         </div>
                         <div>
-                            <strong>Email</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: A
-                        </div>
-                    </div>
-                    <div className="flex flex-col">
-                        <div>
-                            <strong> Name</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Michael Doe
-                        </div>
-                        <div>
-                            <strong>Class</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: Emily Doe
-                        </div>
-                        <div>
-                            <strong>Section</strong>&nbsp;&nbsp;&nbsp;&nbsp;: john.doe@example.com
+                            <strong>Email</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {studentdtls.school_email}
                         </div>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex flex-col space-y-2">
                         <div>
-                            <strong>Date</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {local}
+                            <strong> Name</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {studentdtls.std_name}
                         </div>
                         <div>
-                            <strong>Invoice</strong>&nbsp;&nbsp;&nbsp;: 54321
+                            <strong>Class</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {studentdtls.classname}
                         </div>
                         <div>
-                            <strong>Status</strong>&nbsp;&nbsp;&nbsp;&nbsp;: paid
+                            <strong>Section</strong>&nbsp;&nbsp;&nbsp;&nbsp;: {studentdtls.sectionname}
+                        </div>
+                    </div>
+                    <div className="flex flex-col space-y-2">
+                        <div>
+                            <strong>Invoice</strong>&nbsp;&nbsp;&nbsp;: {localStorage.InvoiceID}
                         </div>
                         <div>
-                            <strong>Roll No</strong>&nbsp;&nbsp;&nbsp;: 12
+                            <strong>Status</strong>&nbsp;&nbsp;&nbsp;&nbsp;:
+                            {localStorage.paidstatus == 0 || localStorage.paidstatus == 1 ? (
+                                <span className="text-red-600 bg-red-300 p-0.5 px-2 m-1 rounded-sm  text-center whitespace-nowrap">Not Paid</span>
+                            ) : (
+                                <span className="text-green-600 bg-green-300 p-0.5 px-2 m-1 rounded-sm  text-center whitespace-nowrap">Paid</span>
+                            )}
                         </div>
                         <div>
-                            <strong>Reg No</strong>&nbsp;&nbsp;&nbsp;: 123-456
+                            <strong>Roll No</strong>&nbsp;&nbsp;&nbsp;:{studentdtls.std_roll}
+                        </div>
+                        <div>
+                            <strong>Reg No</strong>&nbsp;&nbsp;&nbsp;: {studentdtls.std_regno}
                         </div>
                     </div>
                 </div>
@@ -180,24 +190,16 @@ const Preview = () => {
                     <table className="">
                         <thead>
                             <tr>
-                                {columns.map((column) => {
-                                    return (
-                                        <th key={column.key} className={column?.class}>
-                                            {column.label}
-                                        </th>
-                                    );
-                                })}
+                                <th>Sl.NO</th>
+                                <th>Fee Type</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {items.map((item) => {
+                            {invoice.map((inc: any, index: number) => {
                                 return (
-                                    <tr key={item.id}>
-                                        <td>{item.id}</td>
-                                        <td>{item.title}</td>
-                                        <td>{item.quantity}</td>
-                                        <td className="ltr:text-right rtl:text-left">${item.price}</td>
-                                        <td className="ltr:text-right rtl:text-left">${item.amount}</td>
+                                    <tr key={inc.index}>
+                                        <td>{index + 1}</td>
+                                        <td>{inc.fee_term}</td>
                                     </tr>
                                 );
                             })}
@@ -209,42 +211,68 @@ const Preview = () => {
                     <div className="ltr:text-right rtl:text-left space-y-2">
                         <div className="flex items-center">
                             <div className="flex-1">School Fee</div>
-                            <div className="w-[37%]">₹67577</div>
+                            {invoice.length > 0 && <div className="w-[37%]">₹{invoice[0].amount}</div>}
                         </div>
-                        <div className="flex items-center">
-                            <div className="flex-1">Sub Total</div>
-                            <div className="w-[37%]">₹67577</div>
-                        </div>
+
                         <div className="flex items-center">
                             <div className="flex-1">Discount</div>
-                            <div className="w-[37%]">₹67577</div>
+                            {invoice.length > 0 && <div className="w-[37%]">₹{invoice[0].discount}</div>}
                         </div>
                         <div className="flex items-center">
                             <div className="flex-1">Amount After Discount</div>
-                            <div className="w-[37%]">₹67577</div>
+
+                            {invoice.length > 0 && <div className="w-[37%]">₹{invoice[0].after_concession}</div>}
                         </div>
                         <div className="flex items-center">
                             <div className="flex-1">Paid Amount</div>
-                            <div className="w-[37%]">₹67577</div>
+
+                            {invoice.length > 0 && <div className="w-[37%]">₹{invoice[0].paidamount}</div>}
                         </div>
                         <div className="flex items-center">
                             <div className="flex-1">Due Amount</div>
-                            <div className="w-[37%]">₹67577</div>
-                        </div>
-                        <div className="flex items-center font-semibold text-lg">
-                            <div className="flex-1">Grand Total</div>
-                            <div className="w-[37%]">$3945</div>
+                            {invoice.length > 0 && <div className="w-[37%]">₹{invoice[0].amount_due}</div>}
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="ltr:text-right rtl:text-left space-y-2">
-                <div className="">
-                    <Link to="/payments">
-                        <h2 className="print:hidden inline-block mt-2 p-4 py-2 border-blue-400 border text-blue-400 hover:bg-blue-400 hover:text-white">Pay Now</h2>
-                    </Link>
+            {invoice.length > 0 && invoice[0].paidstatus != 2 && (
+                <div className="ltr:text-right rtl:text-left space-y-2">
+                    <div className="">
+                        <Link to="/payments">
+                            <h2 className="print:hidden inline-block mt-2 p-4 py-2 border-blue-400 border text-blue-400 hover:bg-blue-400 hover:text-white">Pay Now</h2>
+                        </Link>
+                    </div>
                 </div>
-            </div>
+            )}
+            {invoice.length > 0 && invoice[0].paidstatus == 2 && (
+                <div className="panel mt-4">
+                    <h2>Payments Done</h2>
+                    <div className="table-responsive mt-6">
+                        <table className="">
+                            <thead>
+                                <tr>
+                                    <th>Sl.NO</th>
+                                    <th>Payment Date</th>
+                                    <th>Payment Mode</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {payment.map((pay: any, index: number) => {
+                                    return (
+                                        <tr key={pay.index}>
+                                            <td>{index + 1}</td>
+                                            <td>{pay.paymentdate}</td>
+                                            <td>{pay.paymenttype}</td>
+                                            <td>{pay.paymentamount}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

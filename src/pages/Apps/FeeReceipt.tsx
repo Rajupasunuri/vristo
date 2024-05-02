@@ -13,7 +13,7 @@ import html2canvas from 'html2canvas';
 import jspdf from 'jspdf';
 import jsPDF from 'jspdf';
 import axios from 'axios';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_YEAR_PAYMENTS_URL } from './query';
 import { FaLocationDot } from 'react-icons/fa6';
 import { IoMdMail } from 'react-icons/io';
 import { IRootState } from '../../store';
@@ -35,12 +35,13 @@ const Preview = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_YEAR_PAYMENTS_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
+                console.log('payments', response);
                 // if (response.data.error) {
                 //     // setUsererror(response.data.message);
                 // } else {

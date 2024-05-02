@@ -40,6 +40,7 @@ import { MdHomeWork } from 'react-icons/md';
 import { FaPenToSquare } from 'react-icons/fa6';
 import { MY_DASHBOARD_URL } from './Apps/query';
 import axios from 'axios';
+import { any } from 'prop-types';
 
 const rowData = [
     {
@@ -125,7 +126,7 @@ const Index = () => {
     const [pageSize2, setPageSize2] = useState(PAGE_SIZES2[0]);
     const [initialRecords2, setInitialRecords2] = useState(rowData2);
     const [recordsData2, setRecordsData2] = useState(initialRecords2);
-    const [rowData, setrowData] = useState([]);
+    const [unpaidinv, setUnPaidInv] = useState([]);
 
     const [search2, setSearch2] = useState('');
 
@@ -152,6 +153,7 @@ const Index = () => {
                     sectionID: localStorage.sectionID,
                     classesID: localStorage.classesID,
                     schoolyearID: localStorage.schoolyearID,
+                    admno: localStorage.std_regno,
                 };
                 const response = await axios.post(MY_DASHBOARD_URL, postData, {
                     headers: headers,
@@ -159,10 +161,12 @@ const Index = () => {
                 //const res = JSON.parse(response.data.data.invoices[0].comps);
 
                 if (!response.data.error) {
-                    setrowData(response.data.data.invoices);
+                    setUnPaidInv(response.data.data.invoices);
                 }
 
-                console.log('dashboard', response.data.data.invoices);
+                console.log('unpaid invoices', response.data.data.invoices);
+                console.log('live classes', response.data.data.liveclasses);
+                console.log('dashboard', response);
                 // if (response.data.error) {
                 //     // setUsererror(response.data.message);
                 // } else {
@@ -178,6 +182,22 @@ const Index = () => {
 
         // Call the fetchData function when the component mounts
         fetchData();
+    }, []);
+
+    const dates: any = [];
+
+    useEffect(() => {
+        unpaidinv.map((unpaid: any) => {
+            dates.push(unpaid.due_date);
+        });
+    }, [unpaidinv]);
+
+    useEffect(() => {
+        // Scroll to a specific element on page load
+        const element = document.getElementById('targetElement');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
     }, []);
 
     useEffect(() => {
@@ -738,6 +758,17 @@ const Index = () => {
         return date.toLocaleDateString(); // Format the date as per the browser's locale
     };
 
+    const handleInvoice = async (invid: any, invostdID: any, invoyearID: any, due_date: any) => {
+        localStorage.setItem('InvoiceID', invid);
+        localStorage.setItem('tempschoolYearID', invoyearID);
+        localStorage.setItem('yearStudentID', invostdID);
+        // const hasSmallerDate = await dates.some((date: any) => date < due_date);
+
+        navigate('/preview');
+    };
+
+    console.log('dates', dates);
+
     return (
         <div>
             <div className="pt-5">
@@ -819,105 +850,22 @@ const Index = () => {
             </div>
             {/* <ToastContainer position="top-center" autoClose={2000} /> */}
             <div className="space-y-4">
-                <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
-                    <div className="invoice-table">
-                        <div className="mb-4.5 px-5 flex justify-between items-center ite md:items-center md:flex-row flex-col gap-5">
-                            <div>
-                                <p className="font-semibold text-lg dark:text-white-light">Invoice to be paid</p>
-                            </div>
-                            <div className="ltr:ml-auto rtl:mr-auto">
-                                <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                            </div>
-                        </div>
-
-                        <div className="datatables pagination-padding">
-                            <DataTable
-                                className="whitespace-nowrap table-hover invoice-table"
-                                records={rowData}
-                                columns={[
-                                    // {
-                                    //     accessor: 'id',
-                                    //     title: 'SL.NO',
-                                    // },
-                                    {
-                                        accessor: 'invoiceID',
-
-                                        render: ({ invoiceID }) => (
-                                            <NavLink to="/apps/invoice/preview">
-                                                <div className="text-primary underline hover:no-underline font-semibold">{`#${invoiceID}`}</div>
-                                            </NavLink>
-                                        ),
-                                    },
-                                    {
-                                        accessor: 'feetype',
-                                        title: 'FEE TYPE',
-                                    },
-                                    {
-                                        accessor: 'amount',
-                                        title: 'FEE AMOUNT',
-                                    },
-                                    {
-                                        accessor: 'discount',
-                                        title: 'Discount',
-                                    },
-                                    {
-                                        accessor: 'afterdiscount',
-                                        title: 'AfterDiscount',
-                                    },
-                                    {
-                                        accessor: 'paid',
-                                        title: 'Paid',
-                                    },
-
-                                    {
-                                        accessor: 'due_amount',
-                                        title: 'Due Amount',
-                                        titleClassName: 'text-right',
-                                        render: ({ due_amount, id }) => <div className="text-right font-semibold">{`Rs${due_amount}`}</div>,
-                                    },
-                                    {
-                                        accessor: 'paidstatus',
-                                        title: 'Status',
-
-                                        //render: ({ status }) => <span className={`badge badge-outline-${status.color} `}>{status.tooltip}</span>,
-                                    },
-                                    {
-                                        accessor: 'due_date',
-                                        title: 'Due Date',
-                                        render: ({ due_date }) => <span>{formatDate(due_date)}</span>,
-                                    },
-                                    {
-                                        accessor: 'action',
-                                        title: 'Actions',
-                                        sortable: false,
-                                        textAlignment: 'center',
-                                        // render: ({ id, status: rowStatus }) => (
-                                        //     <div className="flex gap-4 items-center w-max mx-auto">
-                                        //         <Tippy className="bg-black text-white" content={rowStatus.tooltip === 'Paid' ? 'View' : 'Pay Now'}>
-                                        //             <NavLink to="/preview" className="flex hover:text-primary">
-                                        //                 <IconEye />
-                                        //             </NavLink>
-                                        //         </Tippy>
-                                        //         {/* <NavLink to="" className="flex"> */}
-
-                                        //         {/* </NavLink> */}
-                                        //     </div>
-                                        // ),
-                                    },
-                                ]}
-                                highlightOnHover
-                                totalRecords={initialRecords.length}
-                                recordsPerPage={pageSize}
-                                page={page}
-                                onPageChange={(p) => setPage(p)}
-                                recordsPerPageOptions={PAGE_SIZES}
-                                onRecordsPerPageChange={setPageSize}
-                                sortStatus={sortStatus}
-                                onSortStatusChange={setSortStatus}
-                                selectedRecords={selectedRecords}
-                                onSelectedRecordsChange={setSelectedRecords}
-                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                            />
+                <div className="panel h-full" id="targetElement">
+                    <div className="flex items-center justify-between dark:text-white-light mb-5">
+                        <h5 className="font-semibold text-lg">Kindly Pay Your Dues</h5>
+                    </div>
+                    <div>
+                        <div className="space-y-6">
+                            {unpaidinv.map((unpaid: any) => (
+                                <div className="flex bg-gray-100 p-2 cursor-pointer" onClick={() => handleInvoice(unpaid.invoiceID, unpaid.invostdID, unpaid.invoyearID, unpaid.due_date)}>
+                                    <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">Pay</span>
+                                    <div className="px-3 flex-1">
+                                        <div>{unpaid.fee_term}</div>
+                                        <div className="text-xs text-white-dark dark:text-gray-500">Due Date:{unpaid.due_date}</div>
+                                    </div>
+                                    <span className="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">₹{unpaid.amount_due}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -970,6 +918,7 @@ const Index = () => {
                         </div>
                     </div>
                 </div>
+
                 <div className="space-y-6">
                     {/* Skin: Striped  */}
                     <div className="panel">

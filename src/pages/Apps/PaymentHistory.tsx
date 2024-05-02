@@ -19,7 +19,7 @@ import IconEye from '../../components/Icon/IconEye';
 import IconCalendar from '../../components/Icon/IconCalendar';
 import IconInbox from '../../components/Icon/IconInbox';
 import axios from 'axios';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_YEAR_PAYMENTS_URL } from './query';
 
 const rowData = [
     {
@@ -69,6 +69,7 @@ const Tabs = () => {
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
     });
+    const [payments, setPayments] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -79,20 +80,14 @@ const Tabs = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_YEAR_PAYMENTS_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('payments', response);
+                setPayments(response.data.data.payments);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -149,54 +144,63 @@ const Tabs = () => {
     }, [search]);
 
     return (
-        <div>
-            <h2 className="font-bold text-lg">Payment History</h2>
-            <div className="space-y-8 pt-5">
-                <div className="panel" id="icon">
-                    <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
-                        <h5 className="text-lg font-bold dark:text-white-light">Payment History</h5>
-                    </div>
-                    <div className="mb-5">
-                        <div className="space-y-6">
-                            {/* Skin: Striped  */}
-                            <div className="panel">
-                                <div className="flex items-center justify-end mb-5">
-                                    <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                </div>
-                                <div className="datatables">
-                                    <DataTable
-                                        striped
-                                        className="whitespace-nowrap table-striped"
-                                        //records={recordsData}
-                                        columns={[
-                                            { accessor: 'id', title: 'SL.NO' },
-
-                                            { accessor: 'feetype', title: 'Fee Type' },
-
-                                            {
-                                                accessor: 'paymentmethod',
-                                                title: 'Payment Method',
-                                            },
-                                            { accessor: 'amount', title: 'Amount' },
-                                            { accessor: 'paymentdate', title: 'Payment Date' },
-                                            { accessor: 'paidby', title: 'Paid By' },
-                                        ]}
-                                        totalRecords={initialRecords.length}
-                                        recordsPerPage={pageSize}
-                                        page={page}
-                                        onPageChange={(p) => setPage(p)}
-                                        recordsPerPageOptions={PAGE_SIZES}
-                                        onRecordsPerPageChange={setPageSize}
-                                        minHeight={200}
-                                        paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                    />
+        <>
+            <h2 className="mb-4 font-bold">Payment History</h2>
+            <div className="panel">
+                <div className="flex justify-end flex-wrap gap-4 mb-6 print:hidden">
+                    <button type="button" className="btn btn-success gap-2">
+                        {/* <IconDownload /> */}
+                        Download PDF
+                    </button>
+                </div>
+                <div className="  card-container">
+                    {payments.map((payment: any) => (
+                        <div key={payment.invoiceID} className=" mb-4 ">
+                            <div className=" panel card-body flex flex-col space-y-2">
+                                <div className="mb-5 ">
+                                    <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                        <table className="table-hover table-striped">
+                                            <thead>
+                                                <tr></tr>
+                                            </thead>
+                                            <tbody className="dark:text-white-dark border-1.5 ">
+                                                <tr>
+                                                    <td style={{ width: '200px' }}>Term</td>
+                                                    <td style={{ width: '10px' }}>:</td>
+                                                    <td> {payment.fee_struc_term}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '200px' }} className="whitespace-nowrap">
+                                                        Payment Method
+                                                    </td>
+                                                    <td style={{ width: '10px' }}>:</td>
+                                                    <td> {payment.paymenttype}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '200px' }}>Amount</td>
+                                                    <td style={{ width: '10px' }}>:</td>
+                                                    <td> ₹{payment.paymentamount}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '200px' }}>Payment Date</td>
+                                                    <td style={{ width: '10px' }}>:</td>
+                                                    <td className="whitespace-nowrap"> {payment.paymentdate}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '200px' }}>Paid By</td>
+                                                    <td style={{ width: '10px' }}>:</td>
+                                                    <td> {payment.paidat}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    ))}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
