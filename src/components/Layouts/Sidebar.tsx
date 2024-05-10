@@ -136,19 +136,18 @@ const Sidebar = () => {
                                         <li>
                                             <NavLink to="/attendance">{t('Attendance')}</NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/leave-management">{t('Leave Management')}</NavLink>
-                                        </li>
+                                        </li> */}
                                         <li>
                                             <NavLink to="/mi-child">{t('MI of Your Child')}</NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/academic-year">{t('Academic Year')}</NavLink>
-                                        </li>
+                                        </li> */}
                                     </ul>
                                 </AnimateHeight>
                             </li>
-
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'exams' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('exams')}>
                                     <div className="flex items-center">
@@ -181,7 +180,6 @@ const Sidebar = () => {
                                     </ul>
                                 </AnimateHeight>
                             </li>
-
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'finance' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('finance')}>
                                     <div className="flex items-center">
@@ -211,7 +209,6 @@ const Sidebar = () => {
                                     </ul>
                                 </AnimateHeight>
                             </li>
-
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'facilities' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('facilities')}>
                                     <div className="flex items-center">
@@ -262,7 +259,6 @@ const Sidebar = () => {
                                     </ul>
                                 </AnimateHeight>
                             </li>
-
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'announcements' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('announcements')}>
                                     <div className="flex items-center">
@@ -289,6 +285,37 @@ const Sidebar = () => {
                                         </li>
                                         <li>
                                             <NavLink to="/query-request">{t('Query Request Complaint')}</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'leave' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('leave')}>
+                                    <div className="flex items-center">
+                                        <IconMenuDashboard className="group-hover:!text-primary shrink-0" />
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Leave Management')}</span>
+                                    </div>
+
+                                    <div className={currentMenu !== 'leave' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                        <IconCaretDown />
+                                    </div>
+                                </button>
+
+                                <AnimateHeight duration={300} height={currentMenu === 'leave' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                            <NavLink to="/leave_list">{t('Leaves List')}</NavLink>
+                                        </li>
+
+                                        <li>
+                                            <NavLink to="/pending_leaves">{t('Pending Leaves')}</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/approved_leaves">{t('Approved Leaves')}</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/rejected_leaves">{t('Rejected Leaves')}</NavLink>
                                         </li>
                                     </ul>
                                 </AnimateHeight>

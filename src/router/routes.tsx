@@ -35,6 +35,10 @@ import QueryComplaint from '../pages/Apps/QueryComplaint';
 import InvoicePreviews from '../pages/Apps/InvoicePreviews';
 import PaymentGate from '../pages/Apps/PaymentGate';
 import ApplyLeave from '../pages/Apps/ApplyLeave';
+import LeaveList from '../pages/Apps/LeaveList';
+import PendingLeaves from '../pages/Apps/PendingLeaves';
+import ApprovedLeaves from '../pages/Apps/ApprovedLeaves';
+import RejectedLeaves from '../pages/Apps/RejectedLeaves';
 //import Logout from '../pages/Logout';
 const Index = lazy(() => import('../pages/Index'));
 const Logout = lazy(() => import('../pages/Logout'));
@@ -161,6 +165,22 @@ const routes = [
     {
         path: '/logout',
         element: <Logout />,
+    },
+    {
+        path: '/leave_list',
+        element: <LeaveList />,
+    },
+    {
+        path: '/pending_leaves',
+        element: <PendingLeaves />,
+    },
+    {
+        path: '/approved_leaves',
+        element: <ApprovedLeaves />,
+    },
+    {
+        path: '/rejected_leaves',
+        element: <RejectedLeaves />,
     },
     // {
     //     path: '/index',

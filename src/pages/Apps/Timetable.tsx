@@ -17,7 +17,7 @@ import 'tippy.js/dist/tippy.css';
 import Dropdown from '../../components/Dropdown';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import axios from 'axios';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_TIME_TABLE_URL } from './query';
 
 const Tabs = () => {
     const dispatch = useDispatch();
@@ -40,6 +40,7 @@ const Tabs = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const [tabs1, setTabs1] = useState<string[]>([]);
+    const [all_tabs, setAll_tabs] = useState([]);
     const toggleCode1 = (name: string) => {
         if (tabs.includes(name)) {
             setTabs((value) => value.filter((d) => d !== name));
@@ -360,20 +361,16 @@ const Tabs = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_TIME_TABLE_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
+                console.log('time table', response);
 
-                //     // setProfile(profiledtls);
-                // }
+                setAll_tabs(response.data.data.this_days);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -392,314 +389,66 @@ const Tabs = () => {
                     </div>
                     <div className="mb-5 w-full">
                         <Tab.Group>
-                            <Tab.List className="mt-3 flex flex-wrap  w-full  ">
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:!bg-[#191e3a]' : ''}
-                                                    ' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 before:inline-block hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Monday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Tuesday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Wednesday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Thursday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Friday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Saturday
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? '!border-secondary text-secondary !outline-none dark:bg-[#191e3a]' : ''}
-                                                before:inline-block' flex items-center border-t-2 border-transparent bg-[#f6f7f8] p-7 py-3 hover:border-secondary hover:text-secondary dark:bg-transparent dark:hover:bg-[#191e3a]`}
-                                        >
-                                            Sunday
-                                        </button>
-                                    )}
-                                </Tab>
+                            <Tab.List className="mt-3 flex overflow-x-auto  w-full  ">
+                                {all_tabs.map((all_tab: any, index: number) => {
+                                    return (
+                                        <Tab as={Fragment} key={index}>
+                                            {({ selected }) => (
+                                                <div className="flex-auto text-center !outline-none">
+                                                    <button
+                                                        className={`${
+                                                            selected ? '!border-white-light !border-b-white !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''
+                                                        } dark:hover:border-b-black' -mb-[1px] block border border-transparent p-3.5 py-2 hover:border-white-light hover:border-b-white dark:hover:border-[#191e3a]`}
+                                                        style={{ width: '100%' }}
+                                                    >
+                                                        {all_tab.day_name}
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </Tab>
+                                    );
+                                })}
                             </Tab.List>
                             <Tab.Panels>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
+                                {all_tabs.map((all_tab: any, index: number) => {
+                                    return (
+                                        <Tab.Panel>
+                                            <div className="active">
+                                                {/* Simple */}
 
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {mondayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
+                                                {/* Hover Table  */}
+                                                <div className="mt-2">
+                                                    <div className="table-responsive mb-5">
+                                                        <table className="table-hover">
+                                                            <thead>
+                                                                <tr className="whitespace-nowrap">
+                                                                    <th>Time</th>
+                                                                    <th>Subject</th>
+                                                                    <th>Teacher</th>
+                                                                    <th>Live Class</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="whitespace-nowrap">
+                                                                {all_tab.time_table.map((data: any, index: number) => {
+                                                                    return (
+                                                                        <tr key={index}>
+                                                                            <td>{data.start_time}</td>
+                                                                            <td>
+                                                                                <div className="whitespace-nowrap">{data.subject_name}</div>
+                                                                            </td>
+                                                                            <td>{data.teacher_name}</td>
+                                                                            <td>-</td>
+                                                                        </tr>
+                                                                    );
+                                                                })}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
-
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {tuesdayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
-
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {mondayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
-
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {mondayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
-
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {mondayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="active pt-5">
-                                        <div className="space-y-6">
-                                            {/* Simple */}
-
-                                            {/* Hover Table  */}
-                                            <div className="panel">
-                                                <div className="flex items-center justify-between mb-5">{/* <h5 className="font-semibold text-lg dark:text-white-light">Academic Year</h5> */}</div>
-                                                <div className="table-responsive mb-5">
-                                                    <table className="table-hover">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Time</th>
-                                                                <th>Subject</th>
-                                                                <th>Teacher</th>
-                                                                <th>Live Class</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {mondayData.map((data) => {
-                                                                return (
-                                                                    <tr key={data.time}>
-                                                                        <td>{data.time}</td>
-                                                                        <td>
-                                                                            <div className="whitespace-nowrap">{data.subject}</div>
-                                                                        </td>
-                                                                        <td>{data.teacher}</td>
-                                                                        <td>{data.live}</td>
-                                                                    </tr>
-                                                                );
-                                                            })}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
-                                <Tab.Panel>
-                                    <div className="mt-5 rounded-tr-md rounded-br-md border border-l-2 border-white-light !border-l-primary bg-white p-5 pt-5 text-black shadow-md ltr:pl-3.5 rtl:pr-3.5 dark:border-[#060818] dark:bg-[#060818]">
-                                        <div className="flex items-center justify-center">
-                                            <h2 className="font-bold text-base">No Records Found</h2>
-                                        </div>
-                                    </div>
-                                </Tab.Panel>
+                                        </Tab.Panel>
+                                    );
+                                })}
                             </Tab.Panels>
                         </Tab.Group>
                     </div>

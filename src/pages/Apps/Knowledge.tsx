@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Tab, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import CodeHighlight from '../../components/Highlight';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
 import IconCode from '../../components/Icon/IconCode';
@@ -27,54 +27,40 @@ import ModalK3 from './Modal3';
 import IconGrid from '../../components/Icon/IconGrid';
 import IconList from '../../components/Icon/IconList';
 import axios from 'axios';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_KB_FILE_URL, MY_KNOWLEDGE_BNK_URL, MY_MEDIA } from './query';
 //import {FaYoutube} from 'react-icons';
-
-const tableData = [
-    {
-        id: 1,
-        date: '23-12-2024',
-        type: 'Combine',
-        rooms: '30',
-        members: '38',
-        address: 'Balaji Nagar',
-        note: '',
-        availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
-        action: '',
-        state: <Modal1 />,
-    },
-    {
-        id: 2,
-        date: '23-12-2024',
-        type: 'Combine',
-        rooms: '30',
-        members: '38',
-        address: 'Balaji Nagar',
-        note: '',
-        availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
-        action: '',
-        state: <ModalK2 />,
-    },
-    {
-        id: 3,
-        date: '23-12-2024',
-        type: 'Combine',
-        rooms: '30',
-        members: '38',
-        address: 'Balaji Nagar',
-        note: '',
-        availability: <span className="bg-red-300 text-red-600 p-1 rounded-md">Date Expired</span>,
-        action: '',
-        state: <ModalK3 />,
-    },
-];
+import Dropdown from '../../components/Dropdown';
+import { IRootState } from '../../store';
+import IconCaretDown from '../../components/Icon/IconCaretDown';
+import { LuFileVideo } from 'react-icons/lu';
+import { ImYoutube } from 'react-icons/im';
+import { FaFilePdf } from 'react-icons/fa';
+import { FaFileImage } from 'react-icons/fa6';
+import { BsFiletypeMp3 } from 'react-icons/bs';
+import ReactAudioPlayer from 'react-audio-player';
+import moment from 'moment';
+import { BsFiletypeTxt, BsFiletypeXlsx } from 'react-icons/bs';
+import { GrDocumentWord } from 'react-icons/gr';
 
 const Tabs = () => {
+    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
     });
-
+    const [mySubjects, setMySubjects] = useState<any>([]);
+    const [knowledgeFiles, setKnowledgeFiles] = useState<any>([]);
+    const [subID, setSubID] = useState('0');
+    const [loadSub, setLoadSub] = useState('');
+    const [youtubeModal, setyoutubeModal] = useState(false);
+    const [ycode, setYcode] = useState('');
+    const [urlModal, setUrlModal] = useState('');
+    const [file, setFile] = useState('');
+    const [title, settitle] = useState('');
+    const [description, setdescription] = useState('');
+    const [mediaModal, setmediaModal] = useState(false);
+    const [date, setDate] = useState('');
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -85,20 +71,20 @@ const Tabs = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    subjectID: '0',
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_KNOWLEDGE_BNK_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('knowledge', response);
+                console.log('knowledge', response.data.data.my_subjects);
+                setMySubjects(response.data.data.my_subjects);
+                setKnowledgeFiles(response.data.data.knowledge_files);
+                setLoadSub(response.data.data.my_subjects[0].subject);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -107,6 +93,36 @@ const Tabs = () => {
         // Call the fetchData function when the component mounts
         fetchData();
     }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    subjectID: subID,
+                };
+                const response = await axios.post(MY_KNOWLEDGE_BNK_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('knowledge', response);
+                setKnowledgeFiles(response.data.data.knowledge_files);
+                // console.log('knowledge', response.data.data.my_subjects);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, [subID]);
     const [tabs, setTabs] = useState<string[]>([]);
     const toggleCode = (name: string) => {
         if (tabs.includes(name)) {
@@ -131,316 +147,216 @@ const Tabs = () => {
     };
     const [search, setSearch] = useState('');
 
-    const handleDownload = () => {
-        const imageElement = imgRef.current;
+    const handleSubject = (subID: any, subject: any) => {
+        setSubID(subID);
+        setLoadSub(subject);
+    };
 
-        if (imageElement) {
-            // Added this check
-            html2canvas(imageElement).then((canvas) => {
-                const dataURL = canvas.toDataURL('image/png');
-                const a = document.createElement('a');
-                a.href = dataURL;
-                a.download = 'downloaded-image.png';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+    const handleYoutube = (embedcode: any) => {
+        const ycode = embedcode.split('/');
+        const emcode = ycode.pop();
+        setYcode(emcode);
+        setyoutubeModal(true);
+    };
+
+    const handleVideo = (urlID: any, file: any, title: any, description: any, date: any) => {
+        const formattedDate = moment(date).format('DD:MM:YYYY');
+        setUrlModal(urlID);
+        setFile(file);
+        settitle(title);
+        setdescription(description);
+        setDate(formattedDate);
+        setmediaModal(true);
+    };
+
+    const handleKBFile = async (syllabusId: any, title: any, ext: any) => {
+        const assigntitle = title.toLowerCase();
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: localStorage.token,
+        };
+        try {
+            // Replace 'YOUR_BUCKET_NAME' and 'YOUR_OBJECT_KEY' with your S3 bucket name and object key
+            const response = await axios.get(MY_KB_FILE_URL + localStorage.schoolID + '/' + localStorage.studentID + '/' + syllabusId, {
+                responseType: 'blob',
             });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            console.log('url', url);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${title}.${ext}`); // Specify the desired file name
+            document.body.appendChild(link);
+            link.click();
+        } catch (error) {
+            console.error('Error downloading file:', error);
         }
     };
 
-    // const downloadPdf = () => {
-    //     const pdfUrl = '/src/Application.pdf';
-    //     // Update the path based on your actual PDF file
-    //     const link = document.createElement('a');
-    //     link.href = pdfUrl;
-    //     link.download = 'Application.pdf';
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     document.body.removeChild(link);
-    // };
     return (
-        <div>
-            <div className="space-y-8 pt-5">
-                <h5 className="text-lg font-semibold dark:text-white-light">Knowledge Bank</h5>
-                <div className="panel" id="line">
-                    <div className="mb-5 flex items-center justify-between"></div>
-                    <div className="mb-5">
-                        <Tab.Group>
-                            <Tab.List onClick={handleTab} className="mt-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                    before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Biology
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Chemistry
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            English1
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Geography
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Hindi
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            HSistory & Civics
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Maths
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Physics
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Telugu
-                                        </button>
-                                    )}
-                                </Tab>
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Others
-                                        </button>
-                                    )}
-                                </Tab>
-                            </Tab.List>
-                            <div className="flex justify-end  space-x-2 space-y-2 ">
-                                <div className="mt-2">
-                                    <button onClick={handleTab} className="bg-white text-[#ffa800] p-1 sm:p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                        <IconGrid />
-                                    </button>
-                                </div>
-                                <div>
-                                    <button onClick={handleTab1} className="bg-white text-[#ffa800] p-1 sm:p-2 rounded-md hover:shadow-lg  hover:bg-[#ffa800] hover:text-white border-[#ffa800] border">
-                                        <IconList />
-                                    </button>
-                                </div>
-                            </div>
-                            {tab ? (
-                                <>
-                                    <Tab.Panels>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                        <Tab.Panel>
-                                            <ModalK />
-                                        </Tab.Panel>
-                                    </Tab.Panels>
-                                </>
-                            ) : null}
-
-                            {tab1 ? (
-                                <>
-                                    <div>
-                                        <div className="flex items-center justify-start mb-5">
-                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        </div>
-                                        <div className="table-responsive mb-5">
-                                            <table className="table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>SL.NO</th>
-                                                        <th> DATE</th>
-                                                        <th>TITLE</th>
-
-                                                        <th>FILE TYPE</th>
-
-                                                        <th className="text-center ">ACTION</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {tableData.map((data) => {
-                                                        return (
-                                                            <tr key={data.id}>
-                                                                <td>{data.id}</td>
-                                                                <td>
-                                                                    <div className="whitespace-nowrap">{data.date}</div>
-                                                                </td>
-                                                                <td>{data.type}</td>
-
-                                                                <td>
-                                                                    <button className="flex items-center justify-center">
-                                                                        <IconDownload />
-                                                                    </button>
-                                                                </td>
-
-                                                                <td>
-                                                                    <div>{data.state}</div>
-                                                                    {/* <div>
-                                                                        <button onClick={() => setModal10(true)} type="button" className="border border-blue-400 rounded-md">
-                                                                            <IconEye />
-                                                                        </button>
-                                                                        <Transition appear show={modal10} as={Fragment}>
-                                                                            <Dialog as="div" open={modal10} onClose={() => setModal10(false)}>
-                                                                                <Transition.Child
-                                                                                    as={Fragment}
-                                                                                    enter="ease-out duration-100"
-                                                                                    enterFrom="opacity-0"
-                                                                                    enterTo="opacity-100"
-                                                                                    leave="ease-in duration-100"
-                                                                                    leaveFrom="opacity-100"
-                                                                                    leaveTo="opacity-0"
-                                                                                >
-                                                                                    <div className="fixed inset-0" />
-                                                                                </Transition.Child>
-                                                                                <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-black/20">
-                                                                                    <div className="flex min-h-screen items-start justify-center px-4">
-                                                                                        <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
-                                                                                            <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
-                                                                                                <h5 className="text-lg font-bold"></h5>
-                                                                                                <button onClick={() => setModal10(false)} type="button" className="text-white-dark hover:text-dark">
-                                                                                                    <IconX />
-                                                                                                </button>
-                                                                                            </div>
-                                                                         
-
-                                                                                            <div className="p-4 sm:w-full sm:h-full flex items-center justify-center">
-                                                                                                <img ref={imgRef} src={img} alt="" width="400px" height="200px" />
-                                                                                            </div>
-
-                                                                                            
-
-                                                                                            <div className="panel lg:col-span-2 xl:col-span-3">
-                                                                                                <div className="mb-5">
-                                                                                                    <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                                                                                        <table className="whitespace-nowrap">
-                                                                                                            <thead>
-                                                                                                                <tr>
-                                                    
-                                                                                                                   
-                                                                                    
-                                                                                                                </tr>
-                                                                                                            </thead>
-                                                                                                            <tbody className="dark:text-white-dark border-1.5">
-                                                                                                                <tr>
-                                                                                                                    <td className="text-base font-bold">Name</td>
-                                                                                                                    <td>Ramesh</td>
-                                                                                                                </tr>
-                                                                                                                <tr>
-                                                                                                                    <td className="text-base font-bold">Description</td>
-                                                                                                                    <td>Rani</td>
-                                                                                                                </tr>
-                                                                                                                <tr>
-                                                                                                                    <td className="text-base font-bold">Date</td>
-                                                                                                                    <td>23-11-2023</td>
-                                                                                                                </tr>
-                                                                                                                <tr>
-                                                                                                                    <td className="text-base font-bold">Image Download</td>
-                                                                                                                    <td>
-                                                                                                                        <button onClick={handleDownload}>
-                                                                                                                            <IconDownload />
-                                                                                                                        </button>
-                                                                                                                    </td>
-                                                                                                                </tr>
-                                                                                                            </tbody>
-                                                                                                        </table>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </Dialog.Panel>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </Dialog>
-                                                                        </Transition>
-                                                                    </div> */}
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : null}
-                        </Tab.Group>
+        <div className="panel">
+            <div className="mb-5">
+                <div className="flex flex-wrap w-full gap-7 justify-around">
+                    <div className="flex items-center justify-center">
+                        <div className="dropdown">
+                            <Dropdown
+                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                                btnClassName="btn btn-success  w-full  dropdown-toggle"
+                                button={
+                                    <>
+                                        {loadSub}
+                                        <span>
+                                            <IconCaretDown className="ltr:ml-1 rtl:mr-1 inline-block" />
+                                        </span>
+                                    </>
+                                }
+                            >
+                                {/* {mySubjects.map((subject: any) => {
+                                    <ul className="!min-w-[170px]">
+                                        <li>
+                                            <button type="button">{subject.subject}</button>
+                                        </li>
+                                    </ul>;
+                                })} */}
+                                <ul className="!min-w-[170px]">
+                                    {mySubjects.map((subject: any) => (
+                                        <li key={subject.id}>
+                                            <button type="button" onClick={() => handleSubject(subject.global_subject_id, subject.subject)}>
+                                                {subject.subject}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Dropdown>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="">
+                <div className=" mt-2  sm:grid sm:grid-cols-4 grid-cols-1 gap-2 space-y-2 items-center justify-center ">
+                    {knowledgeFiles.map((file: any) => (
+                        <div className="panel mt-2  flex  space-y-2 items-center  justify-center  ">
+                            {file.is_kb === 'vimeo' ? (
+                                <LuFileVideo
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400"
+                                    onClick={() => handleVideo(file.vimeo_videoID, file.is_kb, file.title, file.description, file.date)}
+                                />
+                            ) : file.is_kb === 'audio' ? (
+                                <BsFiletypeMp3
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9]"
+                                    onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
+                                />
+                            ) : file.is_kb === 'dwn' && file.fileExt === 'pdf' ? (
+                                <FaFilePdf className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                            ) : file.is_kb === 'image' ? (
+                                <FaFileImage
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D]"
+                                    onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
+                                />
+                            ) : file.is_kb === 'youtube' ? (
+                                <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500" onClick={() => handleYoutube(file.ytb_embedcode)} />
+                            ) : file.is_kb === 'dwn' && file.fileExt === 'txt' ? (
+                                <BsFiletypeTxt className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                            ) : file.is_kb === 'dwn' && file.fileExt === 'xlsx' ? (
+                                <BsFiletypeXlsx className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                            ) : file.is_kb === 'dwn' && file.fileExt === 'docx' ? (
+                                <GrDocumentWord className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                            ) : (
+                                ''
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="mb-5">
+                <Transition appear show={youtubeModal} as={Fragment}>
+                    <Dialog as="div" open={youtubeModal} onClose={() => setyoutubeModal(false)}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                            <div className="flex min-h-screen items-start justify-center px-4">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 scale-95"
+                                    enterTo="opacity-100 scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 scale-100"
+                                    leaveTo="opacity-0 scale-95"
+                                >
+                                    <Dialog.Panel className="my-8 w-full max-w-3xl overflow-hidden">
+                                        <div className="text-right">
+                                            <button onClick={() => setyoutubeModal(false)} type="button" className="text-white-dark hover:text-dark">
+                                                <IconX />
+                                            </button>
+                                        </div>
+                                        <iframe title="youtube-video" src={`https://www.youtube.com/embed/${ycode}`} className="h-[250px] w-full md:h-[550px]"></iframe>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
+
+            <div>
+                <Transition appear show={mediaModal} as={Fragment}>
+                    <Dialog as="div" open={mediaModal} onClose={() => setmediaModal(false)}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                            <div className="flex min-h-screen items-start justify-center px-4">
+                                <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                        <div>
+                                            <h5 className="text-lg font-bold">{title}</h5>
+                                            <span className="text-sm">{date}</span>
+                                        </div>
+
+                                        <button onClick={() => setmediaModal(false)} type="button" className="text-white-dark hover:text-dark">
+                                            <IconX />
+                                        </button>
+                                    </div>
+
+                                    <div className="p-5 flex justify-center items-center">
+                                        {file === 'image' ? (
+                                            <img src={MY_MEDIA + 'images' + '/' + urlModal} alt="" className="w-full " />
+                                        ) : file === 'audio' ? (
+                                            <ReactAudioPlayer src={MY_MEDIA + 'images' + '/' + urlModal} controls className="object-cover w-full" />
+                                        ) : file === 'video' ? (
+                                            ''
+                                        ) : (
+                                            ''
+                                        )}
+                                    </div>
+                                    <div className="mt-2 ml-4 mb-2 text-base flex ">
+                                        <span className="font-bold mr-2">Description:</span>
+                                        {description}
+                                    </div>
+                                </Dialog.Panel>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition>
             </div>
         </div>
     );

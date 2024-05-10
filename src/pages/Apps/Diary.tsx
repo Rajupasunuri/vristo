@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, Tab, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import CodeHighlight from '../../components/Highlight';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
 import IconCode from '../../components/Icon/IconCode';
@@ -25,8 +25,12 @@ import IconX from '../../components/Icon/IconX';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_DIARY_INFO_URL, MY_DIARY_URL } from './query';
 import axios from 'axios';
+import Dropdown from '../../components/Dropdown';
+import IconCaretDown from '../../components/Icon/IconCaretDown';
+import { IRootState } from '../../store';
+import moment from 'moment';
 
 const rowData = [
     {
@@ -62,6 +66,7 @@ const rowData = [
 ];
 
 const Tabs = () => {
+    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
@@ -87,6 +92,16 @@ const Tabs = () => {
     const [recordsData, setRecordsData] = useState(initialRecords);
     const [Diary, setDiary] = useState(true);
     const [Calendar, setCalendar] = useState(false);
+    const [loadDiary, setloadDiary] = useState('');
+    const [nowmonth, setnowmonth] = useState('');
+    const [myDiariesMonth, setmyDiariesMonth] = useState<any>([]);
+    const [myDiariesDays, setmyDiariesDays] = useState<any>([]);
+    const [diaryInfo, setmyDiaryInfo] = useState<any>([]);
+    const [diaryModal, setdiaryModal] = useState(false);
+    const [diaryID, setDairyID] = useState('');
+    const [diaryDate, setDairyDate] = useState('');
+    const [diaryTitle, setDairyTitle] = useState('');
+    const [diaryHome, setDairyHome] = useState('');
     const handleDiary = () => {
         setDiary(true);
         setCalendar(false);
@@ -362,20 +377,20 @@ const Tabs = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    nowmonth: '0',
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_DIARY_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
+                console.log('diary', response);
 
-                //     // setProfile(profiledtls);
-                // }
+                setmyDiariesMonth(response.data.data.dairy_months);
+                setmyDiariesDays(response.data.data.dairy_days);
+                setloadDiary(response.data.data.dairy_months[0].monthName);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -385,308 +400,181 @@ const Tabs = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    nowmonth: nowmonth,
+                    //sectionID: localStorage.sectionID,
+                };
+                const response = await axios.post(MY_DIARY_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('diary days', response);
+                setmyDiariesDays(response.data.data.dairy_days);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetch();
+    }, [nowmonth]);
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+
+                    did: diaryID,
+                    //sectionID: localStorage.sectionID,
+                };
+                const response = await axios.post(MY_DIARY_INFO_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('diary info', response);
+                setmyDiaryInfo(response.data.data.dairy_info);
+                setDairyDate(response.data.data.dairy_info.dairy_date);
+                setDairyTitle(response.data.data.dairy_info.title);
+                setDairyHome(response.data.data.dairy_info.homework);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetch();
+    }, [diaryID]);
+
+    const handleDiaryDay = (dairyID: any) => {
+        setdiaryModal(true);
+        setDairyID(dairyID);
+    };
+
+    const handleMonth = (monthno: any, monthName: any) => {
+        //setSubID(subID);
+        setloadDiary(monthName);
+        setnowmonth(monthno);
+    };
+
     return (
         <div>
-            <h2 className="font-bold text-lg">Academics</h2>
-            {Diary ? (
-                <>
-                    <div className="space-y-8 pt-5">
-                        <div className="panel" id="icon">
-                            <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
-                                <h5 className="text-lg font-bold dark:text-white-light">Diary</h5>
-                                <div className="flex justify-end space-x-2">
-                                    {/* <div>
-                                        <Tippy content="Diary">
-                                            <button onClick={handleDiary}>
-                                                <IconInbox className="sm:w-9 sm:h-9 w:5 h:5 text-blue-500" />
-                                            </button>
-                                        </Tippy>
-                                    </div> */}
-                                    <div>
-                                        <Tippy content="Calendar">
-                                            <button onClick={handleCalendar}>
-                                                <IconCalendar className=" sm:w-8 sm:h-8 w-4.5 h-4.5 text-blue-500 " />
-                                            </button>
-                                        </Tippy>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mb-5">
-                                <div className="space-y-6">
-                                    {/* Skin: Striped  */}
-                                    <div className="panel">
-                                        <div className="flex items-center justify-end mb-5">
-                                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        </div>
-                                        <div className="datatables">
-                                            <DataTable
-                                                striped
-                                                className="whitespace-nowrap table-striped"
-                                                //records={recordsData}
-                                                columns={[
-                                                    { accessor: 'id', title: '#' },
-
-                                                    { accessor: 'examdate', title: 'DATE' },
-                                                    { accessor: 'subject', title: 'TITLE' },
-
-                                                    {
-                                                        accessor: 'action',
-                                                        title: 'ACTION',
-                                                        render: () => (
-                                                            <div className="flex  justify-start text-center pl-3 ">
-                                                                <Tippy content="Delete" className="flex justify-start">
-                                                                    <button type="button" className="border  border-blue-400 rounded-md" onClick={() => alert('hello')}>
-                                                                        <IconEye />
+            <>
+                <div className="space-y-8 pt-5">
+                    <div className="panel" id="icon">
+                        {/* <h5 className="text-lg font-bold dark:text-white-light">Diary</h5> */}
+                        <div className="mb-5 flex items-center justify-between border-b-2 pb-6">
+                            <span className="text-lg font-bold">
+                                Diary Month : <span className="text-md font-semibold"> {loadDiary}</span>
+                            </span>
+                            <div className="flex justify-end space-x-2">
+                                <div className="mb-2">
+                                    <div className="flex flex-wrap w-full gap-7 justify-around">
+                                        <div className="flex items-center justify-center">
+                                            <div className="dropdown">
+                                                <Dropdown
+                                                    placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                                                    btnClassName="btn btn-success  w-full  dropdown-toggle"
+                                                    button={
+                                                        <>
+                                                            {loadDiary}
+                                                            <span>
+                                                                <IconCaretDown className="ltr:ml-1 rtl:mr-1 inline-block" />
+                                                            </span>
+                                                        </>
+                                                    }
+                                                >
+                                                    <ul className="!min-w-[170px]">
+                                                        {myDiariesMonth &&
+                                                            myDiariesMonth.map((month: any) => (
+                                                                <li key={month.id}>
+                                                                    <button type="button" onClick={() => handleMonth(month.monthno, month.monthName)}>
+                                                                        {month.monthName}
                                                                     </button>
-                                                                </Tippy>
-                                                            </div>
-                                                        ),
-                                                    },
-                                                ]}
-                                                totalRecords={initialRecords.length}
-                                                recordsPerPage={pageSize}
-                                                page={page}
-                                                onPageChange={(p) => setPage(p)}
-                                                recordsPerPageOptions={PAGE_SIZES}
-                                                onRecordsPerPageChange={setPageSize}
-                                                minHeight={200}
-                                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                                            />
+                                                                </li>
+                                                            ))}
+                                                    </ul>
+                                                </Dropdown>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </>
-            ) : null}
-            {Calendar ? (
-                <>
-                    <div className="panel mb-5">
-                        <div className="mb-4 flex items-center sm:flex-row flex-col sm:justify-between justify-center">
-                            <div className="sm:mb-0 mb-4">
-                                <div className="text-lg font-semibold ltr:sm:text-left rtl:sm:text-right text-center">Diary-Calendar</div>
-                                <div className="flex items-center mt-2 flex-wrap sm:justify-start justify-center">
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <div className="h-2.5 w-2.5 rounded-sm ltr:mr-2 rtl:ml-2 bg-primary"></div>
-                                        <div>Work</div>
-                                    </div>
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <div className="h-2.5 w-2.5 rounded-sm ltr:mr-2 rtl:ml-2 bg-info"></div>
-                                        <div>Travel</div>
-                                    </div>
-                                    <div className="flex items-center ltr:mr-4 rtl:ml-4">
-                                        <div className="h-2.5 w-2.5 rounded-sm ltr:mr-2 rtl:ml-2 bg-success"></div>
-                                        <div>Personal</div>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="h-2.5 w-2.5 rounded-sm ltr:mr-2 rtl:ml-2 bg-danger"></div>
-                                        <div>Important</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end space-x-1">
-                                <button type="button" className="btn btn-primary" onClick={() => editEvent()}>
-                                    <IconPlus className="ltr:mr-2 rtl:ml-2" />
-                                    Create Event
-                                </button>
-                                <div>
-                                    <Tippy content="Diary">
-                                        <button onClick={handleDiary}>
-                                            <IconInbox className="sm:w-9 sm:h-9 w:5 h:5 text-blue-500" />
-                                        </button>
-                                    </Tippy>
-                                </div>
-                                {/* <div>
-                                    <Tippy content="Calendar">
-                                        <button onClick={handleCalendar}>
-                                            <IconCalendar className=" sm:w-8 sm:h-8 w-4.5 h-4.5 text-blue-500" />
-                                        </button>
-                                    </Tippy>
-                                </div> */}
+                        <div>
+                            <div className="space-y-6">
+                                {myDiariesDays &&
+                                    myDiariesDays.map((day: any) => (
+                                        <div className="flex bg-gray-100 p-2 cursor-pointer" onClick={() => handleDiaryDay(day.dairyID)}>
+                                            {/* <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
+                                            Pay
+                                        </span> */}
+                                            <div className="px-3 flex-1">
+                                                <div className="text-sm">{day.title}</div>
+                                                <div className="text-xs text-white-dark dark:text-gray-500">Diary Date:{moment(day.dairy_date).format('DD-MM-YYYY')}</div>
+                                            </div>
+                                            <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
+                                                view
+                                            </span>
+                                        </div>
+                                    ))}
                             </div>
                         </div>
-                        <div className="calendar-wrapper">
-                            <FullCalendar
-                                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                                initialView="dayGridMonth"
-                                headerToolbar={{
-                                    left: 'prev,next today',
-                                    center: 'title',
-                                    right: 'dayGridMonth,timeGridWeek,timeGridDay',
-                                }}
-                                editable={true}
-                                dayMaxEvents={true}
-                                selectable={true}
-                                droppable={true}
-                                eventClick={(event: any) => editEvent(event)}
-                                select={(event: any) => editDate(event)}
-                                events={events}
-                            />
-                        </div>
                     </div>
-                    <Transition appear show={isAddEventModal} as={Fragment}>
-                        <Dialog as="div" onClose={() => setIsAddEventModal(false)} open={isAddEventModal} className="relative z-[51]">
-                            <Transition.Child
-                                as={Fragment}
-                                enter="duration-300 ease-out"
-                                enter-from="opacity-0"
-                                enter-to="opacity-100"
-                                leave="duration-200 ease-in"
-                                leave-from="opacity-100"
-                                leave-to="opacity-0"
-                            >
-                                <Dialog.Overlay className="fixed inset-0 bg-[black]/60" />
-                            </Transition.Child>
+                </div>
+            </>
 
-                            <div className="fixed inset-0 overflow-y-auto">
-                                <div className="flex min-h-full items-center justify-center px-4 py-8">
-                                    <Transition.Child
-                                        as={Fragment}
-                                        enter="duration-300 ease-out"
-                                        enter-from="opacity-0 scale-95"
-                                        enter-to="opacity-100 scale-100"
-                                        leave="duration-200 ease-in"
-                                        leave-from="opacity-100 scale-100"
-                                        leave-to="opacity-0 scale-95"
-                                    >
-                                        <Dialog.Panel className="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-lg text-black dark:text-white-dark">
-                                            <button
-                                                type="button"
-                                                className="absolute top-4 ltr:right-4 rtl:left-4 text-gray-400 hover:text-gray-800 dark:hover:text-gray-600 outline-none"
-                                                onClick={() => setIsAddEventModal(false)}
-                                            >
-                                                <IconX />
-                                            </button>
-                                            <div className="text-lg font-medium bg-[#fbfbfb] dark:bg-[#121c2c] ltr:pl-5 rtl:pr-5 py-3 ltr:pr-[50px] rtl:pl-[50px]">
-                                                {params.id ? 'Edit Event' : 'Add Event'}
-                                            </div>
-                                            <div className="p-5">
-                                                <form className="space-y-5">
-                                                    <div>
-                                                        <label htmlFor="title">Event Title :</label>
-                                                        <input
-                                                            id="title"
-                                                            type="text"
-                                                            name="title"
-                                                            className="form-input"
-                                                            placeholder="Enter Event Title"
-                                                            value={params.title || ''}
-                                                            onChange={(e) => changeValue(e)}
-                                                            required
-                                                        />
-                                                        <div className="text-danger mt-2" id="titleErr"></div>
-                                                    </div>
-
-                                                    <div>
-                                                        <label htmlFor="dateStart">From :</label>
-                                                        <input
-                                                            id="start"
-                                                            type="datetime-local"
-                                                            name="start"
-                                                            className="form-input"
-                                                            placeholder="Event Start Date"
-                                                            value={params.start || ''}
-                                                            min={minStartDate}
-                                                            onChange={(event: any) => startDateChange(event)}
-                                                            required
-                                                        />
-                                                        <div className="text-danger mt-2" id="startDateErr"></div>
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="dateEnd">To :</label>
-                                                        <input
-                                                            id="end"
-                                                            type="datetime-local"
-                                                            name="end"
-                                                            className="form-input"
-                                                            placeholder="Event End Date"
-                                                            value={params.end || ''}
-                                                            min={minEndDate}
-                                                            onChange={(e) => changeValue(e)}
-                                                            required
-                                                        />
-                                                        <div className="text-danger mt-2" id="endDateErr"></div>
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="description">Event Description :</label>
-                                                        <textarea
-                                                            id="description"
-                                                            name="description"
-                                                            className="form-textarea min-h-[130px]"
-                                                            placeholder="Enter Event Description"
-                                                            value={params.description || ''}
-                                                            onChange={(e) => changeValue(e)}
-                                                        ></textarea>
-                                                    </div>
-                                                    <div>
-                                                        <label>Badge:</label>
-                                                        <div className="mt-3">
-                                                            <label className="inline-flex cursor-pointer ltr:mr-3 rtl:ml-3">
-                                                                <input
-                                                                    type="radio"
-                                                                    className="form-radio"
-                                                                    name="type"
-                                                                    value="primary"
-                                                                    checked={params.type === 'primary'}
-                                                                    onChange={(e) => setParams({ ...params, type: e.target.value })}
-                                                                />
-                                                                <span className="ltr:pl-2 rtl:pr-2">Work</span>
-                                                            </label>
-                                                            <label className="inline-flex cursor-pointer ltr:mr-3 rtl:ml-3">
-                                                                <input
-                                                                    type="radio"
-                                                                    className="form-radio text-info"
-                                                                    name="type"
-                                                                    value="info"
-                                                                    checked={params.type === 'info'}
-                                                                    onChange={(e) => setParams({ ...params, type: e.target.value })}
-                                                                />
-                                                                <span className="ltr:pl-2 rtl:pr-2">Travel</span>
-                                                            </label>
-                                                            <label className="inline-flex cursor-pointer ltr:mr-3 rtl:ml-3">
-                                                                <input
-                                                                    type="radio"
-                                                                    className="form-radio text-success"
-                                                                    name="type"
-                                                                    value="success"
-                                                                    checked={params.type === 'success'}
-                                                                    onChange={(e) => setParams({ ...params, type: e.target.value })}
-                                                                />
-                                                                <span className="ltr:pl-2 rtl:pr-2">Personal</span>
-                                                            </label>
-                                                            <label className="inline-flex cursor-pointer">
-                                                                <input
-                                                                    type="radio"
-                                                                    className="form-radio text-danger"
-                                                                    name="type"
-                                                                    value="danger"
-                                                                    checked={params.type === 'danger'}
-                                                                    onChange={(e) => setParams({ ...params, type: e.target.value })}
-                                                                />
-                                                                <span className="ltr:pl-2 rtl:pr-2">Important</span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex justify-end items-center !mt-8">
-                                                        <button type="button" className="btn btn-outline-danger" onClick={() => setIsAddEventModal(false)}>
-                                                            Cancel
-                                                        </button>
-                                                        <button type="button" onClick={() => saveEvent()} className="btn btn-primary ltr:ml-4 rtl:mr-4">
-                                                            {params.id ? 'Update Event' : 'Create Event'}
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </Dialog.Panel>
-                                    </Transition.Child>
-                                </div>
+            <div>
+                <Transition appear show={diaryModal} as={Fragment}>
+                    <Dialog as="div" open={diaryModal} onClose={() => setdiaryModal(false)}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0" />
+                        </Transition.Child>
+                        <div id="slideIn_down_modal" className="fixed inset-0 z-[999] overflow-y-auto bg-[black]/60">
+                            <div className="flex min-h-screen items-start justify-center px-4">
+                                <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
+                                    <div className="flex items-center justify-between bg-[#fbfbfb] px-5 py-3 dark:bg-[#121c2c]">
+                                        <h5 className="text-lg font-bold">{diaryTitle}</h5>
+                                        <button onClick={() => setdiaryModal(false)} type="button" className="text-white-dark hover:text-dark">
+                                            <IconX />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-col space-y2 p-2">
+                                        <div>Date:{moment(diaryDate).format('DD-MM-YYYY')}</div>
+                                        <div dangerouslySetInnerHTML={{ __html: diaryHome }} />
+                                    </div>
+                                </Dialog.Panel>
                             </div>
-                        </Dialog>
-                    </Transition>
-                </>
-            ) : null}
+                        </div>
+                    </Dialog>
+                </Transition>
+            </div>
         </div>
     );
 };

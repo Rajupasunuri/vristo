@@ -123,6 +123,7 @@ const LoginBoxed = () => {
                         } else {
                             const studentdtls = response.data.data;
                             console.log('studentdtls:', studentdtls);
+                            console.log('schlyear:', response);
                             // console.log('Form submitted:', formData);
 
                             // localStorage.setItem("token", response.data.token);

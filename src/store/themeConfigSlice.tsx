@@ -328,6 +328,7 @@ const themeConfigSlice = createSlice({
             state.isLoggedinuser = true;
 
             localStorage.setItem('schoolyearID', studentdtls.schoolyearID);
+            localStorage.setItem('schoolyear', studentdtls.schoolyear);
             localStorage.setItem('studentID', studentdtls.studentID);
             localStorage.setItem('parentID', studentdtls.parentID);
             localStorage.setItem('package_type', studentdtls.package_type);

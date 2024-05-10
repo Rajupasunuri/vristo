@@ -29,11 +29,12 @@ const GetSchDtls = () => {
                         headers: headers,
                     }
                 )
-                .then((res) => {
+                .then((res: any) => {
                     // console.log('response', res.data.data);
                     var schdtls = res.data.data[0];
                     console.log('school_logo', schdtls['schoolID']);
                     // const jsonData = JSON.stringify(schdtls);
+                    //console.log('schyear', schdtls);
                     dispatch(setSchoolDtls(schdtls));
                     navigate('/login');
                 })
