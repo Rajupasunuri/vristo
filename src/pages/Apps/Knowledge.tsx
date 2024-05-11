@@ -1,34 +1,10 @@
-import { Link } from 'react-router-dom';
-import { Dialog, Tab, Transition } from '@headlessui/react';
+import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
-import CodeHighlight from '../../components/Highlight';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconBell from '../../components/Icon/IconBell';
-import IconCode from '../../components/Icon/IconCode';
-import IconHome from '../../components/Icon/IconHome';
-import IconUser from '../../components/Icon/IconUser';
-import IconPhone from '../../components/Icon/IconPhone';
-import IconInfoCircle from '../../components/Icon/IconInfoCircle';
-import IconSettings from '../../components/Icon/IconSettings';
-import IconVideo from '../../components/Icon/IconVideo';
-import ReactPlayer from 'react-player';
 import IconX from '../../components/Icon/IconX';
-import ModalK from './ModalK';
-import IconDownload from '../../components/Icon/IconDownload';
-import IconEye from '../../components/Icon/IconEye';
-import html2canvas from 'html2canvas';
-import React from 'react';
-import img from '/public/crown-logo.png';
-import pdf from '../../../public/Application .pdf';
-import Modal1 from './Modal1';
-import ModalK2 from './Modal2';
-import ModalK3 from './Modal3';
-import IconGrid from '../../components/Icon/IconGrid';
-import IconList from '../../components/Icon/IconList';
 import axios from 'axios';
-import { MY_DASHBOARD_URL, MY_KB_FILE_URL, MY_KNOWLEDGE_BNK_URL, MY_MEDIA } from './query';
-//import {FaYoutube} from 'react-icons';
+import { MY_KB_FILE_URL, MY_KNOWLEDGE_BNK_URL, MY_MEDIA } from './query';
 import Dropdown from '../../components/Dropdown';
 import { IRootState } from '../../store';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
@@ -39,7 +15,7 @@ import { FaFileImage } from 'react-icons/fa6';
 import { BsFiletypeMp3 } from 'react-icons/bs';
 import ReactAudioPlayer from 'react-audio-player';
 import moment from 'moment';
-import { BsFiletypeTxt, BsFiletypeXlsx } from 'react-icons/bs';
+import { BsFiletypeTxt, BsFiletypeXlsx, BsFiletypeMp4 } from 'react-icons/bs';
 import { GrDocumentWord } from 'react-icons/gr';
 
 const Tabs = () => {
@@ -123,30 +99,6 @@ const Tabs = () => {
         // Call the fetchData function when the component mounts
         fetchData();
     }, [subID]);
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
-    const imgRef = React.createRef<HTMLImageElement>();
-    const [modal10, setModal10] = useState(false);
-    const [tab, setTab] = useState(true);
-    const [tab1, setTab1] = useState(false);
-
-    const handleTab = () => {
-        setTab(true);
-        setTab1(false);
-    };
-
-    const handleTab1 = () => {
-        setTab(false);
-        setTab1(true);
-    };
-    const [search, setSearch] = useState('');
-
     const handleSubject = (subID: any, subject: any) => {
         setSubID(subID);
         setLoadSub(subject);
@@ -210,13 +162,6 @@ const Tabs = () => {
                                     </>
                                 }
                             >
-                                {/* {mySubjects.map((subject: any) => {
-                                    <ul className="!min-w-[170px]">
-                                        <li>
-                                            <button type="button">{subject.subject}</button>
-                                        </li>
-                                    </ul>;
-                                })} */}
                                 <ul className="!min-w-[170px]">
                                     {mySubjects.map((subject: any) => (
                                         <li key={subject.id}>
@@ -238,29 +183,46 @@ const Tabs = () => {
                         <div className="panel mt-2  flex  space-y-2 items-center  justify-center  ">
                             {file.is_kb === 'vimeo' ? (
                                 <LuFileVideo
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400"
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400 cursor-pointer"
                                     onClick={() => handleVideo(file.vimeo_videoID, file.is_kb, file.title, file.description, file.date)}
                                 />
                             ) : file.is_kb === 'audio' ? (
                                 <BsFiletypeMp3
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9]"
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9] cursor-pointer"
                                     onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
                                 />
                             ) : file.is_kb === 'dwn' && file.fileExt === 'pdf' ? (
-                                <FaFilePdf className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                                <FaFilePdf
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300 cursor-pointer"
+                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
+                                />
                             ) : file.is_kb === 'image' ? (
                                 <FaFileImage
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D]"
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D] cursor-pointer"
                                     onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
                                 />
                             ) : file.is_kb === 'youtube' ? (
-                                <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500" onClick={() => handleYoutube(file.ytb_embedcode)} />
+                                <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500 cursor-pointer" onClick={() => handleYoutube(file.ytb_embedcode)} />
                             ) : file.is_kb === 'dwn' && file.fileExt === 'txt' ? (
-                                <BsFiletypeTxt className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                                <BsFiletypeTxt
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33] cursor-pointer"
+                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
+                                />
                             ) : file.is_kb === 'dwn' && file.fileExt === 'xlsx' ? (
-                                <BsFiletypeXlsx className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                                <BsFiletypeXlsx
+                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126] cursor-pointer"
+                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
+                                />
                             ) : file.is_kb === 'dwn' && file.fileExt === 'docx' ? (
-                                <GrDocumentWord className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0]" onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)} />
+                                <GrDocumentWord
+                                    className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
+                                />
+                            ) : file.is_kb === 'dwn' && file.fileExt === 'mp4' ? (
+                                <BsFiletypeMp4
+                                    className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
+                                />
                             ) : (
                                 ''
                             )}
@@ -342,8 +304,8 @@ const Tabs = () => {
                                             <img src={MY_MEDIA + 'images' + '/' + urlModal} alt="" className="w-full " />
                                         ) : file === 'audio' ? (
                                             <ReactAudioPlayer src={MY_MEDIA + 'images' + '/' + urlModal} controls className="object-cover w-full" />
-                                        ) : file === 'video' ? (
-                                            ''
+                                        ) : file === 'vimeo' ? (
+                                            <iframe title="youtube-video" src={`https://player.vimeo.com${urlModal}`} className=" w-full h-[250px]"></iframe>
                                         ) : (
                                             ''
                                         )}

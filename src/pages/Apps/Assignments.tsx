@@ -220,35 +220,6 @@ const Tables = () => {
         setUploadModal(true);
     };
 
-    // const handleDeleteFile = (assId: any) => {
-    //     const headers = {
-    //         'Content-Type': 'application/json',
-    //         Authorization: localStorage.token,
-    //     };
-
-    //     const postData = {
-    //         studentID: localStorage.studentID,
-    //         schoolID: localStorage.schoolID,
-    //         schoolyearID: localStorage.schoolyearID,
-    //         assignmentID: assignID,
-    //         assgn_ansid: assId,
-    //         // parentID: localStorage.parentID,
-    //     };
-
-    //     axios
-    //         .post(MY_DELETE_FILE_URL, postData, {
-    //             headers: headers,
-    //         })
-    //         .then((response) => {
-    //             console.log('file deleted', response);
-
-    //             //setShowAssignFilesUp(response.data.data.assignment_files);
-    //         })
-    //         .catch((err: any) => {
-    //             console.log('delete file error', err);
-    //         });
-    // };
-
     const handleDeleteFile = async (assID: any) => {
         Swal.fire({
             icon: 'warning',

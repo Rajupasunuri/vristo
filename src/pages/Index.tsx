@@ -38,7 +38,7 @@ import IconXCircle from '../components/Icon/IconXCircle';
 import { FaRupeeSign, FaBookReader, FaBook, FaLaptop } from 'react-icons/fa';
 import { MdHomeWork } from 'react-icons/md';
 import { FaPenToSquare } from 'react-icons/fa6';
-import { MY_DASHBOARD_URL } from './Apps/query';
+import { MY_DASHBOARD_URL, MY_TALENT_SHOW_URL } from './Apps/query';
 import axios from 'axios';
 import { any } from 'prop-types';
 
@@ -127,6 +127,7 @@ const Index = () => {
     const [initialRecords2, setInitialRecords2] = useState(rowData2);
     const [recordsData2, setRecordsData2] = useState(initialRecords2);
     const [unpaidinv, setUnPaidInv] = useState([]);
+    const [talentShowDash, setTalentShowDash] = useState([]);
 
     const [search2, setSearch2] = useState('');
 
@@ -182,6 +183,36 @@ const Index = () => {
 
         // Call the fetchData function when the component mounts
         fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchDataTalent = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    on_dash: 1,
+                };
+                const response = await axios.post(MY_TALENT_SHOW_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('talent show dashboard', response);
+                setTalentShowDash(response.data.data.talent_shows);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchDataTalent();
     }, []);
 
     const dates: any = [];
@@ -919,40 +950,50 @@ const Index = () => {
                     </div>
                 </div>
 
-                <div className="space-y-6">
-                    {/* Skin: Striped  */}
-                    <div className="panel">
-                        <div className="flex items-center justify-between mb-5">
-                            <h5 className="font-semibold text-lg dark:text-white-light">Talent Show Exams</h5>
-                            <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                        </div>
-                        <div className="datatables">
-                            <DataTable
-                                striped
-                                className="whitespace-nowrap table-striped"
-                                records={recordsData}
-                                columns={[
-                                    { accessor: 'id', title: '#' },
-                                    { accessor: 'action', title: 'ACTION' },
-                                    { accessor: 'status', title: 'STATUS' },
-                                    { accessor: 'type', title: 'TYPE' },
-                                    { accessor: 'phone', title: 'STARTED' },
-                                    { accessor: 'finished', title: 'FINISHED' },
-                                    { accessor: 'examtitle', title: 'EXAM TITLE' },
-                                    { accessor: 'validfrom', title: 'VALID FROM' },
-                                    { accessor: 'validto', title: 'VALID TO' },
-                                    { accessor: 'duration', title: 'DURATION HH:MM' },
-                                ]}
-                                totalRecords={initialRecords.length}
-                                recordsPerPage={pageSize}
-                                page={page}
-                                onPageChange={(p) => setPage(p)}
-                                recordsPerPageOptions={PAGE_SIZES}
-                                onRecordsPerPageChange={setPageSize}
-                                minHeight={200}
-                                paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                            />
-                        </div>
+                <div className="panel h-full w-full">
+                    <div className="flex items-center justify-between mb-5">
+                        <h5 className="font-semibold text-lg dark:text-white-light">Talent Shows</h5>{' '}
+                    </div>
+                    <div className="table-responsive">
+                        <table>
+                            <thead>
+                                <tr className="border-b-0">
+                                    <th className="ltr:rounded-l-md rtl:rounded-r-md">Sl.No</th>
+                                    <th className="whitespace-nowrap">ACTION</th>
+                                    <th>STATUS</th>
+                                    <th>TYPE</th>
+                                    <th className="ltr:rounded-r-md rtl:rounded-l-md whitespace-nowrap">STARTED</th>
+
+                                    <th>FINISHED</th>
+                                    <th>EXAM TITLE</th>
+                                    <th className="whitespace-nowrap">VALID FROM</th>
+                                    <th>VALID TO</th>
+                                    <th className="whitespace-nowrap">DURATION HH:MM</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {talentShowDash.map((show: any, index: number) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{index + 1}</td>
+                                            <td>{show.startExamText}</td>
+                                            <td>
+                                                <span className={`${show.status_msg_btn} whitespace-nowrap  `}>{show.status_msg}</span>
+                                            </td>
+                                            <td className="whitespace-nowrap">{show.assessment_type == 1 ? 'Offline' : 'Online'}</td>
+                                            <td className="whitespace-nowrap"></td>
+                                            <td className="whitespace-nowrap"></td>
+                                            <td className="whitespace-nowrap">{show.aats_talent}</td>
+                                            <td className="whitespace-nowrap">{show.start_date_format}</td>
+                                            <td className="whitespace-nowrap">{show.end_date_format}</td>
+                                            <td className="whitespace-nowrap ">
+                                                <span className="">{show.duration}</span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

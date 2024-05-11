@@ -1,18 +1,7 @@
-import { Link } from 'react-router-dom';
 import { Tab } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
-import CodeHighlight from '../../components/Highlight';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconBell from '../../components/Icon/IconBell';
-import IconCode from '../../components/Icon/IconCode';
-import IconHome from '../../components/Icon/IconHome';
-import IconUser from '../../components/Icon/IconUser';
-import IconPhone from '../../components/Icon/IconPhone';
-import IconInfoCircle from '../../components/Icon/IconInfoCircle';
-import IconSettings from '../../components/Icon/IconSettings';
-import Accordians from '../Components/Accordians';
-import DictionaryAccordian from './DictionaryAccordian';
 import axios from 'axios';
 import { MY_DASHBOARD_URL, MY_DICTIONARY_URL } from './query';
 
@@ -66,14 +55,6 @@ const Tabs = () => {
         };
 
         const postData = {
-            // name: formData.name,
-            // section: formData.section,
-            // address: formData.address,
-            // phoneNumber: formData.phoneNumber,
-            // state: formData.state,
-            // district: formData.district,
-            // country: formData.country,
-            // email: formData.email,
             studentID: localStorage.studentID,
             schoolID: localStorage.schoolID,
             diction: word,

@@ -9,7 +9,7 @@ import IconFile from '../../components/Icon/IconFile';
 import IconPrinter from '../../components/Icon/IconPrinter';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_STUDENT_MARKS_URL } from './query';
 import axios from 'axios';
 
 const rowData = [
@@ -545,20 +545,13 @@ const Export = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_STUDENT_MARKS_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('student marks', response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

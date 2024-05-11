@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconBell from '../../components/Icon/IconBell';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_TALENT_SHOW_URL } from './query';
 import axios from 'axios';
 
 const rowData = [
@@ -90,6 +90,7 @@ const Skin = () => {
     const [pageSize1, setPageSize1] = useState(PAGE_SIZES[0]);
     const [initialRecords1, setInitialRecords1] = useState(rowData);
     const [recordsData1, setRecordsData1] = useState(initialRecords1);
+    const [talentShow, setTalentShow] = useState([]);
 
     const [search1, setSearch1] = useState('');
 
@@ -107,20 +108,17 @@ const Skin = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    on_dash: 0,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_TALENT_SHOW_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('talent show', response);
+                setTalentShow(response.data.data.talent_shows);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -252,38 +250,50 @@ const Skin = () => {
 
     return (
         <div className="space-y-6">
-            {/* Skin: Striped  */}
-            <div className="panel">
+            <div className="panel h-full w-full">
                 <div className="flex items-center justify-between mb-5">
-                    <h5 className="font-semibold text-lg dark:text-white-light">Talent Show Exams</h5>
-                    <input type="text" className="form-input w-auto" placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+                    <h5 className="font-semibold text-lg dark:text-white-light">Talent Shows</h5>{' '}
                 </div>
-                <div className="datatables">
-                    <DataTable
-                        striped
-                        className="whitespace-nowrap table-striped"
-                        records={recordsData}
-                        columns={[
-                            { accessor: 'id', title: '#' },
-                            { accessor: 'action', title: 'ACTION' },
-                            { accessor: 'status', title: 'STATUS' },
-                            { accessor: 'type', title: 'TYPE' },
-                            { accessor: 'phone', title: 'STARTED' },
-                            { accessor: 'finished', title: 'FINISHED' },
-                            { accessor: 'examtitle', title: 'EXAM TITLE' },
-                            { accessor: 'validfrom', title: 'VALID FROM' },
-                            { accessor: 'validto', title: 'VALID TO' },
-                            { accessor: 'duration', title: 'DURATION HH:MM' },
-                        ]}
-                        totalRecords={initialRecords.length}
-                        recordsPerPage={pageSize}
-                        page={page}
-                        onPageChange={(p) => setPage(p)}
-                        recordsPerPageOptions={PAGE_SIZES}
-                        onRecordsPerPageChange={setPageSize}
-                        minHeight={200}
-                        paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
-                    />
+                <div className="table-responsive">
+                    <table>
+                        <thead>
+                            <tr className="border-b-0">
+                                <th className="ltr:rounded-l-md rtl:rounded-r-md">Sl.No</th>
+                                <th className="whitespace-nowrap">ACTION</th>
+                                <th>STATUS</th>
+                                <th>TYPE</th>
+                                <th className="ltr:rounded-r-md rtl:rounded-l-md whitespace-nowrap">STARTED</th>
+
+                                <th>FINISHED</th>
+                                <th>EXAM TITLE</th>
+                                <th className="whitespace-nowrap">VALID FROM</th>
+                                <th>VALID TO</th>
+                                <th className="whitespace-nowrap">DURATION HH:MM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {talentShow.map((show: any, index: number) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{show.startExamText}</td>
+                                        <td>
+                                            <span className={`${show.status_msg_btn} whitespace-nowrap  `}>{show.status_msg}</span>
+                                        </td>
+                                        <td className="whitespace-nowrap">{show.assessment_type == 1 ? 'Offline' : 'Online'}</td>
+                                        <td className="whitespace-nowrap"></td>
+                                        <td className="whitespace-nowrap"></td>
+                                        <td className="whitespace-nowrap">{show.aats_talent}</td>
+                                        <td className="whitespace-nowrap">{show.start_date_format}</td>
+                                        <td className="whitespace-nowrap">{show.end_date_format}</td>
+                                        <td className="whitespace-nowrap ">
+                                            <span className="">{show.duration}</span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

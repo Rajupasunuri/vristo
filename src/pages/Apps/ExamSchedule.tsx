@@ -1,84 +1,21 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useEffect, useState } from 'react';
+import { Transition } from '@headlessui/react';
 import { FaRegPlusSquare } from 'react-icons/fa';
-import IconEye from '../../components/Icon/IconEye';
-import IconX from '../../components/Icon/IconX';
-import jsPDF from 'jspdf';
 import TableDialog from './TableDialog';
-import TableDialog1 from './TableDialog1';
-import TableDialog2 from './TableDialog2';
-import TableDialog3 from './TableDialog3';
-import TableDialog4 from './TableDialog4';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_EXAM_HALL_DEATILS_URL, MY_EXAM_SCHEDULE_DEATILS_URL, MY_EXAM_SCHEDULE_URL } from './query';
 import axios from 'axios';
+import moment from 'moment';
 
-const tableData = [
-    {
-        id: <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-        ticket: <TableDialog />,
-    },
-    {
-        id: <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-        ticket: <TableDialog1 />,
-    },
-    {
-        id: <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-        ticket: <TableDialog2 />,
-    },
-    {
-        id: <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-        ticket: <TableDialog3 />,
-    },
-    {
-        id: <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />,
-        book: 'English',
-        author: 'ram',
-        subjectCode: 'Eng',
-        quantity: '100',
-        rack: '6.7',
-
-        status: '',
-        action: '',
-        ticket: <TableDialog4 />,
-    },
-];
-
-const Tables = () => {
+const ExamSchedule = () => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
+    const [examSchedule, setExamSchedule] = useState([]);
+    const [examScheduleDlts, setExamScheduleDlts] = useState([]);
+    const [examID, setExamID] = useState('');
+    const [toggleBtn, setToggleBtn] = useState(true);
+    const [hallTicket, setHallTicket] = useState<any>([]);
 
-    const toggleRow = (index: number) => {
+    const toggleRow = (index: number, examID: any) => {
+        setExamID(examID);
         if (expandedRow === index) {
             setExpandedRow(null);
         } else {
@@ -96,20 +33,16 @@ const Tables = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_EXAM_SCHEDULE_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('exam schedule', response);
+                setExamSchedule(response.data.data.exam_schedule);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -119,9 +52,69 @@ const Tables = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.token,
+                };
+                const postData = {
+                    studentID: localStorage.studentID,
+                    schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
+                    classesID: localStorage.classesID,
+                    sectionID: localStorage.sectionID,
+                    examID: examID,
+                };
+                const response = await axios.post(MY_EXAM_SCHEDULE_DEATILS_URL, postData, {
+                    headers: headers,
+                });
+
+                console.log('exam schedule details', response);
+                setExamScheduleDlts(response.data.data.exam_details);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Call the fetchData function when the component mounts
+        fetchData();
+    }, [examID]);
+
+    const handleHallTicket = async (examIDs: any) => {
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.token,
+            };
+            const postData = {
+                studentID: localStorage.studentID,
+                schoolID: localStorage.schoolID,
+                schoolyearID: localStorage.schoolyearID,
+                classesID: localStorage.classesID,
+                sectionID: localStorage.sectionID,
+                examID: examIDs,
+            };
+            const response = await axios.post(MY_EXAM_HALL_DEATILS_URL, postData, {
+                headers: headers,
+            });
+
+            if (!response.data.error) {
+                setHallTicket(response.data.data.exam_hall_ticket);
+                const hall = response.data.data.exam_hall_ticket;
+                console.log('inside', hall);
+            }
+
+            console.log('hall ticket', response);
+            //setExamScheduleDlts(response.data.data.exam_details);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
     return (
         <div className="space-y-6">
-            <h3 className="font-bold text-lg">Exam Schedule</h3>
             <div className="panel">
                 <div className="flex items-center justify-between mb-5 border-b ">
                     <h5 className="font-semibold text-lg pb-4 dark:text-white-light">Exam Schedule</h5>
@@ -132,21 +125,27 @@ const Tables = () => {
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Exam NAME</th>
+                                <th className="whitespace-nowrap ">Exam NAME</th>
                                 <th>Time</th>
                                 <th className="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.map((data, index) => (
+                            {examSchedule.map((examsch: any, index) => (
                                 <>
                                     <tr>
-                                        <td onClick={() => toggleRow(index)} className="cursor-pointer">
-                                            {data.id}
+                                        <td onClick={() => toggleRow(index, examsch.examID)} className="cursor-pointer">
+                                            <FaRegPlusSquare className=" sm:w-10 sm:h-10 w-6 h-6 text-blue-500 " />
                                         </td>
-                                        <td>{data.book}</td>
-                                        <td>{data.author}</td>
-                                        <td>{data.ticket}</td>
+                                        <td className="whitespace-nowrap text-sm">{examsch.exam}</td>
+                                        <td className="whitespace-nowrap text-sm">
+                                            {examsch.examfrom} - {examsch.examto}
+                                        </td>
+                                        <td>
+                                            <span onClick={() => handleHallTicket(examsch.examID)}>
+                                                <TableDialog hall={hallTicket} exam={examsch.exam} />
+                                            </span>
+                                        </td>
                                     </tr>
                                     <Transition
                                         as={Fragment}
@@ -161,7 +160,7 @@ const Tables = () => {
                                         <div className="  table-responsive mb-5">
                                             <table className=" table-hover table-striped">
                                                 <thead>
-                                                    <tr>
+                                                    <tr className="whitespace-nowrap">
                                                         <th>Subject</th>
                                                         <th>Final Marks</th>
                                                         <th>Pass Marks</th>
@@ -170,69 +169,17 @@ const Tables = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>Telugu</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Hindi</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Maths</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>English1</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Physics</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Chemistry</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Biology</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>History & Civics</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Geography</td>
-                                                        <td>50</td>
-                                                        <td>20</td>
-                                                        <td>05 Jun 2023</td>
-                                                        <td>09:00AM-11:00AM</td>
-                                                    </tr>
+                                                    {examScheduleDlts.map((examschdlts: any, index) => (
+                                                        <tr className="whitespace-nowrap text-sm">
+                                                            <td>{examschdlts.subject}</td>
+                                                            <td>{examschdlts.finalmark}</td>
+                                                            <td>{examschdlts.passmark}</td>
+                                                            <td>{moment(examschdlts.edate).format('DD-MM-YYYY')}</td>
+                                                            <td>
+                                                                {examschdlts.examfrom} - {examschdlts.examto}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </div>
@@ -247,4 +194,4 @@ const Tables = () => {
     );
 };
 
-export default Tables;
+export default ExamSchedule;

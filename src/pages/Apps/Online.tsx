@@ -6,7 +6,7 @@ import IconBell from '../../components/Icon/IconBell';
 import TalentShow from './TalentShow';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import Tippy from '@tippyjs/react';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL, MY_ONLINE_EXAMS_URL } from './query';
 import axios from 'axios';
 
 const rowData = [
@@ -71,20 +71,13 @@ const Skin = () => {
                 const postData = {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
+                    schoolyearID: localStorage.schoolyearID,
                 };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
+                const response = await axios.post(MY_ONLINE_EXAMS_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
+                console.log('online exams', response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

@@ -6,10 +6,16 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { FaPrint } from 'react-icons/fa';
 import IconDownload from '../../components/Icon/IconDownload';
+import moment from 'moment';
 //import logo from './../../public/assets/image/profile-27.jpeg';
 
-const TableDialog = () => {
-    const [modal10, setModal10] = useState(false);
+interface TableDialogProps {
+    hall: any; // Change `any` to the appropriate type of `hall` if possible
+    exam: any;
+}
+
+const TableDialog = ({ hall, exam }: TableDialogProps) => {
+    const [hallTicketModal, sethallTicketModal] = useState(false);
     const downloadPDF = () => {
         const input = document.getElementById('table-container');
         if (!input) {
@@ -30,13 +36,15 @@ const TableDialog = () => {
             pdf.save('table.pdf');
         });
     };
+
+    //console.log('hall ticlemd used', hall);
     return (
         <div>
-            <button onClick={() => setModal10(true)} type="button" className="border border-blue-400 rounded-md">
-                <IconEye />
+            <button onClick={() => sethallTicketModal(true)} type="button" className="">
+                <FaPrint className="text-[#4531B2] w-6 h-4" />
             </button>
-            <Transition appear show={modal10} as={Fragment}>
-                <Dialog as="div" open={modal10} onClose={() => setModal10(false)}>
+            <Transition appear show={hallTicketModal} as={Fragment}>
+                <Dialog as="div" open={hallTicketModal} onClose={() => sethallTicketModal(false)}>
                     <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
                         <div className="fixed inset-0" />
                     </Transition.Child>
@@ -46,7 +54,7 @@ const TableDialog = () => {
                                 <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
                                     <h5 className="text-lg font-bold">Exam Hall ticket</h5>
                                     <div className="flex space-x-2">
-                                        <button onClick={() => setModal10(false)} type="button" className="text-white-dark hover:text-dark">
+                                        <button onClick={() => sethallTicketModal(false)} type="button" className="text-white-dark hover:text-dark">
                                             <IconX />
                                         </button>
                                         <button onClick={downloadPDF} type="button" className="text-white-dark hover:text-dark">
@@ -56,19 +64,19 @@ const TableDialog = () => {
                                 </div>
                                 <div className="p-5 table-responsive " id="table-container">
                                     <div className="flex justify-center items-center mb-4">
-                                        <p>MID1 Exam Hall Ticket</p>
+                                        <p>{exam}</p>
                                     </div>
                                     <div className="flex justify-between mb-0">
-                                        <div>
-                                            <p>Name:Raju</p>
+                                        <div className="flex justify-center">
+                                            <p>Name:{localStorage.std_name}</p>
                                         </div>
                                         <div className="flex flex-col">
-                                            <p>Class:VII</p>
-                                            <p>Section:A</p>
+                                            <p>Class:{localStorage.classname}</p>
+                                            <p>Section:{localStorage.sectionname}</p>
                                         </div>
                                         <div className="flex flex-col">
-                                            <p>Roll No:5</p>
-                                            <p>Reg.No:20</p>
+                                            <p>Roll No:{localStorage.std_roll}</p>
+                                            <p>Reg.No:{localStorage.std_regno}</p>
                                         </div>
                                         <div>
                                             <img src="/public/assets/images/C2172.jpg" alt="img" className="w-22 h-20   overflow-hidden  object-cover  mb-5" />
@@ -77,77 +85,23 @@ const TableDialog = () => {
                                     <table className="table-hover table-striped">
                                         <thead>
                                             <tr>
+                                                <th>Date</th>
                                                 <th>Subject</th>
-                                                <th>Final Marks</th>
-                                                <th>Pass Marks</th>
-                                                <th className="text-center">Date</th>
                                                 <th>Time</th>
+                                                <th>Inv.Sign</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Telugu</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Hindi</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Maths</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>English1</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Physics</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Chemistry</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Biology</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>History & Civics</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Geography</td>
-                                                <td>50</td>
-                                                <td>20</td>
-                                                <td>05 Jun 2023</td>
-                                                <td>09:00AM-11:00AM</td>
-                                            </tr>
+                                            {hall.map((halltck: any, index: any) => (
+                                                <tr>
+                                                    <td>{moment(halltck.edate).format('DD-MM-YYYY')}</td>
+                                                    <td>{halltck.subject}</td>
+                                                    <td>
+                                                        {halltck.examfrom} - {halltck.examto}
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>
