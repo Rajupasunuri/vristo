@@ -9,6 +9,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const List = () => {
     const dispatch = useDispatch();
@@ -41,8 +42,13 @@ const List = () => {
                     headers: headers,
                 });
 
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setInvoYears(response.data.data.invo_years);
+                }
+
                 console.log('invoices', response);
-                setInvoYears(response.data.data.invo_years);
             } catch (error) {
                 console.error('Error fetching data:', error);
                 //setInvoLoader(true);
@@ -50,7 +56,7 @@ const List = () => {
         };
 
         fetchData();
-    }, [schoolyearID]);
+    }, []);
 
     useEffect(() => {
         const fetchYearInvoices = async () => {
@@ -74,9 +80,13 @@ const List = () => {
                     headers: headers,
                 });
 
-                console.log('year invoices', response);
-                setInvoiceData(response.data.data.invoices);
-                setInvoLoader(false);
+                if (response.data.error) {
+                    //Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    console.log('year invoices', response);
+                    setInvoiceData(response.data.data.invoices);
+                    setInvoLoader(false);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setInvoLoader(true);
@@ -91,7 +101,11 @@ const List = () => {
         localStorage.setItem('yearStudentID', yearStudentID);
         localStorage.setItem('tempschoolYearID', schoolyearID);
         localStorage.setItem('paidstatus', paidstatus);
-        navigate('/preview');
+        if (paidstatus > 1) {
+            navigate('/preview');
+        } else {
+            navigate('/payments');
+        }
     };
     const loadyearinvo = (schyearid: any, yearstdid: any) => {
         if (schoolyearID == schyearid) {
@@ -147,12 +161,12 @@ const List = () => {
                                                         <td> ₹{invoice.amount}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>Discount</td>
+                                                        <td style={{ width: '200px' }}>Concession</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.discount}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td style={{ width: '200px' }}>After Discount</td>
+                                                        <td style={{ width: '200px' }}>After Concession</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td> ₹{invoice.after_concession}</td>
                                                     </tr>

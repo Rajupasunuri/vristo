@@ -6,6 +6,7 @@ import Tippy from '@tippyjs/react';
 import moment from 'moment';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
+import Swal from 'sweetalert2';
 
 const PendingLeaves = () => {
     const [pleaveList, setPLeaveList] = useState([]);
@@ -31,9 +32,14 @@ const PendingLeaves = () => {
                 const response = await axios.post(MY_LEAVE_URL, postData, {
                     headers: headers,
                 });
-                setPLeaveList(response.data.data.leave_Management);
-                console.log('leave', response);
-                setLeaveLoader(false);
+
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setPLeaveList(response.data.data.leave_Management);
+                    console.log('leave', response);
+                    setLeaveLoader(false);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -67,7 +73,7 @@ const PendingLeaves = () => {
                 </div>
             ) : (
                 <div className="panel ">
-                    <h2 className="mb-2 text-base font-semibold">Leave List</h2>
+                    <h2 className="mb-2 text-base font-semibold">Pending Leave List</h2>
                     <div className="  card-container">
                         {pleaveList.map((leave: any, index: number) => (
                             <div key={index} className=" mb-4 ">
@@ -155,8 +161,8 @@ const PendingLeaves = () => {
                                             <IconX />
                                         </button>
                                     </div>
-                                    <div className=" pr-2">
-                                        <div dangerouslySetInnerHTML={{ __html: description }} />
+                                    <div className=" ">
+                                        <div className="m-2" dangerouslySetInnerHTML={{ __html: description }} />
                                     </div>
                                 </Dialog.Panel>
                             </div>

@@ -8,15 +8,22 @@ import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 
 import EditorMce from './EditorMce';
-import Picker from './Picker';
+
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/flatpickr.css';
+import { useSelector } from 'react-redux';
+import { IRootState } from '../../store';
+import Swal from 'sweetalert2';
 
 const LeaveList = () => {
     const [leaveList, setLeaveList] = useState([]);
     const [leaveLoader, setLeaveLoader] = useState(false);
-    const [description, setDescription] = useState('');
+    const [content, setContent] = useState<any>('');
     const [subject, setSubject] = useState('');
     const [leaveModal, setleaveModal] = useState(false);
     const [leaveListBox, setLeaveListBox] = useState(true);
+    const [date1, setDate1] = useState<any>('');
+    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,9 +42,14 @@ const LeaveList = () => {
                 const response = await axios.post(MY_LEAVE_URL, postData, {
                     headers: headers,
                 });
-                setLeaveList(response.data.data.leave_Management);
-                console.log('leave', response);
-                setLeaveLoader(false);
+
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setLeaveList(response.data.data.leave_Management);
+                    console.log('leave', response);
+                    setLeaveLoader(false);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -47,29 +59,26 @@ const LeaveList = () => {
         fetchData();
     }, []);
     const handleInvoice = (subject: any, description: any) => {
-        // Get the HTML content from the description variable
-        var descriptionHTML = description;
-
-        // Create a temporary element to parse the HTML
-        var tempElement = document.createElement('div');
-        tempElement.innerHTML = descriptionHTML;
-
-        // Extract the text content from the temporary element
-        var textContent = tempElement.textContent || tempElement.innerText;
-
-        // Output the plain text content
-        console.log(textContent);
-
         setSubject(subject);
-        setDescription(textContent);
+        //setContent(description);
+        setContent(decodeHtmlEntities(description));
         setleaveModal(true);
     };
+    const decodeHtmlEntities = (text: any) => {
+        const parser = new DOMParser();
+        const decodedString = parser.parseFromString(text, 'text/html').body.textContent;
+        return decodedString;
+    };
+
     const handleApplyLeave = () => {
         setLeaveListBox(true);
     };
     const handleleaveList = () => {
         setLeaveListBox(false);
     };
+
+    console.log('content', content);
+
     return (
         <>
             {leaveLoader ? (
@@ -169,11 +178,25 @@ const LeaveList = () => {
                             <div className="flex items-center">
                                 <div className="flex items-center">
                                     <span className="sm:mr-20 mr-4">Leave From*</span>
-                                    <Picker />
+                                    <div className="mb-5">
+                                        <Flatpickr
+                                            value={date1}
+                                            options={{ dateFormat: 'Y-m-d', position: isRtl ? 'auto right' : 'auto left' }}
+                                            className="form-input sm:w-40 w:20"
+                                            onChange={(date) => setDate1(date)}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex items-center ml-4">
                                     <span className="sm:mr-20 mr-4 sm:ml-4 md:ml-6 lg:ml-8 ml-2">Leave To*</span>
-                                    <Picker />
+                                    <div className="mb-5">
+                                        <Flatpickr
+                                            value={date1}
+                                            options={{ dateFormat: 'Y-m-d', position: isRtl ? 'auto right' : 'auto left' }}
+                                            className="form-input sm:w-40 w:20"
+                                            onChange={(date) => setDate1(date)}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-center mt-4">
@@ -212,8 +235,8 @@ const LeaveList = () => {
                                             <IconX />
                                         </button>
                                     </div>
-                                    <div className="flex flex-col space-y2 p-2">
-                                        <div dangerouslySetInnerHTML={{ __html: description }} />
+                                    <div className="flex flex-col space-2 p-2">
+                                        <div dangerouslySetInnerHTML={{ __html: content }} />
                                     </div>
                                 </Dialog.Panel>
                             </div>

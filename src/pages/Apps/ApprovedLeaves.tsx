@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { MY_LEAVE_URL } from './query';
 import { Fragment, useEffect, useState } from 'react';
-import Index from '../Index';
 import Tippy from '@tippyjs/react';
 import moment from 'moment';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
+import Swal from 'sweetalert2';
 
 const ApprovedLeaves = () => {
     const [apleaveList, setALeaveList] = useState([]);
@@ -31,9 +31,15 @@ const ApprovedLeaves = () => {
                 const response = await axios.post(MY_LEAVE_URL, postData, {
                     headers: headers,
                 });
-                setALeaveList(response.data.data.leave_Management);
+
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setALeaveList(response.data.data.leave_Management);
+                    setLeaveLoader(false);
+                }
+
                 console.log('leave', response);
-                setLeaveLoader(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -67,7 +73,7 @@ const ApprovedLeaves = () => {
                 </div>
             ) : (
                 <div className="panel ">
-                    <h2 className="mb-2 text-base font-semibold">Leave List</h2>
+                    <h2 className="mb-2 text-base font-semibold"> Approved Leave List</h2>
                     <div className="  card-container">
                         {apleaveList.map((leave: any, index: number) => (
                             <div key={index} className=" mb-4 ">

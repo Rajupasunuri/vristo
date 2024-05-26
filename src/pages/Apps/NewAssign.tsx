@@ -1,5 +1,6 @@
 import { useEffect, useState, Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
@@ -7,15 +8,17 @@ import IconDownload from '../../components/Icon/IconDownload';
 //import React from 'react';
 import { MY_ASSIGNMENTS_FILES_URL, MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DELETE_FILE_URL, MY_DOWNLOAD_ASSIGNMENTS_FILE_URL, MY_IMG_URL } from './query';
 import axios from 'axios';
-import { FaArrowDownLong } from 'react-icons/fa6';
+import { FaEye, FaUpload, FaArrowDownLong } from 'react-icons/fa6';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Moment from 'react-moment';
 import { MdDelete } from 'react-icons/md';
 import Swal from 'sweetalert2';
-import { FaFilePdf, FaFileAlt } from 'react-icons/fa';
+import moment from 'moment';
+
 //import print from '/public/Application.pdf';
 
-const NewAssign = () => {
+const Tables = () => {
     const dispatch = useDispatch();
     const [fileErr, setFileErr] = useState(false);
 
@@ -357,68 +360,72 @@ const NewAssign = () => {
 
     return (
         <div className="space-y-6">
-            <div className=" space-y-4">
-                <h2 className="mb-4 text-lg font-bold">Assignments</h2>
-                {assignments.map((assign: any, index: number) => {
-                    return (
-                        <div key={index} className="panel h-full p-0 border-0 overflow-hidden">
-                            <div className="p-6 bg-gradient-to-r from-[#4361ee] to-[#160f6b] min-h-[140px]">
-                                <div className="flex justify-between items-center mb-6">
-                                    <div className="bg-black/50 rounded-md p-1 ltr:pr-3 rtl:pl-3 flex items-center justify-center text-white font-semibold">
-                                        {/* <img className="w-8 h-8 rounded-full border-2 border-white/50 block object-cover ltr:mr-1 rtl:ml-1" src="/assets/images/profile-34.jpeg" alt="avatar" /> */}
-                                        {assign.subject_name}
-                                    </div>
-                                    <button onClick={() => handleFileDownload(assign.assignmentID, assign.fileExt, assign.title)}>
-                                        <IconDownload className="text-white w-8 h-8" />
-                                    </button>
-                                </div>
-                                <div className="text-white flex justify-between items-center">
-                                    <p className="text-lg">{assign.title}</p>
-                                </div>
-                            </div>
+            {/* Hover Table  */}
 
-                            <div className="p-5">
-                                <div className="mb-5">
-                                    <span
-                                        className={` px-4 py-1.5 before:bg-black before:w-1.5 before:h-1.5 before:rounded-full ltr:before:mr-2 rtl:before:ml-2 before:inline-block whitespace-nowrap p-1 rounded-md ${
-                                            assign.astatus === 'Date Expired'
-                                                ? '  bg-red-200 text-red-600'
-                                                : assign.astatus === 'Submitted'
-                                                ? 'bg-blue-200 text-blue-600'
-                                                : ' bg-orange-200  text-orange-600'
-                                        }`}
-                                    >
-                                        {assign.astatus}
-                                    </span>
-                                </div>
-                                <div className="mb-5 space-y-1">
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-[#515365] font-semibold">Created On</p>
-                                        <p className="text-base">
-                                            <span className="font-semibold">{assign.created_on}</span>
-                                        </p>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-[#515365] font-semibold">Last Date</p>
-                                        <p className="text-base">
-                                            <span className="font-semibold ">{assign.deadlinedate}</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="text-center px-2 flex justify-around">
-                                    <button type="button" onClick={() => handleAssignModal(assign.assignmentID, assign.title, assign.ddays)} className="btn btn-secondary ltr:mr-2 rtl:ml-2">
-                                        View Details
-                                    </button>
-                                    {(assign.ddays > 0 || assign.astatus === 'Submitted') && assign.ddays > 0 ? (
-                                        <button type="button" onClick={() => showUploadModal(assign.assignmentID)} className="btn btn-success">
-                                            Upload
-                                        </button>
-                                    ) : assign.astatus === 'Submitted' ? null : null}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+            <div className="panel h-full w-full">
+                <div className="flex items-center justify-between mb-5">
+                    <h5 className="font-semibold text-lg dark:text-white-light">Assignments</h5>{' '}
+                </div>
+                <div className="table-responsive">
+                    <table>
+                        <thead>
+                            <tr className="border-b-0">
+                                <th className="ltr:rounded-l-md rtl:rounded-r-md">Sl.No</th>
+                                <th className="whitespace-nowrap">Created Date</th>
+                                <th>Title</th>
+                                <th>Subject</th>
+                                <th className="ltr:rounded-r-md rtl:rounded-l-md whitespace-nowrap">Last Date</th>
+                                <th>
+                                    <IconDownload />
+                                </th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {assignments.map((assign: any, index: number) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{assign.created_on}</td>
+                                        <td className="whitespace-nowrap">{assign.title}</td>
+                                        <td className="whitespace-nowrap">{assign.subject_name}</td>
+                                        <td className="whitespace-nowrap">{assign.deadlinedate}</td>
+                                        <td>
+                                            <button onClick={() => handleFileDownload(assign.assignmentID, assign.fileExt, assign.title)}>
+                                                <IconDownload />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span
+                                                className={`whitespace-nowrap p-1 rounded-md ${
+                                                    assign.astatus === 'Date Expired'
+                                                        ? '  bg-red-200 text-red-400'
+                                                        : assign.astatus === 'Submitted'
+                                                        ? 'bg-blue-200 text-blue-400'
+                                                        : ' bg-orange-200  text-orange-400'
+                                                }`}
+                                            >
+                                                {assign.astatus}
+                                            </span>
+                                        </td>
+                                        <td className="flex space-x-1">
+                                            <button type="button" onClick={() => handleAssignModal(assign.assignmentID, assign.title, assign.ddays)} className=" rounded-md">
+                                                <FaEye className="text-blue-400 w-8 h-4" />
+                                            </button>
+                                            {(assign.ddays > 0 || assign.astatus === 'Submitted') && assign.ddays > 0 ? (
+                                                <button type="button" onClick={() => showUploadModal(assign.assignmentID)} className="btn btn-secondary btn-sm">
+                                                    <FaUpload className="mr-2" /> Upload
+                                                </button>
+                                            ) : assign.astatus === 'Submitted' ? null : null}
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div>
@@ -551,20 +558,10 @@ const NewAssign = () => {
                                                 {showAssignFiles.map((file: any) => (
                                                     <div className="flex bg-gray-100 p-2 ">
                                                         <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
-                                                            {file.file_name.endsWith('.pdf') ||
-                                                            file.file_name.endsWith('.ppt') ||
-                                                            file.file_name.endsWith('.pptx') ||
-                                                            file.file_name.endsWith('.doc') ||
-                                                            file.file_name.endsWith('.docx') ||
-                                                            file.file_name.endsWith('.xlsx') ||
-                                                            file.file_name.endsWith('.xls') ||
-                                                            file.file_name.endsWith('.zip') ||
-                                                            file.file_name.endsWith('.mp4') ||
-                                                            file.file_name.endsWith('.mp3') ||
-                                                            file.file_name.endsWith('.csv') ? (
+                                                            {file.file_name.endsWith('.pdf') ? (
                                                                 // Render PDF button if file is PDF
                                                                 <button onClick={() => handleAssgnAwsFileDownload(file.assgn_ansid, file.file_name)}>
-                                                                    <FaFileAlt />
+                                                                    <IconDownload />
                                                                 </button>
                                                             ) : (
                                                                 // Render image if file is an image
@@ -665,20 +662,10 @@ const NewAssign = () => {
                                             {showAssignFilesUp.map((file: any) => (
                                                 <div className="flex bg-gray-100 p-2 ">
                                                     <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
-                                                        {file.file_name.endsWith('.pdf') ||
-                                                        file.file_name.endsWith('.ppt') ||
-                                                        file.file_name.endsWith('.pptx') ||
-                                                        file.file_name.endsWith('.doc') ||
-                                                        file.file_name.endsWith('.docx') ||
-                                                        file.file_name.endsWith('.xlsx') ||
-                                                        file.file_name.endsWith('.xls') ||
-                                                        file.file_name.endsWith('.zip') ||
-                                                        file.file_name.endsWith('.mp4') ||
-                                                        file.file_name.endsWith('.mp3') ||
-                                                        file.file_name.endsWith('.csv') ? (
+                                                        {file.file_name.endsWith('.pdf') ? (
                                                             // Render PDF button if file is PDF
                                                             <button onClick={() => handleAssgnAwsFileDownload(file.assgn_ansid, file.file_name)}>
-                                                                <FaFileAlt />
+                                                                <IconDownload />
                                                             </button>
                                                         ) : (
                                                             // Render image if file is an image
@@ -718,4 +705,4 @@ const NewAssign = () => {
     );
 };
 
-export default NewAssign;
+export default Tables;

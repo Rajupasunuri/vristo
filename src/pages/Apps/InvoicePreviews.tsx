@@ -2,20 +2,15 @@ import { useEffect, useRef, RefObject, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconSend from '../../components/Icon/IconSend';
 import IconPrinter from '../../components/Icon/IconPrinter';
 import IconDownload from '../../components/Icon/IconDownload';
-import IconEdit from '../../components/Icon/IconEdit';
-import IconPlus from '../../components/Icon/IconPlus';
-import IconAt from '../../components/Icon/IconAt';
-import { useReactToPrint } from 'react-to-print';
 import html2canvas from 'html2canvas';
-import jspdf from 'jspdf';
 import { IRootState } from '../../store';
 
 import jsPDF from 'jspdf';
 import { MY_INVOICE_URL } from './query';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Preview = () => {
     const studentdtls = useSelector((state: IRootState) => state.themeConfig);
@@ -52,9 +47,14 @@ const Preview = () => {
                     headers: headers,
                 });
 
-                console.log('preview_invoice', response);
-                setInvoice(response.data.data.invoice);
-                setPayment(response.data.data.payments);
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    console.log('preview_invoice', response);
+                    localStorage.setItem('paidstatus', response.data.data.invoice[0].paidstatus);
+                    setInvoice(response.data.data.invoice);
+                    setPayment(response.data.data.payments);
+                }
 
                 //  setInvoiceData(response.data.data.invoices);
                 //  setInvoLoader(false);
@@ -70,45 +70,49 @@ const Preview = () => {
 
     const dates = new Date();
     const local = dates.toLocaleDateString('en-GB');
-    const downloadPdf = () => {
-        const input = pdfref.current;
-        if (input) {
-            html2canvas(input).then((canvas) => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf('p', 'mm', 'a4', true);
-                const pdfwidth = pdf.internal.pageSize.getWidth();
-                const pdfheight = pdf.internal.pageSize.getHeight();
-                const imgwidth = canvas.width;
-                const imgheight = canvas.height;
-                const ratio = Math.min(pdfwidth / imgwidth, pdfheight / imgheight);
-                const imgx = (pdfwidth - imgwidth * ratio) / 2;
-                const imgy = 30;
-                pdf.addImage(imgData, 'PNG', imgx, imgy, imgwidth * ratio, imgheight * ratio);
-                pdf.save('invoice.pdf');
-            });
-        } else {
-            console.error('Input element is null.');
-        }
-    };
+
     const downloadPDF = () => {
         const input = document.getElementById('table-container');
         if (!input) {
             console.error("Element with ID 'table-container' not found.");
             return;
         }
+        const margin = 10; // Adjust margin as needed
+        const padding = 10; // Adjust padding as needed
 
-        html2canvas(input, { scale: 2 }).then((canvas) => {
-            const pdf = new jsPDF('p', 'mm', 'a4'); // Changed document size to A4
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = 210; // A4 width in mm
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        // Positioning with margins and padding
 
-            // Ensure canvas size is adjusted to fit the entire table
-            const pdfHeight = (imgHeight * 210) / imgWidth;
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, pdfHeight); // Adjusted image placement and size for A4
+        const image = new Image();
+        image.src = localStorage.school_logo;
+        image.onload = () => {
+            html2canvas(input, { scale: 2 })
+                .then((canvas) => {
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 210;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    const pdfHeight = (imgHeight * 210) / imgWidth;
 
-            pdf.save('table.pdf');
-        });
+                    const margin = 1.5; // Adjust margin as needed
+                    const padding = 10;
+
+                    const xPos = margin; // Adjust as needed
+                    const yPos = 10; // Adjust as needed
+                    const contentWidth = imgWidth - 2 * 1.5;
+                    const contentHeight = pdfHeight - 2 * padding;
+
+                    pdf.addImage(imgData, 'PNG', xPos, yPos, contentWidth, contentHeight);
+                    pdf.setFontSize(20);
+                    pdf.save('Fee Receipt.pdf');
+                })
+                .catch((error) => {
+                    console.error('Error generating canvas:', error);
+                });
+        };
+
+        image.onerror = (error) => {
+            console.error('Error loading image:', error);
+        };
     };
 
     return (
@@ -125,7 +129,7 @@ const Preview = () => {
                 </button>
             </div>
             <div className="text-2xl font-semibold uppercase mb-4">Invoice</div>
-            <div className="panel" ref={pdfref}>
+            <div className="w-[1200px] h-full p-6  border-gray-400 border-2" ref={pdfref} id="table-container">
                 <div className="flex justify-between flex-wrap gap-4 px-4"></div>
                 <div className="flex justify-between">
                     <div className="shrink-0">
@@ -171,8 +175,10 @@ const Preview = () => {
                         </div>
                         <div>
                             <strong>Status</strong>&nbsp;&nbsp;&nbsp;&nbsp;:
-                            {localStorage.paidstatus == 0 || localStorage.paidstatus == 1 ? (
+                            {localStorage.paidstatus == 0 ? (
                                 <span className="text-red-600 bg-red-300 p-0.5 px-2 m-1 rounded-sm  text-center whitespace-nowrap">Not Paid</span>
+                            ) : localStorage.paidstatus == 1 ? (
+                                <span className="text-yellow-600 bg-yellow-300 p-0.5 px-2 m-1 rounded-sm  text-center whitespace-nowrap">Partially Paid</span>
                             ) : (
                                 <span className="text-green-600 bg-green-300 p-0.5 px-2 m-1 rounded-sm  text-center whitespace-nowrap">Paid</span>
                             )}

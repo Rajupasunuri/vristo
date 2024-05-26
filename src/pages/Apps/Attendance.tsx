@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import CodeHighlight from '../../components/Highlight';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import ReactApexChart from 'react-apexcharts';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconBell from '../../components/Icon/IconBell';
-import IconCode from '../../components/Icon/IconCode';
-import { MY_ATTENDANCE_URL, MY_DASHBOARD_URL } from './query';
+import { MY_ATTENDANCE_URL } from './query';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Charts = () => {
     const dispatch = useDispatch();
@@ -46,38 +43,44 @@ const Charts = () => {
                     studentID: localStorage.studentID,
                     schoolID: localStorage.schoolID,
                     schoolyearID: localStorage.schoolyearID,
+                    on_dash: 0,
                 };
                 const response = await axios.post(MY_ATTENDANCE_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('attendance', response);
-                setAttendance(response.data.data.attendance);
-                setMonthYears(response.data.data.monthYear);
-                setMonthWiseAtt(response.data.data.atdmonthwise);
-                if (response.data.data.attendance) {
-                    const present = response.data.data.attendance[0].data;
-                    const absent = response.data.data.attendance[2].data;
-                    const halfday = response.data.data.attendance[1].data;
-                    const late = response.data.data.attendance[3].data;
-                    const holiday = response.data.data.attendance[4].data;
-                    const ptotal = present.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
-                    const atotal = absent.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
-                    const hptotal = halfday.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
-                    const hdtotal = holiday.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
-                    const ltotal = late.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
-                    setPresent(ptotal);
-                    setAbsent(atotal);
-                    setHd(hdtotal);
-                    setHp(hptotal);
-                    setLate(ltotal);
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setAttendance(response.data.data.attendance);
+                    setMonthYears(response.data.data.monthYear);
+                    setMonthWiseAtt(response.data.data.atdmonthwise);
+                    if (response.data.data.attendance) {
+                        const present = response.data.data.attendance[0].data;
+                        const absent = response.data.data.attendance[2].data;
+                        const halfday = response.data.data.attendance[1].data;
+                        const late = response.data.data.attendance[3].data;
+                        const holiday = response.data.data.attendance[4].data;
+                        const ptotal = present.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
+                        const atotal = absent.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
+                        const hptotal = halfday.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
+                        const hdtotal = holiday.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
+                        const ltotal = late.reduce((accumulator: any, currentValue: any) => accumulator + currentValue, 0);
+                        setPresent(ptotal);
+                        setAbsent(atotal);
+                        setHd(hdtotal);
+                        setHp(hptotal);
+                        setLate(ltotal);
 
-                    console.log('ptotal', ptotal);
-                    console.log('atotal', atotal);
-                    console.log('hptotal', hptotal);
-                    console.log('hdtotal', hdtotal);
-                    console.log('ltotal', ltotal);
+                        console.log('ptotal', ptotal);
+                        console.log('atotal', atotal);
+                        console.log('hptotal', hptotal);
+                        console.log('hdtotal', hdtotal);
+                        console.log('ltotal', ltotal);
+                    }
                 }
+
+                console.log('attendance', response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -154,7 +157,7 @@ const Charts = () => {
                 width: 25,
                 colors: isDark ? '#0e1726' : '#fff',
             },
-            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f', '#2fbec0', '#c02f3f', '#e2a03f'] : ['#e2a03f', '#5c1ac3', '#e7515a', '#8dc02f', '#b02fc0'],
+            colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f', '#2fbec0', '#c02f3f', '#e2a03f'] : ['#e2a03f', '#5c1ac3', '#e7515a', '#8dc02f', '#ea041d'],
             legend: {
                 position: 'bottom',
                 horizontalAlign: 'center',
@@ -164,7 +167,7 @@ const Charts = () => {
                     height: 10,
                     offsetX: -2,
                 },
-                height: 50,
+                height: '',
                 offsetY: 20,
             },
             plotOptions: {
@@ -240,7 +243,7 @@ const Charts = () => {
             },
             stroke: {
                 show: true,
-                width: 2,
+                width: 0.5,
                 colors: ['transparent'],
             },
             plotOptions: {
@@ -369,31 +372,37 @@ const Charts = () => {
                         </div>
                         <div>
                             <div className="space-y-2">
-                                <div className="flex bg-gray-100 p-2 cursor-pointer">
+                                <div className="flex bg-gray-100 p-2 ">
                                     <div className="px-3 flex-1">
                                         <div>Present</div>
                                     </div>
                                     <span className="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">{attd.p}</span>
                                 </div>
-                                <div className="flex bg-gray-100 p-2 cursor-pointer">
+                                <div className="flex bg-gray-100 p-2 ">
                                     <div className="px-3 flex-1">
                                         <div>Half Day Present</div>
                                     </div>
                                     <span className="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">{attd.hp}</span>
                                 </div>
-                                <div className="flex bg-gray-100 p-2 cursor-pointer">
+                                <div className="flex bg-gray-100 p-2 ">
                                     <div className="px-3 flex-1">
                                         <div>Absent</div>
                                     </div>
+                                    <span className="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">{attd.A}</span>
+                                </div>
+                                <div className="flex bg-gray-100 p-2 ">
+                                    <div className="px-3 flex-1">
+                                        <div>On Leave</div>
+                                    </div>
                                     <span className="text-danger text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">{attd.ol}</span>
                                 </div>
-                                <div className="flex bg-gray-100 p-2 cursor-pointer">
+                                <div className="flex bg-gray-100 p-2 ">
                                     <div className="px-3 flex-1">
                                         <div>Holiday</div>
                                     </div>
                                     <span className="text-success text-base px-1 ltr:ml-auto rtl:mr-auto whitespace-pre flex justify-center items-center">{attd.hd}</span>
                                 </div>
-                                <div className="flex bg-gray-100 p-2 cursor-pointer">
+                                <div className="flex bg-gray-100 p-2 ">
                                     <div className="px-3 flex-1">
                                         <div>Came Late </div>
                                     </div>

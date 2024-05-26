@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { IRootState } from '../../store/index';
@@ -8,7 +8,7 @@ import IconMail from '../../components/Icon/IconMail';
 import axios from 'axios';
 import { MY_LOGIN_URL } from '../Apps/query';
 import IconLock from '../../components/Icon/IconLock';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const LoginBoxed = () => {
@@ -38,6 +38,7 @@ const LoginBoxed = () => {
 
     const [usererror, setUsererror] = useState('');
     const [passerror, setPasserror] = useState('');
+    const [loginError, setLoginError] = useState('');
 
     // State variables for form fields and errors
     const [formData, setFormData] = useState({
@@ -56,6 +57,7 @@ const LoginBoxed = () => {
         });
 
         // Clear the corresponding error when the user starts typing
+        setLoginError('');
         setUsererror('');
         setPasserror('');
     };
@@ -77,8 +79,10 @@ const LoginBoxed = () => {
         } else if (username && password) {
             if (username.length < 2) {
                 setUsererror('username is Invalid');
+                return;
             } else if (password.length < 5) {
                 setPasserror('Password Length Invalid');
+                return;
             }
             console.log('Submit username');
             // If there are no errors, proceed with form submission
@@ -107,6 +111,8 @@ const LoginBoxed = () => {
                         // console.log(response.data.message);
                         if (response.data.error) {
                             var errors = response.data.message;
+                            setLoginError(errors);
+                            console.log('login err', response);
                             errors.forEach((error: any) => {
                                 switch (error.path) {
                                     case 'password':
@@ -119,7 +125,6 @@ const LoginBoxed = () => {
                                         break;
                                 }
                             });
-                            // setUsererror(response.data.message);
                         } else {
                             const studentdtls = response.data.data;
                             console.log('studentdtls:', studentdtls);
@@ -150,7 +155,10 @@ const LoginBoxed = () => {
                     </div>
                     <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                         <div>
-                            <label htmlFor="username">Username</label>
+                            <div className="flex justify-between">
+                                <label htmlFor="username">Username</label>
+                                <h2 className="text-red-500">{loginError && loginError.toString()}</h2>
+                            </div>
                             <div className="relative text-white-dark">
                                 <input
                                     id="username"
@@ -194,6 +202,12 @@ const LoginBoxed = () => {
                             Sign in
                         </button>
                     </form>
+                </div>
+
+                <div className="text-center dark:text-white mt-8">
+                    <a href={localStorage.sch_url} className=" text-primary hover:underline transition hover:text-black dark:hover:text-white">
+                        Login as Teacher/School
+                    </a>
                 </div>
             </div>
 

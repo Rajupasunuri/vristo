@@ -5,6 +5,7 @@ import TableDialog from './TableDialog';
 import { MY_EXAM_HALL_DEATILS_URL, MY_EXAM_SCHEDULE_DEATILS_URL, MY_EXAM_SCHEDULE_URL } from './query';
 import axios from 'axios';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const ExamSchedule = () => {
     const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -41,8 +42,12 @@ const ExamSchedule = () => {
                     headers: headers,
                 });
 
-                console.log('exam schedule', response);
-                setExamSchedule(response.data.data.exam_schedule);
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    console.log('exam schedule', response);
+                    setExamSchedule(response.data.data.exam_schedule);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -71,8 +76,12 @@ const ExamSchedule = () => {
                     headers: headers,
                 });
 
-                console.log('exam schedule details', response);
-                setExamScheduleDlts(response.data.data.exam_details);
+                if (response.data.error) {
+                    //Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    console.log('exam schedule details', response);
+                    setExamScheduleDlts(response.data.data.exam_details);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -100,7 +109,9 @@ const ExamSchedule = () => {
                 headers: headers,
             });
 
-            if (!response.data.error) {
+            if (response.data.error) {
+                Swal.fire('Request Failed, Try Again Later!');
+            } else {
                 setHallTicket(response.data.data.exam_hall_ticket);
                 const hall = response.data.data.exam_hall_ticket;
                 console.log('inside', hall);

@@ -74,12 +74,10 @@ const Tabs = () => {
 
                 console.log('dashboard', response);
                 // if (response.data.error) {
-                //     // setUsererror(response.data.message);
+                //     Swal.fire('Request Failed, Try Again Later!');
                 // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
+                //     setALeaveList(response.data.data.leave_Management);
+                //     setLeaveLoader(false);
                 // }
             } catch (error) {
                 console.error('Error fetching data:', error);

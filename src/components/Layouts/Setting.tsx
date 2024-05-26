@@ -84,12 +84,12 @@ const Setting = () => {
                         </div>
                         <div className="mt-5 text-primary">
                             <label className="inline-flex mb-0">
-                                <input
+                                {/* <input
                                     type="checkbox"
                                     className="form-checkbox"
                                     checked={themeConfig.semidark === true || themeConfig.semidark === 'true'}
                                     onChange={(e) => dispatch(toggleSemidark(e.target.checked))}
-                                />
+                                /> */}
                                 <span>Semi Dark (Sidebar & Header)</span>
                             </label>
                         </div>

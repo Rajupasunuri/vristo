@@ -8,6 +8,7 @@ import Dropdown from '../../components/Dropdown';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import { IRootState } from '../../store';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const Tabs = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
@@ -40,11 +41,15 @@ const Tabs = () => {
                     headers: headers,
                 });
 
-                console.log('diary', response);
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setmyDiariesMonth(response.data.data.dairy_months);
+                    setmyDiariesDays(response.data.data.dairy_days);
+                    setloadDiary(response.data.data.dairy_months[0].monthName);
+                }
 
-                setmyDiariesMonth(response.data.data.dairy_months);
-                setmyDiariesDays(response.data.data.dairy_days);
-                setloadDiary(response.data.data.dairy_months[0].monthName);
+                console.log('diary', response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -74,8 +79,13 @@ const Tabs = () => {
                     headers: headers,
                 });
 
+                if (response.data.error) {
+                    // Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setmyDiariesDays(response.data.data.dairy_days);
+                }
+
                 console.log('diary days', response);
-                setmyDiariesDays(response.data.data.dairy_days);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -103,11 +113,16 @@ const Tabs = () => {
                     headers: headers,
                 });
 
+                if (response.data.error) {
+                    // Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setmyDiaryInfo(response.data.data.dairy_info);
+                    setDairyDate(response.data.data.dairy_info.dairy_date);
+                    setDairyTitle(response.data.data.dairy_info.title);
+                    setDairyHome(response.data.data.dairy_info.homework);
+                }
+
                 console.log('diary info', response);
-                setmyDiaryInfo(response.data.data.dairy_info);
-                setDairyDate(response.data.data.dairy_info.dairy_date);
-                setDairyTitle(response.data.data.dairy_info.title);
-                setDairyHome(response.data.data.dairy_info.homework);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

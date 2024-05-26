@@ -1,21 +1,8 @@
-import { useEffect, useState, Fragment } from 'react';
-import CodeHighlight from '../../components/Highlight';
-import Tippy from '@tippyjs/react';
+import { useEffect, useState } from 'react';
 import 'tippy.js/dist/tippy.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
-import Dropdown from '../../components/Dropdown';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconCode from '../../components/Icon/IconCode';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconXCircle from '../../components/Icon/IconXCircle';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import IconCircleCheck from '../../components/Icon/IconCircleCheck';
-import IconSettings from '../../components/Icon/IconSettings';
-import { Dialog, Transition } from '@headlessui/react';
-import IconX from '../../components/Icon/IconX';
-import IconEye from '../../components/Icon/IconEye';
 import axios from 'axios';
 import { MY_DASHBOARD_URL } from './query';
 

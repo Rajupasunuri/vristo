@@ -1,18 +1,9 @@
-import { useEffect, useState } from 'react';
-import CodeHighlight from '../../components/Highlight';
+import { useEffect } from 'react';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
-import Dropdown from '../../components/Dropdown';
+import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconCode from '../../components/Icon/IconCode';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconXCircle from '../../components/Icon/IconXCircle';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import IconCircleCheck from '../../components/Icon/IconCircleCheck';
-import IconSettings from '../../components/Icon/IconSettings';
 import { MY_DASHBOARD_URL } from './query';
 import axios from 'axios';
 
@@ -78,14 +69,6 @@ const Tables = () => {
                 });
 
                 console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
-
-                //     // setProfile(profiledtls);
-                // }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -94,16 +77,7 @@ const Tables = () => {
         // Call the fetchData function when the component mounts
         fetchData();
     }, []);
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
     return (
         <div className="space-y-6">
             {/* Simple */}
@@ -154,22 +128,6 @@ const Tables = () => {
                     </table>
                 </div>
             </div>
-
-            {/* stripped Table  */}
-
-            {/* light Table  */}
-
-            {/* captions */}
-
-            {/* progress */}
-
-            {/* Contextual */}
-
-            {/* dropdown */}
-
-            {/* footer Table  */}
-
-            {/* checkboxes */}
         </div>
     );
 };

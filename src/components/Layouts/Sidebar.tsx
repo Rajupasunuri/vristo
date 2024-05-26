@@ -10,28 +10,8 @@ import IconCaretsDown from '../Icon/IconCaretsDown';
 import IconCaretDown from '../Icon/IconCaretDown';
 import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
 import IconLogout from '../Icon/IconLogout';
-import IconMinus from '../Icon/IconMinus';
-import IconMenuChat from '../Icon/Menu/IconMenuChat';
-import IconMenuMailbox from '../Icon/Menu/IconMenuMailbox';
-import IconMenuTodo from '../Icon/Menu/IconMenuTodo';
-import IconMenuNotes from '../Icon/Menu/IconMenuNotes';
-import IconMenuScrumboard from '../Icon/Menu/IconMenuScrumboard';
-import IconMenuContacts from '../Icon/Menu/IconMenuContacts';
-import IconMenuInvoice from '../Icon/Menu/IconMenuInvoice';
-import IconMenuCalendar from '../Icon/Menu/IconMenuCalendar';
-import IconMenuComponents from '../Icon/Menu/IconMenuComponents';
-import IconMenuElements from '../Icon/Menu/IconMenuElements';
-import IconMenuCharts from '../Icon/Menu/IconMenuCharts';
-import IconMenuWidgets from '../Icon/Menu/IconMenuWidgets';
-import IconMenuFontIcons from '../Icon/Menu/IconMenuFontIcons';
-import IconMenuDragAndDrop from '../Icon/Menu/IconMenuDragAndDrop';
-import IconMenuTables from '../Icon/Menu/IconMenuTables';
-import IconMenuDatatables from '../Icon/Menu/IconMenuDatatables';
-import IconMenuForms from '../Icon/Menu/IconMenuForms';
-import IconMenuUsers from '../Icon/Menu/IconMenuUsers';
-import IconMenuPages from '../Icon/Menu/IconMenuPages';
-import IconMenuAuthentication from '../Icon/Menu/IconMenuAuthentication';
-import IconMenuDocumentation from '../Icon/Menu/IconMenuDocumentation';
+import { FaUserTie } from 'react-icons/fa6';
+import { AWS_S3_IMG } from '../../pages/Apps/query';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -47,6 +27,7 @@ const Sidebar = () => {
             return oldValue === value ? '' : value;
         });
     };
+    console.log('user photo', typeof null);
 
     useEffect(() => {
         const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -101,7 +82,11 @@ const Sidebar = () => {
                             <li>
                                 <p className="font-bold space-y-0.5 p-4 py-0 text-xs">{themeConfig.std_name}</p>
                                 <NavLink to="/users/profile" className="flex items-center px-4 py-1">
-                                    <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
+                                    {localStorage.std_photo != 'null' || localStorage.std_photo != null || localStorage.std_photo != '' ? (
+                                        <img className="w-8 ml-[5px] flex-none" src={AWS_S3_IMG + localStorage.std_photo} alt="pic" />
+                                    ) : (
+                                        <FaUserTie className="w-16 h-16   overflow-hidden  object-cover  mb-5 text-blue-400 " />
+                                    )}
                                     <p className="font-semibold space-y-0.5 p-4 py-0 text-xs">
                                         Class: {themeConfig.classname}:{themeConfig.sectionname} <hr /> AdmNo: {themeConfig.std_regno}
                                     </p>
@@ -128,10 +113,14 @@ const Sidebar = () => {
                                             <NavLink to="/knowledge-bank">{t('Knowledge Bank')}</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/assignments">{t('Assignments')}</NavLink>
+                                            <NavLink to="/live-class">{t('Live Classes')}</NavLink>
                                         </li>
+
                                         <li>
                                             <NavLink to="/diary">{t('Diary')}</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/homework">{t('HomeWork')}</NavLink>
                                         </li>
                                         <li>
                                             <NavLink to="/attendance">{t('Attendance')}</NavLink>
@@ -169,8 +158,14 @@ const Sidebar = () => {
                                             <NavLink to="/online-exam">{t('Online Exam')}</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/offline-exam">{t('Offline Exam')}</NavLink>
+                                            <NavLink to="/assignments">{t('Assignments')}</NavLink>
                                         </li>
+                                        {/* <li>
+                                            <NavLink to="/newassign">{t('NewAssignments')}</NavLink>
+                                        </li> */}
+                                        {/* <li>
+                                            <NavLink to="/offline-exam">{t('Offline Exam')}</NavLink>
+                                        </li> */}
                                         <li>
                                             <NavLink to="/schedule">{t('Exam Schedule')}</NavLink>
                                         </li>
@@ -204,8 +199,11 @@ const Sidebar = () => {
                                             <NavLink to="/payment-history">{t('Payment History')}</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/fee-receipt">{t('Fee Receipt')}</NavLink>
+                                            <NavLink to="/paynow">{t('Pay Now')}</NavLink>
                                         </li>
+                                        {/* <li>
+                                            <NavLink to="/fee-receipt">{t('Fee Receipt')}</NavLink>
+                                        </li> */}
                                     </ul>
                                 </AnimateHeight>
                             </li>
@@ -290,36 +288,38 @@ const Sidebar = () => {
                                 </AnimateHeight>
                             </li>
 
-                            <li className="menu nav-item">
-                                <button type="button" className={`${currentMenu === 'leave' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('leave')}>
-                                    <div className="flex items-center">
-                                        <IconMenuDashboard className="group-hover:!text-primary shrink-0" />
-                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Leave Management')}</span>
-                                    </div>
+                            {localStorage.std_leave_apply == 1 ? (
+                                <li className="menu nav-item">
+                                    <button type="button" className={`${currentMenu === 'leave' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('leave')}>
+                                        <div className="flex items-center">
+                                            <IconMenuDashboard className="group-hover:!text-primary shrink-0" />
+                                            <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Leave Management')}</span>
+                                        </div>
 
-                                    <div className={currentMenu !== 'leave' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                        <IconCaretDown />
-                                    </div>
-                                </button>
+                                        <div className={currentMenu !== 'leave' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                            <IconCaretDown />
+                                        </div>
+                                    </button>
 
-                                <AnimateHeight duration={300} height={currentMenu === 'leave' ? 'auto' : 0}>
-                                    <ul className="sub-menu text-gray-500">
-                                        <li>
-                                            <NavLink to="/leave_list">{t('Leaves List')}</NavLink>
-                                        </li>
+                                    <AnimateHeight duration={300} height={currentMenu === 'leave' ? 'auto' : 0}>
+                                        <ul className="sub-menu text-gray-500">
+                                            <li>
+                                                <NavLink to="/leave_list">{t('Leaves List')}</NavLink>
+                                            </li>
 
-                                        <li>
-                                            <NavLink to="/pending_leaves">{t('Pending Leaves')}</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/approved_leaves">{t('Approved Leaves')}</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to="/rejected_leaves">{t('Rejected Leaves')}</NavLink>
-                                        </li>
-                                    </ul>
-                                </AnimateHeight>
-                            </li>
+                                            <li>
+                                                <NavLink to="/pending_leaves">{t('Pending Leaves')}</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/approved_leaves">{t('Approved Leaves')}</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to="/rejected_leaves">{t('Rejected Leaves')}</NavLink>
+                                            </li>
+                                        </ul>
+                                    </AnimateHeight>
+                                </li>
+                            ) : null}
                             <li className="menu nav-item">
                                 <button type="button">
                                     <div className="flex items-center">

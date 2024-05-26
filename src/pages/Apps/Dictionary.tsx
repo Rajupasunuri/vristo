@@ -4,48 +4,48 @@ import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import axios from 'axios';
 import { MY_DASHBOARD_URL, MY_DICTIONARY_URL } from './query';
+import Swal from 'sweetalert2';
 
 const Tabs = () => {
     const [word, setWord] = useState('');
     const [show, setShow] = useState(false);
+    const [WordErr, setWordErr] = useState(false);
     const [resWord, setResWord] = useState('');
     const [wordMeaning, setWordMeaning] = useState<any>({});
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tabs'));
     });
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                    Authorization: localStorage.token,
-                };
-                const postData = {
-                    studentID: localStorage.studentID,
-                    schoolID: localStorage.schoolID,
-                };
-                const response = await axios.post(MY_DASHBOARD_URL, postData, {
-                    headers: headers,
-                });
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const headers = {
+    //                 'Content-Type': 'application/json',
+    //                 Authorization: localStorage.token,
+    //             };
+    //             const postData = {
+    //                 studentID: localStorage.studentID,
+    //                 schoolID: localStorage.schoolID,
+    //             };
+    //             const response = await axios.post(MY_DASHBOARD_URL, postData, {
+    //                 headers: headers,
+    //             });
 
-                console.log('dashboard', response);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
+    //             console.log('dashboard', response);
+    //             // if (response.data.error) {
+    //             //     Swal.fire('Request Failed, Try Again Later!');
+    //             // } else {
+    //             //     setALeaveList(response.data.data.leave_Management);
+    //             //     setLeaveLoader(false);
+    //             // }
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
 
-                //     // setProfile(profiledtls);
-                // }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        // Call the fetchData function when the component mounts
-        fetchData();
-    }, []);
+    //     // Call the fetchData function when the component mounts
+    //     fetchData();
+    // }, []);
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
@@ -67,39 +67,22 @@ const Tabs = () => {
             })
             .then((response) => {
                 console.log('Response is----- ', response);
-                if (!response.data.error) {
-                    const meaningObject = JSON.parse(response.data.data.dictioninfo[0].meaning);
-
-                    const resWord = response.data.data.dictioninfo[0].word;
-                    setWordMeaning(meaningObject);
-                    setShow(true);
-                    console.log('parse ', meaningObject);
-                    console.log('resword', resWord);
-                    setResWord(resWord);
-                }
                 if (response.data.error) {
-                    var errors = response.data.message;
-                    errors.forEach((error: any) => {
-                        switch (error.path) {
-                            case 'address':
-                                // setAddressErr(error.msg);
-                                break;
-                            case 'state':
-                                //setStateErr(error.msg);
-                                break;
-                            case 'district':
-                                //setDistErr(error.msg);
-                                break;
-                            case 'email':
-                                // setEmailErr(error.msg);
-                                break;
-                            case 'phoneNumber':
-                                // setPhoneErr(error.msg);
-                                break;
-                            default:
-                                break;
-                        }
-                    });
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    if (response.data.data.dictioninfo.length > 0) {
+                        const meaningObject = JSON.parse(response.data.data.dictioninfo[0].meaning);
+
+                        const resWord = response.data.data.dictioninfo[0].word;
+                        setWordMeaning(meaningObject);
+                        setShow(true);
+                        console.log('parse ', meaningObject);
+                        console.log('resword', resWord);
+                        setResWord(resWord);
+                    } else {
+                        var errors = response.data.message;
+                        setWordErr(true);
+                    }
                 }
             })
             .catch((error) => {
@@ -119,6 +102,7 @@ const Tabs = () => {
         setWord(e.target.value);
         setWordMeaning('');
         setShow(false);
+        setWordErr(false);
     };
 
     return (
@@ -129,82 +113,60 @@ const Tabs = () => {
                         <h5 className="text-lg font-semibold dark:text-white-light">Dictionary</h5>
                     </div>
                     <div className="mb-5">
-                        <Tab.Group>
-                            <Tab.List className="mt-3 flex flex-wrap border-b border-white-light dark:border-[#191e3a]">
-                                {/* <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                    before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Today Words
+                        <div>
+                            <div className="flex items-start pt-5">
+                                <div className="flex-auto">
+                                    <form onSubmit={handleSubmit} className="flex justify-center items-center space-x-1">
+                                        <input
+                                            type="text"
+                                            value={word}
+                                            onChange={handleword}
+                                            placeholder="Some Text..."
+                                            className="block w-1/2 rounded-md border-0 py-1.5 pl-2  text-gray-600 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6"
+                                            required
+                                        />
+                                        <button type="submit" className="border border-gray-300 py-1.5 bg-white px-4 rounded-md">
+                                            Search
                                         </button>
-                                    )}
-                                </Tab> */}
-                                <Tab as={Fragment}>
-                                    {({ selected }) => (
-                                        <button
-                                            className={`${selected ? 'text-secondary !outline-none before:!w-full' : ''}
-                                                before:inline-block' relative -mb-[1px] flex items-center p-5 py-3 before:absolute before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:w-0 before:bg-secondary before:transition-all before:duration-700 hover:text-secondary hover:before:w-full`}
-                                        >
-                                            Dictionary
-                                        </button>
-                                    )}
-                                </Tab>
-                            </Tab.List>
-                            <Tab.Panels>
-                                {/* <Tab.Panel>
-                                    <DictionaryAccordian />
-                                </Tab.Panel> */}
-                                <Tab.Panel>
-                                    <div>
-                                        <div className="flex items-start pt-5">
-                                            <div className="flex-auto">
-                                                <form onSubmit={handleSubmit} className="flex justify-center items-center space-x-1">
-                                                    <input
-                                                        type="text"
-                                                        value={word}
-                                                        onChange={handleword}
-                                                        placeholder="Some Text..."
-                                                        className="block w-1/2 rounded-md border-0 py-1.5 pl-2  text-gray-600 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6"
-                                                        required
-                                                    />
-                                                    <button type="submit" className="border border-gray-300 py-1.5 bg-white px-4 rounded-md">
-                                                        Search
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 
-                                        <div className="mt-4">
-                                            {show && (
-                                                <div className="flex flex-col space-y-2">
-                                                    <div className="flex space-x-2">
-                                                        <p className="text-md font-bold">Word:</p>
-                                                        <p>{resWord}</p>
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-md font-bold">Meaning and Uses:</p>
-                                                    </div>
-                                                </div>
-                                            )}
+                            <div className="mt-4">
+                                {show && (
+                                    <div className="flex flex-col space-y-2">
+                                        <div className="flex space-x-2">
+                                            <p className="text-md font-bold">Word:</p>
+                                            <p>{resWord}</p>
                                         </div>
-
-                                        <div className="mt-4">
-                                            {Object.keys(wordMeaning).map((item, key) => (
-                                                <div key={key}>
-                                                    <p></p>
-                                                    <p className="space-x-2">
-                                                        {item}
-                                                        {wordMeaning[item]}
-                                                    </p>
-                                                </div>
-                                            ))}
+                                        <div>
+                                            <p className="text-md font-bold">Meaning and Uses:</p>
                                         </div>
                                     </div>
-                                </Tab.Panel>
-                            </Tab.Panels>
-                        </Tab.Group>
+                                )}
+                            </div>
+
+                            <div className="mt-4">
+                                {Object.keys(wordMeaning).map((item, key) => (
+                                    <div key={key}>
+                                        <p></p>
+                                        <p className="space-x-2">
+                                            {item}
+                                            {wordMeaning[item]}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div>
+                                {WordErr ? (
+                                    <div className="flex justify-center items-center">
+                                        <h2 className="text-md font-bold">No Meaning Found For The Word</h2>
+                                    </div>
+                                ) : (
+                                    ''
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

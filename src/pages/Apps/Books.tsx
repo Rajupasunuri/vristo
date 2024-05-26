@@ -1,27 +1,13 @@
 import { useEffect, useState, Fragment } from 'react';
-import CodeHighlight from '../../components/Highlight';
-import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
-import Dropdown from '../../components/Dropdown';
+import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconCode from '../../components/Icon/IconCode';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconXCircle from '../../components/Icon/IconXCircle';
-import IconPencil from '../../components/Icon/IconPencil';
-import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
-import IconCircleCheck from '../../components/Icon/IconCircleCheck';
-import IconSettings from '../../components/Icon/IconSettings';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
-import IconEye from '../../components/Icon/IconEye';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { MY_BOOKS_URL, MY_DASHBOARD_URL, MY_ISSUED_BOOKS_URL } from './query';
-import DataTable from 'react-data-table-component';
+import { MY_BOOKS_URL, MY_ISSUED_BOOKS_URL } from './query';
 import moment from 'moment';
-
+import Swal from 'sweetalert2';
 import { FaEye } from 'react-icons/fa6';
 
 interface BOOKS {
@@ -42,88 +28,19 @@ interface BOOKSISSUED {
     due_date: string;
 }
 const Tables = () => {
-    const [modal10, setModal10] = useState(false);
     const [Books, setBooks] = useState(true);
     const [Issue, setIssue] = useState(false);
     const [modalNotice, setmodalNotice] = useState(false);
-    const [modalContent, setModalContent] = useState({ title: '', notice: '' });
+
     const [dataBooks, setdataBooks] = useState<BOOKS[]>([]);
-    const [filterBooks, setfilterBooks] = useState<BOOKS[]>([]);
     const [dataBooksIssued, setdataBooksIssued] = useState<BOOKSISSUED[]>([]);
-    const [filterBooksIssued, setfilterBooksIssued] = useState<BOOKSISSUED[]>([]);
-    const [search, setSearch] = useState('');
-    const columnbooks: any = [
-        {
-            name: 'SL.NO',
-            selector: (row: BOOKS, index: number) => index + 1,
-        },
-        {
-            name: 'BOOK NAME',
-            selector: (row: BOOKS) => row.book,
-        },
-        {
-            name: 'AUTHOR',
-            selector: (row: BOOKS) => row.author,
-        },
-        {
-            name: 'SUBJECT CODE',
-            selector: (row: BOOKS) => row.subject_code,
-        },
-        {
-            name: 'QUANTITY',
-            selector: (row: BOOKS) => row.quantity,
-        },
-        {
-            name: 'RACK NO',
-            selector: (row: BOOKS) => row.rack,
-        },
-        {
-            name: 'STATUS',
-            selector: (row: BOOKS) => row.status,
-        },
 
-        {
-            name: 'Action',
-            cell: (row: any) => (
-                <button className="border border-blue-400 bg-blue-400 p-2 text-white rounded-md" onClick={() => handlecoledit(row)}>
-                    <FaEye />
-                </button>
-            ),
-        },
-    ];
-
-    const columnbooksissued: any = [
-        {
-            name: 'SL.NO',
-            selector: (row: BOOKSISSUED, index: number) => index + 1,
-        },
-        {
-            name: 'ISSUED BOOK',
-            selector: (row: BOOKSISSUED) => row.book,
-        },
-        {
-            name: 'SERIAL NO',
-            selector: (row: BOOKSISSUED) => row.serial_no,
-        },
-        {
-            name: 'DUE DATE',
-            selector: (row: BOOKSISSUED) => formatDate(row.due_date),
-        },
-
-        {
-            name: 'STATUS',
-            selector: (row: BOOKSISSUED) => row.status,
-        },
-    ];
-
-    const handlecoledit = async (row: any) => {
-        setModalContent({ title: row.title, notice: row.notice });
-        setmodalNotice(true);
-    };
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Tables'));
-    });
+    const [bookRack, setBookRack] = useState('');
+    const [bookAuth, setBookAuth] = useState('');
+    const [book, setBook] = useState('');
+    const [bookDue, setBookDue] = useState('');
+    const [bookQuantity, setBookQuantity] = useState('');
+    const [bookDsc, setBookDsc] = useState('');
 
     useEffect(() => {
         if (Issue) {
@@ -142,18 +59,12 @@ const Tables = () => {
                     const response = await axios.post(MY_ISSUED_BOOKS_URL, postData, {
                         headers: headers,
                     });
-
+                    if (response.data.error) {
+                        // Swal.fire('Request Failed, Try Again Later!');
+                    } else {
+                        setdataBooksIssued(response.data.data.issuedbooks);
+                    }
                     console.log('issuedbooks', response);
-                    setdataBooksIssued(response.data.data.issuedbooks);
-                    setfilterBooksIssued(response.data.data.issuedbooks);
-                    // if (response.data.error) {
-                    //     // setUsererror(response.data.message);
-                    // } else {
-                    //     const profiledtls = response.data.data;
-                    //     console.log('profiledtls:', profiledtls);
-
-                    //     // setProfile(profiledtls);
-                    // }
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
@@ -178,17 +89,13 @@ const Tables = () => {
                     headers: headers,
                 });
 
-                console.log('books', response);
-                setdataBooks(response.data.data.books);
-                setfilterBooks(response.data.data.books);
-                // if (response.data.error) {
-                //     // setUsererror(response.data.message);
-                // } else {
-                //     const profiledtls = response.data.data;
-                //     console.log('profiledtls:', profiledtls);
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setdataBooks(response.data.data.books);
+                }
 
-                //     // setProfile(profiledtls);
-                // }
+                console.log('books', response);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -197,16 +104,6 @@ const Tables = () => {
         // Call the fetchData function when the component mounts
         fetchData();
     }, []);
-    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
-
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
 
     const handleBooks = () => {
         setBooks(false);
@@ -216,27 +113,18 @@ const Tables = () => {
         setBooks(true);
         setIssue(false);
     };
-    const tableHeaderstyle = {
-        headCells: {
-            style: {
-                fontWeight: 'bold',
-                fontSize: '14px',
-                backgroundColor: '#ccc',
-            },
-        },
-    };
 
-    function formatDate(date: any): string {
-        if (!date || typeof date !== 'string') return 'Invalid Date';
-        const formattedDate = moment(date).format('DD:MM:YYYY'); // Using Moment.js to format the date
-        return formattedDate;
-    }
+    const handleBookModal = (author: any, book: any, due_quantity: any, quantity: any, rack: any, subject_code: any) => {
+        setBookAuth(author);
+        setBook(book);
+        setBookDue(due_quantity);
+        setBookQuantity(quantity);
+        setBookRack(rack);
+        setBookDsc(subject_code);
+        setmodalNotice(true);
+    };
     return (
         <div className="space-y-6">
-            {/* Simple */}
-
-            {/* Hover Table  */}
-            <h3 className="font-bold text-lg">Facilities</h3>
             {Books ? (
                 <>
                     <div className="panel">
@@ -249,27 +137,25 @@ const Tables = () => {
                             </div>
                         </div>
 
-                        <div className="mb-5">
-                            <div className="space-y-6">
-                                {/* Skin: Striped  */}
-                                <div className="panel">
-                                    <div className="datatables">
-                                        <DataTable
-                                            customStyles={tableHeaderstyle}
-                                            columns={columnbooks}
-                                            data={filterBooks}
-                                            pagination
-                                            fixedHeader
-                                            highlightOnHover
-                                            subHeader
-                                            striped
-                                            subHeaderComponent={
-                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            }
-                                        />
+                        <div className="space-y-2">
+                            {dataBooks.map((book: any) => (
+                                <div className="flex bg-gray-100 p-2 ">
+                                    <span
+                                        onClick={() => handleBookModal(book.author, book.book, book.due_quantity, book.quantity, book.rack, book.subject_code)}
+                                        className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
+                                    >
+                                        <FaEye className="text-blue-400 w-8 h-4" />
+                                    </span>
+
+                                    <div className="px-3 flex-1">
+                                        <div className="text-sm">{book.book}</div>
+                                        <div className="text-xs text-white-dark dark:text-gray-500">Author : {book.author}</div>
                                     </div>
+                                    <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
+                                        {parseInt(book.quantity) - parseInt(book.due_quantity)}
+                                    </span>
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </>
@@ -285,27 +171,55 @@ const Tables = () => {
                                 </button>
                             </div>
                         </div>
-
-                        <div className="mb-5">
-                            <div className="space-y-6">
-                                {/* Skin: Striped  */}
-                                <div className="panel">
-                                    <div className="datatables">
-                                        <DataTable
-                                            customStyles={tableHeaderstyle}
-                                            columns={columnbooksissued}
-                                            data={filterBooksIssued}
-                                            pagination
-                                            fixedHeader
-                                            highlightOnHover
-                                            subHeader
-                                            striped
-                                            subHeaderComponent={
-                                                <input type="text" className="w-auto form-input  " placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                            }
-                                        />
+                        <div className="space-y-2">
+                            <div className="  card-container">
+                                {dataBooksIssued.map((book: any, index: number) => (
+                                    <div key={index} className=" mb-4 ">
+                                        <div className=" panel card-body flex flex-col space-y-2">
+                                            <div className="mb-5 ">
+                                                <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
+                                                    <table className="table-hover table-striped">
+                                                        <thead>
+                                                            <tr></tr>
+                                                        </thead>
+                                                        <tbody className="dark:text-white-dark border-1.5 ">
+                                                            <tr>
+                                                                <td className="whitespace-nowrap" style={{ width: '200px' }}>
+                                                                    Issued Book
+                                                                </td>
+                                                                <td style={{ width: '10px' }}>:</td>
+                                                                <td> {book.book}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style={{ width: '200px' }} className="whitespace-nowrap">
+                                                                    Serial No
+                                                                </td>
+                                                                <td style={{ width: '10px' }}>:</td>
+                                                                <td> {book.serial_no}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style={{ width: '200px' }}>Due Date</td>
+                                                                <td style={{ width: '10px' }}>:</td>
+                                                                <td> {moment(book.due_date).format('DD-MM-YYYY')}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style={{ width: '200px' }}>Status</td>
+                                                                <td style={{ width: '10px' }}>:</td>
+                                                                <td>
+                                                                    {new Date(book.due_date) < new Date() ? (
+                                                                        <div className="text-[#FFA800] bg-[#FFF4DE] text-center p-2 rounded-md whitespace-nowrap">Due Date Expired</div>
+                                                                    ) : (
+                                                                        <div className="text-[#8950FC] text-center bg-[#EEE5FF] p-2 rounded-md">Issued</div>
+                                                                    )}{' '}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -321,7 +235,7 @@ const Tables = () => {
                         <div className="flex min-h-screen items-start justify-center px-4">
                             <Dialog.Panel className="panel animate__animated animate__slideInDown my-8 w-full max-w-lg overflow-hidden rounded-lg border-0 p-0 text-black dark:text-white-dark">
                                 <div className="flex items-center justify-between bg-white px-5 py-3 dark:bg-white border-b">
-                                    <h5 className="text-md font-bold">{/* {Notices && modalContent.title} {Events && 'Event Details'} {Holidays && 'Holiday Details'} */}Book - English</h5>
+                                    <h5 className="text-md font-bold">Book - {book}</h5>
                                     <button onClick={() => setmodalNotice(false)} type="button" className="text-white-dark hover:text-dark">
                                         <IconX />
                                     </button>
@@ -329,36 +243,47 @@ const Tables = () => {
 
                                 <div className="flex items-center justify-between  bg-white px-5 py-3 dark:bg-white border-b">
                                     <h5 className="text-sm ">
-                                        {/* {Notices && modalContent.notice} */}
                                         {Books && (
                                             <>
-                                                <div className="panel lg:col-span-2 xl:col-span-3">
-                                                    <div className="mb-5">
+                                                <div className=" panel card-body justify-center flex flex-col space-y-2">
+                                                    <div className="mb-5 ">
                                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
-                                                            <table className="whitespace-nowrap">
+                                                            <table className="table-hover table-striped">
                                                                 <thead>
                                                                     <tr></tr>
                                                                 </thead>
-                                                                <tbody className="dark:text-white-dark border-1.5 w-screen">
+                                                                <tbody className="dark:text-white-dark border-1.5 ">
                                                                     <tr>
-                                                                        <td className="w-screen">Book Name</td>
-                                                                        <td className="w-[800px]">:</td>
-                                                                        <td>Ramesh</td>
+                                                                        <td style={{ width: '200px' }}>Book Name</td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td> {book}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td>Description</td>
-                                                                        <td className="w-[10px]">:</td>
-                                                                        <td>Rani</td>
+                                                                        <td style={{ width: '200px' }} className="">
+                                                                            Subject Code
+                                                                        </td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td> {bookDsc}</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td>Subject</td>
-                                                                        <td className="w-[10px]">:</td>
-                                                                        <td>21-11-2023</td>
+                                                                        <td style={{ width: '200px' }}>Author</td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td>{bookAuth} </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td>Serial No</td>
-                                                                        <td className="w-[10px]">:</td>
-                                                                        <td></td>
+                                                                        <td style={{ width: '200px' }}>Due Quantity</td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td>{bookDue} </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style={{ width: '200px' }}>Quantity</td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td>{bookQuantity} </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style={{ width: '200px' }}>Rack No</td>
+                                                                        <td style={{ width: '10px' }}>:</td>
+                                                                        <td>{bookRack} </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>

@@ -6,11 +6,12 @@ import Tippy from '@tippyjs/react';
 import moment from 'moment';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
+import Swal from 'sweetalert2';
 
 const RejectedLeaves = () => {
     const [rleaveList, setRLeaveList] = useState([]);
     const [leaveLoader, setLeaveLoader] = useState(false);
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState<any>('');
     const [subject, setSubject] = useState('');
     const [leaveModal, setleaveModal] = useState(false);
 
@@ -31,9 +32,14 @@ const RejectedLeaves = () => {
                 const response = await axios.post(MY_LEAVE_URL, postData, {
                     headers: headers,
                 });
-                setRLeaveList(response.data.data.leave_Management);
-                console.log('leave', response);
-                setLeaveLoader(false);
+
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setRLeaveList(response.data.data.leave_Management);
+                    console.log('leave', response);
+                    setLeaveLoader(false);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -44,9 +50,16 @@ const RejectedLeaves = () => {
     }, []);
     const handleInvoice = (subject: any, description: any) => {
         setSubject(subject);
-        setDescription(description);
+        // setDescription(description);
+        setDescription(decodeHtmlEntities(description));
         setleaveModal(true);
     };
+    const decodeHtmlEntities = (text: any) => {
+        const parser = new DOMParser();
+        const decodedString = parser.parseFromString(text, 'text/html').body.textContent;
+        return decodedString;
+    };
+
     return (
         <>
             {leaveLoader ? (
@@ -55,7 +68,7 @@ const RejectedLeaves = () => {
                 </div>
             ) : (
                 <div className="panel ">
-                    <h2 className="mb-2 text-base font-semibold">Leave List</h2>
+                    <h2 className="mb-2 text-base font-semibold">Rejected Leave List</h2>
                     <div className="  card-container">
                         {rleaveList.map((leave: any, index: number) => (
                             <div key={index} className=" mb-4 ">

@@ -9,13 +9,13 @@ import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 //import CropImgUpload from '../Pages/cropimg';
 import axios from 'axios';
 //import {u=U_URL}
-import { MY_PROFILE_URL, MY_PROFILE_EDIT_URL } from '../Apps/query';
+import { MY_PROFILE_URL, MY_PROFILE_EDIT_URL, AWS_S3_IMG } from '../Apps/query';
 //import UploadAvtar from './UploadAvtar';
 import IconLock from '../../components/Icon/IconLock';
 import Tippy from '@tippyjs/react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaEnvelope, FaPhone, FaLock } from 'react-icons/fa6';
+import { FaEnvelope, FaPhone, FaLock, FaUserTie } from 'react-icons/fa6';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -83,6 +83,11 @@ const Profile = () => {
         guardian_relationship: '',
         secondary_phone: '',
         dob: '',
+        state: '',
+        country: '',
+        district: '',
+        bloodgroup: '',
+        address: '',
     });
     const [address, setAddress] = useState('');
     const [phone, setPhone] = useState('');
@@ -145,6 +150,9 @@ const Profile = () => {
                 } else {
                     const profiledtls = response.data.data;
                     console.log('profiledtls:', profiledtls);
+
+                    localStorage.setItem('father', profiledtls.father_name);
+                    localStorage.setItem('mother', profiledtls.mother_name);
 
                     setFormData({ ...formData, district: profiledtls.district, phoneNumber: profiledtls.phone, state: profiledtls.state, address: profiledtls.address, email: profiledtls.email });
 
@@ -299,7 +307,7 @@ const Profile = () => {
             const res1 = await axios.post(`http://localhost:8081/pass?username=${l1}`, data2);
 
             console.log('Data uploaded successfully');
-            toast(res1.data);
+            // toast(res1.data);
             console.log('data4', res1.data);
             setsucc(res1.data);
             setCurr('');
@@ -367,11 +375,17 @@ const Profile = () => {
                                     </div>
                                     <div className="mb-5">
                                         <div className="flex flex-col justify-center items-center">
-                                            <img
+                                            {/* <img
                                                 src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg"
                                                 alt="img"
                                                 className="w-48 h-46 md:w-37 md:h-35  overflow-hidden  object-cover  mb-5"
-                                            />
+                                            /> */}
+                                            {localStorage.std_photo != 'null' || localStorage.std_photo != null || localStorage.std_photo != '' ? (
+                                                <img className="w-48 h-46 md:w-37 md:h-35  overflow-hidden  object-cover  mb-5" src={AWS_S3_IMG + localStorage.std_photo} alt="pic" />
+                                            ) : (
+                                                <FaUserTie className="w-16 h-16   overflow-hidden  object-cover  mb-5 text-blue-400 " />
+                                            )}
+
                                             {/* <CropImg imgsrc={localStorage.cu_image_url} className="img-thumbnail onclicklink" onwhich='cu_image_url' imgtitle='Profile Picture' imgw={250}></CropImg> */}
                                             {/* <UploadAvtar></UploadAvtar> */}
                                             {/* <Uploadfile
@@ -463,12 +477,12 @@ const Profile = () => {
                                                     <tr>
                                                         <td>Class</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{localStorage.classname}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Section</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{localStorage.sectionname}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Roll No</td>
@@ -486,69 +500,29 @@ const Profile = () => {
                                                         <td>{profile.secondary_phone}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Aadhar No</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Student Aadhar Photo</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Class of Admission</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Mother Tongue</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Nationality</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Category</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Religion</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Caste</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Sub-Caste</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Place of Birth</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Hospital Name</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Ration Card No</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
                                                         <td>Blood Group</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
+                                                        <td>{profile.bloodgroup}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Address</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{profile.address}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>District</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{profile.district}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>State</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{profile.state}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Country</td>
+                                                        <td style={{ width: '10px' }}>:</td>
+                                                        <td>{profile.country}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -561,14 +535,7 @@ const Profile = () => {
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
                                             <table className="table-hover table-striped">
                                                 <thead>
-                                                    <tr>
-                                                        {/* <th colSpan={2} className="text-center col-span">
-                                                Projects
-                                            </th> */}
-                                                        {/* <th>Progress</th> */}
-                                                        {/* <th>Task Done</th>
-                                            <th className="text-center">Time</th> */}
-                                                    </tr>
+                                                    <tr></tr>
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
@@ -586,11 +553,6 @@ const Profile = () => {
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.father_phone}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Father Aadhar No</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
 
                                                     <tr>
                                                         <td>Father Qualification</td>
@@ -601,16 +563,6 @@ const Profile = () => {
                                                         <td>Father Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.father_email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Annual Income</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Father Aadhar Copy</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -623,14 +575,7 @@ const Profile = () => {
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
                                             <table className="table-hover table-striped">
                                                 <thead>
-                                                    <tr>
-                                                        {/* <th colSpan={2} className="text-center col-span">
-                                                Projects
-                                            </th> */}
-                                                        {/* <th>Progress</th> */}
-                                                        {/* <th>Task Done</th>
-                                            <th className="text-center">Time</th> */}
-                                                    </tr>
+                                                    <tr></tr>
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
@@ -648,11 +593,6 @@ const Profile = () => {
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.mother_phone}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Mother Aadhar No</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
 
                                                     <tr>
                                                         <td>Mother Qualification</td>
@@ -663,16 +603,6 @@ const Profile = () => {
                                                         <td>Mother Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.mother_email}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Mother Office Address</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Mother Aadhar Copy</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -685,14 +615,7 @@ const Profile = () => {
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
                                             <table className="table-hover table-striped">
                                                 <thead>
-                                                    <tr>
-                                                        {/* <th colSpan={2} className="text-center col-span">
-                                                Projects
-                                            </th> */}
-                                                        {/* <th>Progress</th> */}
-                                                        {/* <th>Task Done</th>
-                                            <th className="text-center">Time</th> */}
-                                                    </tr>
+                                                    <tr></tr>
                                                 </thead>
                                                 <tbody className="dark:text-white-dark border-1.5">
                                                     <tr>
@@ -710,11 +633,6 @@ const Profile = () => {
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.guardian_phone}</td>
                                                     </tr>
-                                                    <tr>
-                                                        <td>Guardian Aadhar No</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
-                                                    </tr>
 
                                                     <tr>
                                                         <td>Guardian Qualification</td>
@@ -725,12 +643,6 @@ const Profile = () => {
                                                         <td>Guardian Email</td>
                                                         <td style={{ width: '10px' }}>:</td>
                                                         <td>{profile.guardian_email}</td>
-                                                    </tr>
-
-                                                    <tr>
-                                                        <td>Guardian Aadhar Copy</td>
-                                                        <td style={{ width: '10px' }}>:</td>
-                                                        <td></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -830,16 +742,21 @@ const Profile = () => {
                                     <div className="flex flex-col sm:flex-row">
                                         <div className="ltr:sm:mr-4 rtl:sm:ml-4 w-full sm:w-2/12 mb-5">
                                             {/* Hidden input field */}
-                                            <input type="file" name="image" id="imageInput" accept="images/*" onChange={handleChange} style={{ display: 'none' }} />
+                                            {/* <input type="file" name="image" id="imageInput" accept="images/*" onChange={handleChange} style={{ display: 'none' }} /> */}
 
                                             {/* Clickable image */}
-                                            <label htmlFor="imageInput" style={{ cursor: 'pointer' }}>
-                                                <img
-                                                    src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg"
-                                                    alt="img"
-                                                    className="w-20 h-18 md:w-31 md:h-28  object-cover mx-auto"
-                                                />
-                                            </label>
+                                            {/* <label htmlFor="imageInput" style={{ cursor: 'pointer' }}> */}
+                                            {/* <img
+                                                src="https://crown-school-site.s3.ap-south-1.amazonaws.com/images/small-thumb/images/C2172.jpg"
+                                                alt="img"
+                                                className="w-20 h-18 md:w-31 md:h-28  object-cover mx-auto"
+                                            /> */}
+                                            {localStorage.std_photo != 'null' || localStorage.std_photo != null || localStorage.std_photo != '' ? (
+                                                <img className="w-48 h-46 md:w-37 md:h-35  overflow-hidden  object-cover  mb-5" src={AWS_S3_IMG + localStorage.std_photo} alt="pic" />
+                                            ) : (
+                                                <FaUserTie className="w-16 h-16   overflow-hidden  object-cover  mb-5 text-blue-400 " />
+                                            )}
+                                            {/* </label> */}
                                         </div>
                                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5">
                                             <div>

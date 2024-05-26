@@ -1,6 +1,5 @@
 import { Transition, Dialog } from '@headlessui/react';
 import { Fragment, useState } from 'react';
-import IconEye from '../../components/Icon/IconEye';
 import IconX from '../../components/Icon/IconX';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -16,6 +15,7 @@ interface TableDialogProps {
 
 const TableDialog = ({ hall, exam }: TableDialogProps) => {
     const [hallTicketModal, sethallTicketModal] = useState(false);
+
     const downloadPDF = () => {
         const input = document.getElementById('table-container');
         if (!input) {
@@ -24,20 +24,27 @@ const TableDialog = ({ hall, exam }: TableDialogProps) => {
         }
 
         html2canvas(input, { scale: 2 }).then((canvas) => {
-            const pdf = new jsPDF('p', 'mm', 'a6');
+            const pdf = new jsPDF('p', 'mm', 'a4');
             const imgData = canvas.toDataURL('image/png');
-            const imgWidth = 105;
+            const imgWidth = 210; // Width of A4 paper in mm
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
             // Ensure canvas size is adjusted to fit the entire table
-            const pdfHeight = (imgHeight * 105) / imgWidth;
-            pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, 148);
+            const pdfHeight = (imgHeight * 210) / imgWidth;
+            const margin = 1; // Adjust margin as needed
+            const padding = 10;
 
-            pdf.save('table.pdf');
+            const xPos = margin; // Adjust as needed
+            const yPos = 15; // Adjust as needed
+            const contentWidth = imgWidth - 2 * 1;
+            const contentHeight = pdfHeight - 2 * padding;
+            pdf.addImage(imgData, 'PNG', xPos, yPos, contentWidth, contentHeight);
+            pdf.setFontSize(10);
+
+            pdf.save('Hall-Ticket.pdf');
         });
     };
 
-    //console.log('hall ticlemd used', hall);
     return (
         <div>
             <button onClick={() => sethallTicketModal(true)} type="button" className="">
@@ -62,11 +69,11 @@ const TableDialog = ({ hall, exam }: TableDialogProps) => {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="p-5 table-responsive " id="table-container">
+                                <div className="p-2 w-[1200px] h-full  panel border-gray-400 border-2 m-2" id="table-container">
                                     <div className="flex justify-center items-center mb-4">
                                         <p>{exam}</p>
                                     </div>
-                                    <div className="flex justify-between mb-0">
+                                    <div className="flex justify-between mb-0 ">
                                         <div className="flex justify-center">
                                             <p>Name:{localStorage.std_name}</p>
                                         </div>
@@ -82,9 +89,9 @@ const TableDialog = ({ hall, exam }: TableDialogProps) => {
                                             <img src="/public/assets/images/C2172.jpg" alt="img" className="w-22 h-20   overflow-hidden  object-cover  mb-5" />
                                         </div>
                                     </div>
-                                    <table className="table-hover table-striped">
+                                    <table className="table-hover  table-striped w-[1200px] h-full">
                                         <thead>
-                                            <tr>
+                                            <tr className="whitespace-nowrap text-sm">
                                                 <th>Date</th>
                                                 <th>Subject</th>
                                                 <th>Time</th>
@@ -93,7 +100,7 @@ const TableDialog = ({ hall, exam }: TableDialogProps) => {
                                         </thead>
                                         <tbody>
                                             {hall.map((halltck: any, index: any) => (
-                                                <tr>
+                                                <tr className="whitespace-nowrap text-sm">
                                                     <td>{moment(halltck.edate).format('DD-MM-YYYY')}</td>
                                                     <td>{halltck.subject}</td>
                                                     <td>

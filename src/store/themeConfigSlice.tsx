@@ -370,7 +370,9 @@ const themeConfigSlice = createSlice({
             // console.log('schdtls', schdtls);
             // console.log('setSchoolDtlsschoolID', schdtls.schoolID);
             const jsonData = JSON.stringify(action.payload);
+
             localStorage.setItem('schdtls', jsonData);
+            localStorage.setItem('sch_url', schdtls.sch_url);
             localStorage.setItem('schoolID', schdtls.schoolID);
             localStorage.setItem('school_name', schdtls.school_name);
             localStorage.setItem('school_logo', schdtls.school_logo);

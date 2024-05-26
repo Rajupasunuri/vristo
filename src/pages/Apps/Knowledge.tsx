@@ -4,18 +4,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconX from '../../components/Icon/IconX';
 import axios from 'axios';
-import { MY_KB_FILE_URL, MY_KNOWLEDGE_BNK_URL, MY_MEDIA } from './query';
+import { MY_KB_FILE_URL, MY_KNOWLEDGE_BNK_URL, MY_KNOWLEDGE_SUBJECT_URL, MY_MEDIA } from './query';
 import Dropdown from '../../components/Dropdown';
 import { IRootState } from '../../store';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
 import { LuFileVideo } from 'react-icons/lu';
 import { ImYoutube } from 'react-icons/im';
-import { FaFilePdf } from 'react-icons/fa';
+import { FaFilePdf, FaFileAlt } from 'react-icons/fa';
 import { FaFileImage } from 'react-icons/fa6';
 import { BsFiletypeMp3 } from 'react-icons/bs';
 import ReactAudioPlayer from 'react-audio-player';
 import moment from 'moment';
-import { BsFiletypeTxt, BsFiletypeXlsx, BsFiletypeMp4 } from 'react-icons/bs';
+import { BsFiletypeTxt, BsFiletypeXlsx, BsFiletypeMp4, BsFiletypePpt } from 'react-icons/bs';
+import { FaRegFileZipper } from 'react-icons/fa6';
+import Swal from 'sweetalert2';
+
 import { GrDocumentWord } from 'react-icons/gr';
 
 const Tabs = () => {
@@ -27,9 +30,11 @@ const Tabs = () => {
     });
     const [mySubjects, setMySubjects] = useState<any>([]);
     const [knowledgeFiles, setKnowledgeFiles] = useState<any>([]);
+    const [subKnowledgeFiles, setSubKnowledgeFiles] = useState<any>([]);
     const [subID, setSubID] = useState('0');
     const [loadSub, setLoadSub] = useState('');
     const [youtubeModal, setyoutubeModal] = useState(false);
+    const [subChange, setSubChange] = useState(true);
     const [ycode, setYcode] = useState('');
     const [urlModal, setUrlModal] = useState('');
     const [file, setFile] = useState('');
@@ -56,11 +61,16 @@ const Tabs = () => {
                     headers: headers,
                 });
 
+                if (response.data.error) {
+                    Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    // setMySubjects(response.data.data.my_subjects);
+                    setKnowledgeFiles(response.data.data.knowledge_files);
+                    setLoadSub(response.data.data.knowledge_files[0].subject);
+                }
+
                 console.log('knowledge', response);
-                console.log('knowledge', response.data.data.my_subjects);
-                setMySubjects(response.data.data.my_subjects);
-                setKnowledgeFiles(response.data.data.knowledge_files);
-                setLoadSub(response.data.data.my_subjects[0].subject);
+                // console.log('knowledge', response.data.data.my_subjects);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -84,12 +94,18 @@ const Tabs = () => {
                     sectionID: localStorage.sectionID,
                     subjectID: subID,
                 };
-                const response = await axios.post(MY_KNOWLEDGE_BNK_URL, postData, {
+                const response = await axios.post(MY_KNOWLEDGE_SUBJECT_URL, postData, {
                     headers: headers,
                 });
 
-                console.log('knowledge', response);
-                setKnowledgeFiles(response.data.data.knowledge_files);
+                if (response.data.error) {
+                    //Swal.fire('Request Failed, Try Again Later!');
+                } else {
+                    setSubKnowledgeFiles(response.data.data.knowledge_files);
+                }
+
+                console.log('knowledge......', response);
+
                 // console.log('knowledge', response.data.data.my_subjects);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -100,6 +116,7 @@ const Tabs = () => {
         fetchData();
     }, [subID]);
     const handleSubject = (subID: any, subject: any) => {
+        setSubChange(false);
         setSubID(subID);
         setLoadSub(subject);
     };
@@ -119,6 +136,27 @@ const Tabs = () => {
         setdescription(description);
         setDate(formattedDate);
         setmediaModal(true);
+    };
+
+    const handleDownloadFile = async (syllabusId: any, title: any, ext: any) => {
+        let syllabus: any = syllabusId;
+        let titles: any = title;
+        let exts: any = ext;
+        Swal.fire({
+            icon: 'warning',
+            title: 'Are you sure?',
+            text: 'You want to download this file!',
+            showCancelButton: true,
+            confirmButtonText: 'Download',
+            padding: '2em',
+            customClass: 'sweet-alerts',
+            allowOutsideClick: false,
+        }).then(async (result) => {
+            if (result.value) {
+                handleKBFile(syllabus, titles, exts);
+                // Swal.fire({ title: 'Deleted!', text: 'Your file has been deleted.', icon: 'success', customClass: 'sweet-alerts' });
+            }
+        });
     };
 
     const handleKBFile = async (syllabusId: any, title: any, ext: any) => {
@@ -145,89 +183,182 @@ const Tabs = () => {
     };
 
     return (
-        <div className="panel">
+        <div className="">
             <div className="mb-5">
-                <div className="flex flex-wrap w-full gap-7 justify-around">
-                    <div className="flex items-center justify-center">
-                        <div className="dropdown">
-                            <Dropdown
-                                placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
-                                btnClassName="btn btn-success  w-full  dropdown-toggle"
-                                button={
-                                    <>
-                                        {loadSub}
-                                        <span>
-                                            <IconCaretDown className="ltr:ml-1 rtl:mr-1 inline-block" />
-                                        </span>
-                                    </>
-                                }
-                            >
-                                <ul className="!min-w-[170px]">
-                                    {mySubjects.map((subject: any) => (
-                                        <li key={subject.id}>
-                                            <button type="button" onClick={() => handleSubject(subject.global_subject_id, subject.subject)}>
-                                                {subject.subject}
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </Dropdown>
-                        </div>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-bold">Knowledge Bank</h2>
+                    <div className="dropdown">
+                        <Dropdown
+                            placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
+                            btnClassName="btn btn-success btn-sm  w-full  dropdown-toggle"
+                            button={
+                                <>
+                                    {loadSub}
+                                    <span>
+                                        <IconCaretDown className="ltr:ml-1 rtl:mr-1 inline-block" />
+                                    </span>
+                                </>
+                            }
+                        >
+                            <ul className="!min-w-[170px]">
+                                {knowledgeFiles.map((subject: any) => (
+                                    <li key={subject.id}>
+                                        <button type="button" onClick={() => handleSubject(subject.global_subject_id, subject.subject)}>
+                                            {subject.subject}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </Dropdown>
                     </div>
                 </div>
             </div>
 
             <div className="">
-                <div className=" mt-2  sm:grid sm:grid-cols-4 grid-cols-1 gap-2 space-y-2 items-center justify-center ">
-                    {knowledgeFiles.map((file: any) => (
-                        <div className="panel mt-2  flex  space-y-2 items-center  justify-center  ">
-                            {file.is_kb === 'vimeo' ? (
-                                <LuFileVideo
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400 cursor-pointer"
-                                    onClick={() => handleVideo(file.vimeo_videoID, file.is_kb, file.title, file.description, file.date)}
-                                />
-                            ) : file.is_kb === 'audio' ? (
-                                <BsFiletypeMp3
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9] cursor-pointer"
-                                    onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
-                                />
-                            ) : file.is_kb === 'dwn' && file.fileExt === 'pdf' ? (
-                                <FaFilePdf
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300 cursor-pointer"
-                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
-                                />
-                            ) : file.is_kb === 'image' ? (
-                                <FaFileImage
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D] cursor-pointer"
-                                    onClick={() => handleVideo(file.file, file.is_kb, file.title, file.description, file.date)}
-                                />
-                            ) : file.is_kb === 'youtube' ? (
-                                <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500 cursor-pointer" onClick={() => handleYoutube(file.ytb_embedcode)} />
-                            ) : file.is_kb === 'dwn' && file.fileExt === 'txt' ? (
-                                <BsFiletypeTxt
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33] cursor-pointer"
-                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
-                                />
-                            ) : file.is_kb === 'dwn' && file.fileExt === 'xlsx' ? (
-                                <BsFiletypeXlsx
-                                    className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126] cursor-pointer"
-                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
-                                />
-                            ) : file.is_kb === 'dwn' && file.fileExt === 'docx' ? (
-                                <GrDocumentWord
-                                    className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
-                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
-                                />
-                            ) : file.is_kb === 'dwn' && file.fileExt === 'mp4' ? (
-                                <BsFiletypeMp4
-                                    className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
-                                    onClick={() => handleKBFile(file.syllabusID, file.title, file.fileExt)}
-                                />
-                            ) : (
-                                ''
-                            )}
-                        </div>
-                    ))}
+                <div className=" mt-2  sm:grid sm:grid-cols-2 grid-cols-1 gap-2 space-y-2 items-center justify-center ">
+                    {subChange
+                        ? knowledgeFiles.map((file: any) =>
+                              file.kbs.map((kb: any, index: number) => (
+                                  <div key={index} className="panel mt-2  flex flex-col  space-y-8 items-center  justify-center  ">
+                                      {kb.is_kb === 'vimeo' ? (
+                                          <LuFileVideo
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400 cursor-pointer"
+                                              onClick={() => handleVideo(kb.vimeo_videoID, kb.is_kb, kb.title, kb.description, kb.date)}
+                                          />
+                                      ) : kb.is_kb === 'audio' ? (
+                                          <BsFiletypeMp3
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9] cursor-pointer"
+                                              onClick={() => handleVideo(kb.file, kb.is_kb, kb.title, kb.description, kb.date)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'pdf' ? (
+                                          <FaFilePdf
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300 cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'image' ? (
+                                          <FaFileImage
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D] cursor-pointer"
+                                              onClick={() => handleVideo(kb.file, kb.is_kb, kb.title, kb.description, kb.date)}
+                                          />
+                                      ) : kb.is_kb === 'youtube' ? (
+                                          <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500 cursor-pointer" onClick={() => handleYoutube(kb.ytb_embedcode)} />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'txt' ? (
+                                          <BsFiletypeTxt
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'xlsx' ? (
+                                          <BsFiletypeXlsx
+                                              className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'docx' ? (
+                                          <GrDocumentWord
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'zip' ? (
+                                          <FaRegFileZipper
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#FFA800] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'doc' ? (
+                                          <GrDocumentWord
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' && kb.fileExt === 'mp4' ? (
+                                          <BsFiletypeMp4
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : (kb.is_kb === 'dwn' && kb.fileExt === 'ppt') || kb.fileExt === 'pptx' ? (
+                                          <BsFiletypePpt
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#E88114] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : kb.is_kb === 'dwn' ? (
+                                          <FaFileAlt
+                                              className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#14cce8] cursor-pointer"
+                                              onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                          />
+                                      ) : (
+                                          ''
+                                      )}
+                                      <p className="text-lg text-center font-semibold">{kb.title}</p>
+                                  </div>
+                              ))
+                          )
+                        : subKnowledgeFiles.map((kb: any, index: number) => (
+                              <div key={index} className="panel mt-2  flex flex-col  space-y-8 items-center  justify-center  ">
+                                  {kb.is_kb === 'vimeo' ? (
+                                      <LuFileVideo
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-blue-400 cursor-pointer"
+                                          onClick={() => handleVideo(kb.vimeo_videoID, kb.is_kb, kb.title, kb.description, kb.date)}
+                                      />
+                                  ) : kb.is_kb === 'audio' ? (
+                                      <BsFiletypeMp3
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#9F6CD9] cursor-pointer"
+                                          onClick={() => handleVideo(kb.file, kb.is_kb, kb.title, kb.description, kb.date)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'pdf' ? (
+                                      <FaFilePdf
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-300 cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'image' ? (
+                                      <FaFileImage
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#68478D] cursor-pointer"
+                                          onClick={() => handleVideo(kb.file, kb.is_kb, kb.title, kb.description, kb.date)}
+                                      />
+                                  ) : kb.is_kb === 'youtube' ? (
+                                      <ImYoutube className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-red-500 cursor-pointer" onClick={() => handleYoutube(kb.ytb_embedcode)} />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'txt' ? (
+                                      <BsFiletypeTxt
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#959B33] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'zip' ? (
+                                      <FaRegFileZipper
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#FFA800] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'xlsx' ? (
+                                      <BsFiletypeXlsx
+                                          className="sm:w-[70px] sm:h-[70px] w-[110px] h-[100px]  text-[#41B126] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'docx' ? (
+                                      <GrDocumentWord
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'doc' ? (
+                                      <GrDocumentWord
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'mp4' ? (
+                                      <BsFiletypeMp4
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#4762B0] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' && kb.fileExt === 'ppt' ? (
+                                      <BsFiletypePpt
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#E88114] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : kb.is_kb === 'dwn' ? (
+                                      <FaFileAlt
+                                          className="sm:w-[70px] sm:h-[70px] w-[85px] h-[85px]  text-[#14cce8] cursor-pointer"
+                                          onClick={() => handleDownloadFile(kb.syllabusID, kb.title, kb.fileExt)}
+                                      />
+                                  ) : (
+                                      ''
+                                  )}
+                                  <p className="text-md text-center font-semibold">{kb.title}</p>
+                              </div>
+                          ))}
                 </div>
             </div>
 
