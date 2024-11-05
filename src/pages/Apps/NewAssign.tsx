@@ -1,20 +1,17 @@
 import { useEffect, useState, Fragment } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { IRootState } from '../../store';
+import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import IconDownload from '../../components/Icon/IconDownload';
 //import React from 'react';
-import { MY_ASSIGNMENTS_FILES_URL, MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DELETE_FILE_URL, MY_DOWNLOAD_ASSIGNMENTS_FILE_URL, MY_IMG_URL } from './query';
+import { MY_ASSIGNMENTS_FILES_URL, MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DELETE_FILE_URL, MY_DOWNLOAD_ASSIGNMENTS_FILE_URL, MY_IMG_URL } from '../query';
 import axios from 'axios';
 import { FaEye, FaUpload, FaArrowDownLong } from 'react-icons/fa6';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Moment from 'react-moment';
 import { MdDelete } from 'react-icons/md';
 import Swal from 'sweetalert2';
-import moment from 'moment';
 
 //import print from '/public/Application.pdf';
 
@@ -398,13 +395,12 @@ const Tables = () => {
                                         </td>
                                         <td>
                                             <span
-                                                className={`whitespace-nowrap p-1 rounded-md ${
-                                                    assign.astatus === 'Date Expired'
+                                                className={`whitespace-nowrap p-1 rounded-md ${assign.astatus === 'Date Expired'
                                                         ? '  bg-red-200 text-red-400'
                                                         : assign.astatus === 'Submitted'
-                                                        ? 'bg-blue-200 text-blue-400'
-                                                        : ' bg-orange-200  text-orange-400'
-                                                }`}
+                                                            ? 'bg-blue-200 text-blue-400'
+                                                            : ' bg-orange-200  text-orange-400'
+                                                    }`}
                                             >
                                                 {assign.astatus}
                                             </span>
@@ -525,13 +521,12 @@ const Tables = () => {
                                                                         <td style={{ width: '10px' }}>:</td>
                                                                         <td>
                                                                             <span
-                                                                                className={`whitespace-nowrap p-1 rounded-md ${
-                                                                                    file.astatus === 'Date Expired'
+                                                                                className={`whitespace-nowrap p-1 rounded-md ${file.astatus === 'Date Expired'
                                                                                         ? '  bg-red-200 text-red-400'
                                                                                         : file.astatus === 'Submitted'
-                                                                                        ? 'bg-blue-200 text-blue-400'
-                                                                                        : ' bg-orange-200  text-orange-400'
-                                                                                }`}
+                                                                                            ? 'bg-blue-200 text-blue-400'
+                                                                                            : ' bg-orange-200  text-orange-400'
+                                                                                    }`}
                                                                             >
                                                                                 {file.astatus}
                                                                             </span>

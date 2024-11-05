@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 import IconLock from '../../components/Icon/IconLock';
-import IconLogout from '../../components/Icon/IconLogout';
 import IconUser from '../../components/Icon/IconUser';
-import { NavLink } from '@mantine/core';
 
 const ChangePassword = () => {
     return (

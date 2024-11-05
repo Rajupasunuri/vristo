@@ -4,29 +4,14 @@ import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import 'tippy.js/dist/tippy.css';
 import axios from 'axios';
-import { MY_TIME_TABLE_URL } from './query';
+import { MY_TIME_TABLE_URL } from '../query';
 import Swal from 'sweetalert2';
 
-const Tabs = () => {
+const Timetable = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Tabs'));
-    });
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
-
-    //const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Tables'));
-    });
 
     const [all_tabs, setAll_tabs] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,6 +34,9 @@ const Tabs = () => {
                     Swal.fire('Request Failed, Try Again Later!');
                 } else {
                     setAll_tabs(response.data.data.this_days);
+                    const today = new Date().toLocaleString('en-us', { weekday: 'long' });
+                    const defaultIndex = response.data.data.this_days.findIndex((tab: any) => tab.day_name === today);
+                    setSelectedIndex(defaultIndex !== -1 ? defaultIndex : 0);
                 }
 
                 console.log('time table', response);
@@ -69,7 +57,7 @@ const Tabs = () => {
                         <h5 className="text-lg font-semibold dark:text-white-light">Time Table</h5>
                     </div>
                     <div className="mb-5 w-full">
-                        <Tab.Group>
+                        <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
                             <Tab.List className="mt-3 flex overflow-x-auto  w-full  ">
                                 {all_tabs.map((all_tab: any, index: number) => {
                                     return (
@@ -77,9 +65,8 @@ const Tabs = () => {
                                             {({ selected }) => (
                                                 <div className="flex-auto text-center !outline-none">
                                                     <button
-                                                        className={`${
-                                                            selected ? '!border-white-light !border-b-white !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''
-                                                        } dark:hover:border-b-black' -mb-[1px] block border border-transparent p-3.5 py-2 hover:border-white-light hover:border-b-white dark:hover:border-[#191e3a]`}
+                                                        className={`${selected ? '!border-white-light !border-b-white !outline-none dark:!border-[#191e3a] dark:!border-b-black' : ''
+                                                            } dark:hover:border-b-black' -mb-[1px] block border border-transparent p-3.5 py-2 hover:border-white-light hover:border-b-white dark:hover:border-[#191e3a]`}
                                                         style={{ width: '100%' }}
                                                     >
                                                         {all_tab.day_name}
@@ -93,7 +80,7 @@ const Tabs = () => {
                             <Tab.Panels>
                                 {all_tabs.map((all_tab: any, index: number) => {
                                     return (
-                                        <Tab.Panel>
+                                        <Tab.Panel key={index}>
                                             <div className="active">
                                                 {/* Simple */}
 
@@ -138,4 +125,4 @@ const Tabs = () => {
         </div>
     );
 };
-export default Tabs;
+export default Timetable;

@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { MY_LEAVE_URL } from './query';
+import { MY_LEAVE_URL } from '../query';
 import { Fragment, useEffect, useState } from 'react';
-import Index from '../Index';
+import Index from '../Dashboard';
 import Tippy from '@tippyjs/react';
 import moment from 'moment';
 import { Dialog, Transition } from '@headlessui/react';
@@ -60,11 +60,22 @@ const PendingLeaves = () => {
         var textContent = tempElement.textContent || tempElement.innerText;
 
         // Output the plain text content
+        // Insert spaces after commas, periods, and before and after placeholders
+        let formattedText = textContent
+            .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space between camelCase words
+            .replace(/\[([^\]]+)\]/g, '[$1]') // Add space before and after placeholders
+            .replace(/([a-z])\./gi, '$1. ') // Add space after periods
+            .replace(/([a-z]),/gi, '$1, ') // Add space after commas
+            .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
+
+        // Format the date properly
+        formattedText = formattedText.replace(/(\d+)([A-Za-z]+)/, '$1 $2');
         console.log(textContent);
         setSubject(subject);
-        setDescription(textContent);
+        setDescription(formattedText);
         setleaveModal(true);
     };
+
     return (
         <>
             {leaveLoader ? (
@@ -162,7 +173,7 @@ const PendingLeaves = () => {
                                         </button>
                                     </div>
                                     <div className=" ">
-                                        <div className="m-2" dangerouslySetInnerHTML={{ __html: description }} />
+                                        <div className="m-2  whitespace-pre-wrap break-words" dangerouslySetInnerHTML={{ __html: description }} />
                                     </div>
                                 </Dialog.Panel>
                             </div>

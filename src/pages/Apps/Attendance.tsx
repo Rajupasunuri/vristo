@@ -2,12 +2,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import ReactApexChart from 'react-apexcharts';
-import { setPageTitle } from '../../store/themeConfigSlice';
-import { MY_ATTENDANCE_URL } from './query';
+import { MY_ATTENDANCE_URL } from '../query';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-const Charts = () => {
+const Attendance = () => {
     const dispatch = useDispatch();
     const [attendance, setAttendance] = useState<any>([]);
     const [loading] = useState(false);
@@ -19,18 +18,6 @@ const Charts = () => {
     const [hp, setHp] = useState(0);
     const [hd, setHd] = useState(0);
     const [late, setLate] = useState(0);
-    useEffect(() => {
-        dispatch(setPageTitle('Charts'));
-    });
-    const [codeArr, setCodeArr] = useState<string[]>([]);
-
-    const toggleCode = (name: string) => {
-        if (codeArr.includes(name)) {
-            setCodeArr((value) => value.filter((d) => d !== name));
-        } else {
-            setCodeArr([...codeArr, name]);
-        }
-    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,24 +80,19 @@ const Charts = () => {
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const lineChart: any = {
-        series: [
-            {
-                name: 'Sales',
-                data: [45, 55, 75, 25, 45, 110],
-            },
-        ],
+        series: [attendance[0], attendance[1], attendance[2], attendance[3]],
         options: {
             chart: {
                 height: 300,
                 type: 'line',
                 toolbar: false,
             },
-            colors: ['#4361EE'],
+            colors: ['#e2a03f', '#5c1ac3', '#e7515a', '#8dc02f', '#ea041d'],
             tooltip: {
                 marker: false,
                 y: {
                     formatter(number: number) {
-                        return '$' + number;
+                        return number;
                     },
                 },
             },
@@ -119,7 +101,7 @@ const Charts = () => {
                 curve: 'smooth',
             },
             xaxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
+                categories: monthYears,
                 axisBorder: {
                     color: isDark ? '#191e3a' : '#e0e6ed',
                 },
@@ -146,7 +128,7 @@ const Charts = () => {
         options: {
             chart: {
                 type: 'donut',
-                height: 460,
+                height: 760,
                 fontFamily: 'Nunito, sans-serif',
             },
             dataLabels: {
@@ -154,7 +136,7 @@ const Charts = () => {
             },
             stroke: {
                 show: true,
-                width: 25,
+                width: 20,
                 colors: isDark ? '#0e1726' : '#fff',
             },
             colors: isDark ? ['#5c1ac3', '#e2a03f', '#e7515a', '#e2a03f', '#2fbec0', '#c02f3f', '#e2a03f'] : ['#e2a03f', '#5c1ac3', '#e7515a', '#8dc02f', '#ea041d'],
@@ -167,7 +149,7 @@ const Charts = () => {
                     height: 10,
                     offsetX: -2,
                 },
-                height: '',
+                height: '120',
                 offsetY: 20,
             },
             plotOptions: {
@@ -339,7 +321,7 @@ const Charts = () => {
                                             <span className="animate-spin border-2 border-black dark:border-white !border-l-transparent  rounded-full w-5 h-5 inline-flex"></span>
                                         </div>
                                     ) : (
-                                        <ReactApexChart series={salesByCategory.series} options={salesByCategory.options} type="donut" height={460} />
+                                        <ReactApexChart series={salesByCategory.series} options={salesByCategory.options} type="donut" height={560} />
                                     )}
                                 </div>
                             </div>
@@ -365,8 +347,8 @@ const Charts = () => {
             </div>
 
             <div className="pt-5 grid lg:grid-cols-2 grid-cols-1 gap-6">
-                {monthWiseAtt.map((attd: any) => (
-                    <div className="panel h-full">
+                {monthWiseAtt.map((attd: any, index: number) => (
+                    <div key={index} className="panel h-full">
                         <div className="flex items-center justify-between dark:text-white-light mb-5">
                             <h5 className="font-semibold text-lg">{attd.month}</h5>
                         </div>
@@ -417,4 +399,4 @@ const Charts = () => {
     );
 };
 
-export default Charts;
+export default Attendance;

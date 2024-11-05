@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MY_LEAVE_URL } from './query';
+import { MY_LEAVE_URL } from '../query';
 import { Fragment, useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 import moment from 'moment';

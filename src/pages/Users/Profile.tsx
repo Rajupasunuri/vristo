@@ -9,7 +9,7 @@ import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 //import CropImgUpload from '../Pages/cropimg';
 import axios from 'axios';
 //import {u=U_URL}
-import { MY_PROFILE_URL, MY_PROFILE_EDIT_URL, AWS_S3_IMG } from '../Apps/query';
+import { MY_PROFILE_URL, MY_PROFILE_EDIT_URL, AWS_S3_IMG } from '../query';
 //import UploadAvtar from './UploadAvtar';
 import IconLock from '../../components/Icon/IconLock';
 import Tippy from '@tippyjs/react';
@@ -366,13 +366,13 @@ const Profile = () => {
                         {profileinfobox ? (
                             <>
                                 <div className="panel">
-                                    <div className="flex items-center justify-between mb-1">
+                                    {/* <div className="flex items-center justify-between mb-1">
                                         <Tippy content="Edit Profile">
                                             <span onClick={handleProfileRequest} className="ltr:ml-auto rtl:mr-auto btn btn-primary p-2 cursor-pointer rounded-full">
                                                 <IconPencilPaper />
                                             </span>
                                         </Tippy>
-                                    </div>
+                                    </div> */}
                                     <div className="mb-5">
                                         <div className="flex flex-col justify-center items-center">
                                             {/* <img

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Tippy from '@tippyjs/react';
 
 import axios from 'axios';
-import { MY_INVOICES_URL, MY_INVOICES_YEARS_URL } from './query';
+import { MY_INVOICES_URL, MY_INVOICES_YEARS_URL } from '../query';
 
 import { NavLink, useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
-const List = () => {
+const Invoices = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -104,7 +104,7 @@ const List = () => {
         if (paidstatus > 1) {
             navigate('/preview');
         } else {
-            navigate('/payments');
+            navigate('/invoice_pay');
         }
     };
     const loadyearinvo = (schyearid: any, yearstdid: any) => {
@@ -125,7 +125,7 @@ const List = () => {
             ) : (
                 <div className="panel ">
                     <div className="flex  panel items-center justify-between pb-5 mb-4 border-b-2 overflow-x-auto space-x-1.5">
-                        {invoYears.map((year: any, index) => (
+                        {invoYears.map((year: any, index: number) => (
                             <div key={index}>
                                 <button
                                     className={`btn whitespace-nowrap ${schoolyearID == year.schoolyearID ? 'btn-info' : 'btn-outline-info'}`}
@@ -138,8 +138,8 @@ const List = () => {
                     </div>
 
                     <div className="  card-container">
-                        {invoiceData.map((invoice: any) => (
-                            <div key={invoice.invoiceID} className=" mb-4 ">
+                        {invoiceData.map((invoice: any, index: number) => (
+                            <div key={index} className=" mb-4 ">
                                 <div className=" panel card-body flex flex-col space-y-2">
                                     <div className="mb-5 ">
                                         <div className="table-responsive text-[#515365] dark:text-white-light font-semibold">
@@ -158,12 +158,12 @@ const List = () => {
                                                             Fee Amount
                                                         </td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td> ₹{invoice.amount}</td>
+                                                        <td> ₹{invoice.invoicetotal}</td>
                                                     </tr>
                                                     <tr>
                                                         <td style={{ width: '200px' }}>Concession</td>
                                                         <td style={{ width: '10px' }}>:</td>
-                                                        <td> ₹{invoice.discount}</td>
+                                                        <td> ₹{invoice.fee_concession}</td>
                                                     </tr>
                                                     <tr>
                                                         <td style={{ width: '200px' }}>After Concession</td>
@@ -205,7 +205,7 @@ const List = () => {
 
                                     <div className=" flex justify-end">
                                         <Tippy className="bg-black text-white" content={invoice.paidstatus === 0 || invoice.paidstatus === 1 ? 'Pay Now' : 'View'}>
-                                            <button onClick={() => handleInvoice(invoice.invoiceID, invoice.paidstatus)} className="flex hover:text-primary">
+                                            <div onClick={() => handleInvoice(invoice.invoiceID, invoice.paidstatus)} className="flex hover:text-primary">
                                                 {invoice.paidstatus === 0 || invoice.paidstatus === 1 ? (
                                                     <button type="button" className="btn btn-secondary btn-sm ">
                                                         Pay Now
@@ -215,7 +215,7 @@ const List = () => {
                                                         View
                                                     </button>
                                                 )}
-                                            </button>
+                                            </div>
                                         </Tippy>
                                     </div>
                                 </div>
@@ -228,4 +228,4 @@ const List = () => {
     );
 };
 
-export default List;
+export default Invoices;

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from './store';
 import { toggleRTL, toggleTheme, toggleLocale, toggleMenu, toggleLayout, toggleAnimation, toggleNavbar, toggleSemidark, toggleIsLoggedin, toggleIsschoolID, toggleIsschool_name, toggleIsschool_logo, toggleStudentLoginDtls } from './store/themeConfigSlice';
 import store from './store';
-import { Navigate } from 'react-router';
 
 function App({ children }: PropsWithChildren) {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);

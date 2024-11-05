@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { MY_LEAVE_URL } from './query';
+import { MY_LEAVE_URL } from '../query';
 import { Fragment, useEffect, useState } from 'react';
-import Index from '../Index';
+import Index from '../Dashboard';
 import Tippy from '@tippyjs/react';
 import moment from 'moment';
 import { Dialog, Transition } from '@headlessui/react';

@@ -220,7 +220,7 @@ const ExamSchedule = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {hallTicket.map((halltck: any, index: number) => (
+                            {hallTicket.map((halltck: any, index: any) => (
                                 <tr key={index}>
                                     <td style={cellStyle}>{moment(halltck.edate).format('DD-MM-YYYY')}</td>
                                     <td style={cellStyle}>{halltck.subject}</td>
@@ -249,7 +249,7 @@ const ExamSchedule = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {examSchedule.map((examsch: any, index: number) => (
+                            {examSchedule.map((examsch: any, index) => (
                                 <>
                                     <tr key={index}>
                                         <td onClick={() => toggleRow(index, examsch.examID)} className="cursor-pointer">
@@ -290,7 +290,7 @@ const ExamSchedule = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {examScheduleDlts.map((examschdlts: any, index: number) => (
+                                                    {examScheduleDlts.map((examschdlts: any, index) => (
                                                         <tr key={index} className="whitespace-nowrap text-sm">
                                                             <td>{examschdlts.subject}</td>
                                                             <td>{examschdlts.finalmark}</td>

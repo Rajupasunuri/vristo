@@ -6,7 +6,7 @@ import { setPageTitle, setStudentLoginDtls } from '../../store/themeConfigSlice'
 import IconMail from '../../components/Icon/IconMail';
 
 import axios from 'axios';
-import { MY_LOGIN_URL } from '../Apps/query';
+import { MY_LOGIN_URL } from '../query';
 import IconLock from '../../components/Icon/IconLock';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -148,10 +148,10 @@ const LoginBoxed = () => {
         <div>
             <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[700px] py-20">
                 <div className="mx-auto w-full max-w-[440px]">
-                    <div className="mb-5">
+                    <div className="mb-5 space-y-2">
                         <img src={localStorage.school_logo} className="mx-auto w-12 sm:w-16 md:w-24 lg:w-32 xl:w-40" alt="Image Description" />
 
-                        <p className="text-base font-bold leading-normal text-white-dark">{school_name}</p>
+                        <p className="text-base font-bold leading-normal text-white-dark text-center">{school_name}</p>
                     </div>
                     <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                         <div>

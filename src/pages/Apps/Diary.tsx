@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import IconX from '../../components/Icon/IconX';
-import { MY_DIARY_INFO_URL, MY_DIARY_URL } from './query';
+import { MY_DIARY_INFO_URL, MY_DIARY_URL } from '../query';
 import axios from 'axios';
 import Dropdown from '../../components/Dropdown';
 import IconCaretDown from '../../components/Icon/IconCaretDown';
@@ -10,7 +10,7 @@ import { IRootState } from '../../store';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 
-const Tabs = () => {
+const Diary = () => {
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
     const [loadDiary, setloadDiary] = useState('');
     const [nowmonth, setnowmonth] = useState('');
@@ -172,8 +172,8 @@ const Tabs = () => {
                                                 >
                                                     <ul className="!min-w-[170px]">
                                                         {myDiariesMonth &&
-                                                            myDiariesMonth.map((month: any) => (
-                                                                <li key={month.id}>
+                                                            myDiariesMonth.map((month: any, index: number) => (
+                                                                <li key={index}>
                                                                     <button type="button" onClick={() => handleMonth(month.monthno, month.monthName)}>
                                                                         {month.monthName}
                                                                     </button>
@@ -190,8 +190,8 @@ const Tabs = () => {
                         <div>
                             <div className="space-y-6">
                                 {myDiariesDays &&
-                                    myDiariesDays.map((day: any) => (
-                                        <div className="flex bg-gray-100 p-2 cursor-pointer" onClick={() => handleDiaryDay(day.dairyID)}>
+                                    myDiariesDays.map((day: any, index: number) => (
+                                        <div key={index} className="flex bg-gray-100 p-2 cursor-pointer" onClick={() => handleDiaryDay(day.dairyID)}>
                                             {/* <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
                                             Pay
                                         </span> */}
@@ -234,7 +234,7 @@ const Tabs = () => {
                                         </button>
                                     </div>
                                     <div className="flex flex-col space-y2 p-2">
-                                        <div>Date:{moment(diaryDate).format('DD-MM-YYYY')}</div>
+                                        <div className="mb-2 text-md font-bold">Date:{moment(diaryDate).format('DD-MM-YYYY')}</div>
                                         <div dangerouslySetInnerHTML={{ __html: diaryHome }} />
                                     </div>
                                 </Dialog.Panel>
@@ -247,4 +247,4 @@ const Tabs = () => {
     );
 };
 
-export default Tabs;
+export default Diary;

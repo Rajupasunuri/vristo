@@ -5,7 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import IconDownload from '../../components/Icon/IconDownload';
 //import React from 'react';
-import { MY_ASSIGNMENTS_FILES_URL, MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DELETE_FILE_URL, MY_DOWNLOAD_ASSIGNMENTS_FILE_URL, MY_IMG_URL } from './query';
+import { MY_ASSIGNMENTS_FILES_URL, MY_ASSIGNMENTS_URL, MY_ASSIGNMENT_FILE_URL, MY_DELETE_FILE_URL, MY_DOWNLOAD_ASSIGNMENTS_FILE_URL, MY_IMG_URL } from '../query';
 import axios from 'axios';
 import { FaArrowDownLong } from 'react-icons/fa6';
 import { ToastContainer, toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 import { FaFilePdf, FaFileAlt } from 'react-icons/fa';
 //import print from '/public/Application.pdf';
 
-const NewAssign = () => {
+const Assignments = () => {
     const dispatch = useDispatch();
     const [fileErr, setFileErr] = useState(false);
 
@@ -31,6 +31,7 @@ const NewAssign = () => {
     const [assignments, setAssignments] = useState<any>([]);
     const [refresh, setRefresh] = useState(false);
     const [selectFlMsg, setSelectFlMsg] = useState(false);
+    const [invalidType, setInvalidType] = useState(false);
     const [selectFlLng, setSelectFlLng] = useState(0);
 
     const [ddays, setDdays] = useState('');
@@ -143,9 +144,34 @@ const NewAssign = () => {
         setAssignModal(true);
     };
 
-    const handleFileChange = (e: any) => {
-        setFileErr(false);
-        setSelectedFiles(Array.from(e.target.files));
+    const handleFileChange = (event: any) => {
+
+        const allowedTypes = ["image/jpeg", "image/png", "application/x-zip-compressed", "image/gif", "image/bmp", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "text/plain", "application/zip"];
+        const files = event.target.files;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            console.log("file type", file.type)
+            if (!allowedTypes.includes(file.type)) {
+                // Not a valid file type, handle accordingly (e.g., show error message)
+                console.log("Invalid file type:", file.name);
+                setSelectFlMsg(false)
+                setFileErr(false)
+                setInvalidType(true)
+                setSelectedFiles([]);
+                // Optionally, clear the input field
+                event.target.value = '';
+            } else {
+                setInvalidType(false)
+                // Valid file type, handle the file (e.g., upload)
+                console.log("Valid file:", file.name);
+                setFileErr(false);
+                setSelectedFiles(Array.from(event.target.files));
+            }
+        }
+
+
+
     };
 
     const uploadClick = () => {
@@ -162,6 +188,7 @@ const NewAssign = () => {
             // If no files are selected, display an error message or take appropriate action
             console.log('Please select a file.');
             setFileErr(true);
+            setInvalidType(false)
             return;
         }
         setSelectFlMsg(false);
@@ -240,9 +267,11 @@ const NewAssign = () => {
         }
     };
 
-    const showUploadModal = (assgnID: any) => {
+    const showUploadModal = (assgnID: any, ddays: any) => {
+        setDdays(ddays);
         setSelectFlMsg(false);
         setFileErr(false);
+        setInvalidType(false)
         setAssignID(assgnID);
         localStorage.setItem('assignmentID', assgnID);
         const headers = {
@@ -380,13 +409,12 @@ const NewAssign = () => {
                             <div className="p-5">
                                 <div className="mb-5">
                                     <span
-                                        className={` px-4 py-1.5 before:bg-black before:w-1.5 before:h-1.5 before:rounded-full ltr:before:mr-2 rtl:before:ml-2 before:inline-block whitespace-nowrap p-1 rounded-md ${
-                                            assign.astatus === 'Date Expired'
+                                        className={` px-4 py-1.5 before:bg-black before:w-1.5 before:h-1.5 before:rounded-full ltr:before:mr-2 rtl:before:ml-2 before:inline-block whitespace-nowrap p-1 rounded-md ${assign.astatus === 'Date Expired'
                                                 ? '  bg-red-200 text-red-600'
                                                 : assign.astatus === 'Submitted'
-                                                ? 'bg-blue-200 text-blue-600'
-                                                : ' bg-orange-200  text-orange-600'
-                                        }`}
+                                                    ? 'bg-blue-200 text-blue-600'
+                                                    : ' bg-orange-200  text-orange-600'
+                                            }`}
                                     >
                                         {assign.astatus}
                                     </span>
@@ -410,7 +438,7 @@ const NewAssign = () => {
                                         View Details
                                     </button>
                                     {(assign.ddays > 0 || assign.astatus === 'Submitted') && assign.ddays > 0 ? (
-                                        <button type="button" onClick={() => showUploadModal(assign.assignmentID)} className="btn btn-success">
+                                        <button type="button" onClick={() => showUploadModal(assign.assignmentID, assign.ddays)} className="btn btn-success">
                                             Upload
                                         </button>
                                     ) : assign.astatus === 'Submitted' ? null : null}
@@ -451,9 +479,9 @@ const NewAssign = () => {
                                                 <thead>
                                                     <tr></tr>
                                                 </thead>
-                                                {assignments.map((file: any) => {
+                                                {assignments.map((file: any, index: number) => {
                                                     return (
-                                                        <>
+                                                        <div key={index}>
                                                             {file.assignmentID == assignID ? (
                                                                 <tbody className="dark:text-white-dark border-1.5 ">
                                                                     <tr>
@@ -518,13 +546,12 @@ const NewAssign = () => {
                                                                         <td style={{ width: '10px' }}>:</td>
                                                                         <td>
                                                                             <span
-                                                                                className={`whitespace-nowrap p-1 rounded-md ${
-                                                                                    file.astatus === 'Date Expired'
+                                                                                className={`whitespace-nowrap p-1 rounded-md ${file.astatus === 'Date Expired'
                                                                                         ? '  bg-red-200 text-red-400'
                                                                                         : file.astatus === 'Submitted'
-                                                                                        ? 'bg-blue-200 text-blue-400'
-                                                                                        : ' bg-orange-200  text-orange-400'
-                                                                                }`}
+                                                                                            ? 'bg-blue-200 text-blue-400'
+                                                                                            : ' bg-orange-200  text-orange-400'
+                                                                                    }`}
                                                                             >
                                                                                 {file.astatus}
                                                                             </span>
@@ -534,7 +561,7 @@ const NewAssign = () => {
                                                             ) : (
                                                                 ''
                                                             )}
-                                                        </>
+                                                        </div>
                                                     );
                                                 })}
                                             </table>
@@ -548,20 +575,21 @@ const NewAssign = () => {
                                                 ''
                                             )}
                                             <div className="space-y-2">
-                                                {showAssignFiles.map((file: any) => (
-                                                    <div className="flex bg-gray-100 p-2 ">
+                                                {showAssignFiles.map((file: any, index: number) => (
+                                                    <div key={index} className="flex justify-between bg-gray-100 p-2 ">
                                                         <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
                                                             {file.file_name.endsWith('.pdf') ||
-                                                            file.file_name.endsWith('.ppt') ||
-                                                            file.file_name.endsWith('.pptx') ||
-                                                            file.file_name.endsWith('.doc') ||
-                                                            file.file_name.endsWith('.docx') ||
-                                                            file.file_name.endsWith('.xlsx') ||
-                                                            file.file_name.endsWith('.xls') ||
-                                                            file.file_name.endsWith('.zip') ||
-                                                            file.file_name.endsWith('.mp4') ||
-                                                            file.file_name.endsWith('.mp3') ||
-                                                            file.file_name.endsWith('.csv') ? (
+                                                                file.file_name.endsWith('.ppt') ||
+                                                                file.file_name.endsWith('.pptx') ||
+                                                                file.file_name.endsWith('.doc') ||
+                                                                file.file_name.endsWith('.docx') ||
+                                                                file.file_name.endsWith('.xlsx') ||
+                                                                file.file_name.endsWith('.xls') ||
+                                                                file.file_name.endsWith('.zip') ||
+                                                                file.file_name.endsWith('.mp4') ||
+                                                                file.file_name.endsWith('.mp3') ||
+                                                                file.file_name.endsWith('.txt') ||
+                                                                file.file_name.endsWith('.csv') ? (
                                                                 // Render PDF button if file is PDF
                                                                 <button onClick={() => handleAssgnAwsFileDownload(file.assgn_ansid, file.file_name)}>
                                                                     <FaFileAlt />
@@ -576,8 +604,8 @@ const NewAssign = () => {
                                                                 />
                                                             )}
                                                         </span>
-                                                        <div className="px-3 flex-1">
-                                                            <div className="text-sm">{file.file_name}</div>
+                                                        <div className="px-3 flex-1  overflow-x-auto">
+                                                            <div className="text-xs break-words">{file.file_name}</div>
                                                         </div>
 
                                                         {ddays != '0' ? (
@@ -638,8 +666,20 @@ const NewAssign = () => {
                                         ) : (
                                             ''
                                         )}
+
+                                        {invalidType && (
+                                            <div className="flex items-center justify-between mb-5 text-red-500 animate-pulse  ">Not a Valid File to Upload</div>
+                                        )}
                                         <form onSubmit={handleFormSubmit}>
-                                            <input type="file" onChange={handleFileChange} hidden multiple id="upload" />
+                                            <input
+                                                type="file"
+                                                onChange={handleFileChange}
+                                                hidden
+                                                accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+                                                multiple
+                                                id="upload"
+
+                                            />
                                             <label
                                                 htmlFor="upload"
                                                 className=" border-[2px] border-spacing-8 cursor-pointer border-dashed panel flex flex-col space-y-2 justify-center items-center border-gray-500 "
@@ -662,20 +702,20 @@ const NewAssign = () => {
                                         )}
 
                                         <div className="space-y-2">
-                                            {showAssignFilesUp.map((file: any) => (
-                                                <div className="flex bg-gray-100 p-2 ">
+                                            {showAssignFilesUp.map((file: any, index: number) => (
+                                                <div key={index} className="flex bg-gray-100 p-2 ">
                                                     <span className="shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light">
                                                         {file.file_name.endsWith('.pdf') ||
-                                                        file.file_name.endsWith('.ppt') ||
-                                                        file.file_name.endsWith('.pptx') ||
-                                                        file.file_name.endsWith('.doc') ||
-                                                        file.file_name.endsWith('.docx') ||
-                                                        file.file_name.endsWith('.xlsx') ||
-                                                        file.file_name.endsWith('.xls') ||
-                                                        file.file_name.endsWith('.zip') ||
-                                                        file.file_name.endsWith('.mp4') ||
-                                                        file.file_name.endsWith('.mp3') ||
-                                                        file.file_name.endsWith('.csv') ? (
+                                                            file.file_name.endsWith('.ppt') ||
+                                                            file.file_name.endsWith('.pptx') ||
+                                                            file.file_name.endsWith('.doc') ||
+                                                            file.file_name.endsWith('.docx') ||
+                                                            file.file_name.endsWith('.xlsx') ||
+                                                            file.file_name.endsWith('.xls') ||
+                                                            file.file_name.endsWith('.zip') ||
+                                                            file.file_name.endsWith('.mp4') ||
+                                                            file.file_name.endsWith('.mp3') ||
+                                                            file.file_name.endsWith('.csv') ? (
                                                             // Render PDF button if file is PDF
                                                             <button onClick={() => handleAssgnAwsFileDownload(file.assgn_ansid, file.file_name)}>
                                                                 <FaFileAlt />
@@ -690,8 +730,8 @@ const NewAssign = () => {
                                                             />
                                                         )}
                                                     </span>
-                                                    <div className="px-3 flex-1">
-                                                        <div className="text-sm">{file.file_name}</div>
+                                                    <div className="px-3 flex-1 overflow-x-auto">
+                                                        <div className="text-sm break-words ">{file.file_name}</div>
                                                     </div>
                                                     {ddays != '0' ? (
                                                         <span
@@ -718,4 +758,4 @@ const NewAssign = () => {
     );
 };
 
-export default NewAssign;
+export default Assignments;

@@ -2,11 +2,9 @@ import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import IconBell from '../../components/Icon/IconBell';
-import TalentShow from './TalentShow';
 import IconXCircle from '../../components/Icon/IconXCircle';
 import Tippy from '@tippyjs/react';
-import { MY_DASHBOARD_URL, MY_ONLINE_EXAMS_URL } from './query';
+import { MY_ONLINE_EXAMS_URL } from '../query';
 import axios from 'axios';
 
 const rowData = [
@@ -42,7 +40,7 @@ const rowData = [
     },
 ];
 
-const Skin = () => {
+const Online = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Skin Tables'));
@@ -167,4 +165,4 @@ const Skin = () => {
     );
 };
 
-export default Skin;
+export default Online;

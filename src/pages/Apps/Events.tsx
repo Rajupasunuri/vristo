@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
-import { MY_EVENTS_INFO_URL, MY_EVENTS_URL, MY_HOLIDAYS_INFO_URL, MY_HOLIDAYS_URL, MY_NOTICES_URL } from './query';
+import { MY_EVENTS_INFO_URL, MY_EVENTS_URL, MY_HOLIDAYS_INFO_URL, MY_HOLIDAYS_URL, MY_NOTICES_URL } from '../query';
 import moment from 'moment';
 import { Transition, Dialog } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
@@ -27,7 +27,7 @@ interface HolidayData {
     holidayID: string;
 }
 
-const Tabs = () => {
+const Events = () => {
     const [Notices, setNotices] = useState(false);
     const [Events, setEvents] = useState(true);
     const [Holidays, setHolidays] = useState(false);
@@ -265,7 +265,7 @@ const Tabs = () => {
         setEventID(eventID);
         setEventFDate(moment(fdate).format('DD:MM:YYYY'));
         setEventTDate(moment(tdate).format('DD:MM:YYYY'));
-        setEventTime(moment(tdate).format('LT'));
+        setEventTime(moment(ftime, 'HH:mm:ss').format('hh:mm:ss A'));
         setEventTitle(title);
         setmodalNotice(true);
     };
@@ -294,8 +294,8 @@ const Tabs = () => {
                             </div>
                             <div className="space-y-2">
                                 {dataNotices.length > 0 ? <h2 className="text-md font-bold mb-4">Upcoming Notices</h2> : ''}
-                                {dataNotices.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {dataNotices.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleNoticeModal(notice.notice, notice.title)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -317,8 +317,8 @@ const Tabs = () => {
                                 ) : (
                                     <h2 className="text-md font-bold mb-4 mt-4"> Notices</h2>
                                 )}
-                                {datapast.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {datapast.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleNoticeModal(notice.notice, notice.title)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -360,8 +360,8 @@ const Tabs = () => {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                {dataHoliday.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {dataHoliday.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleHoliModal(notice.fdate, notice.title, notice.holidayID)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -402,8 +402,8 @@ const Tabs = () => {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                {dataEvents.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {dataEvents.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleEventModal(notice.fdate, notice.tdate, notice.ftime, notice.title, notice.eventID)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -532,11 +532,6 @@ const Tabs = () => {
                                         )}
                                     </h5>
                                 </div>
-                                {/* <div className="flex justify-end items-end m-4 ">
-                                    <button className="p-2 bg-gray-300 rounded-md" onClick={() => setmodalNotice(false)}>
-                                        Close
-                                    </button>
-                                </div> */}
                             </Dialog.Panel>
                         </div>
                     </div>
@@ -546,4 +541,4 @@ const Tabs = () => {
     );
 };
 
-export default Tabs;
+export default Events;

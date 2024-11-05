@@ -16,19 +16,17 @@ import router from './router/index';
 
 // Redux
 import { Provider } from 'react-redux';
-import { store, persistor } from './store/index';
-import { PersistGate } from 'redux-persist/integration/react';
-import { ToastContainer } from 'react-toastify';
+import { store } from './store/index';
+// import { PersistGate } from 'redux-persist/integration/react';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <React.StrictMode>
-        <Suspense>
-            <Provider store={store}>
-                <PersistGate persistor={persistor}>
-                    <RouterProvider router={router} />
-                </PersistGate>
-            </Provider>
-        </Suspense>
-        {/* <ToastContainer position="top-center" autoClose={2000} /> */}
-    </React.StrictMode>
+    // <React.StrictMode>
+    <Suspense>
+        <Provider store={store}>
+            {/* <PersistGate persistor={persistor}> */}
+            <RouterProvider router={router} />
+            {/* </PersistGate> */}
+        </Provider>
+    </Suspense>
+    // </React.StrictMode>
 );

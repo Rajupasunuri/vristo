@@ -11,7 +11,7 @@ import IconCaretDown from '../Icon/IconCaretDown';
 import IconMenuDashboard from '../Icon/Menu/IconMenuDashboard';
 import IconLogout from '../Icon/IconLogout';
 import { FaUserTie } from 'react-icons/fa6';
-import { AWS_S3_IMG } from '../../pages/Apps/query';
+import { AWS_S3_IMG } from '../../pages/query';
 
 const Sidebar = () => {
     const [currentMenu, setCurrentMenu] = useState<string>('');
@@ -27,7 +27,7 @@ const Sidebar = () => {
             return oldValue === value ? '' : value;
         });
     };
-    console.log('user photo', typeof null);
+    // console.log('user photo', typeof null);
 
     useEffect(() => {
         const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -65,7 +65,7 @@ const Sidebar = () => {
                 <div className="bg-white dark:bg-black h-full">
                     <div className="flex justify-between items-center px-4 py-3">
                         <NavLink to="/dashboard" className="main-logo flex items-center shrink-0">
-                            <img className="w-19 h-9 ml-[4px] flex-none" src="/assets/images/crown-logo.png" alt="logo" />
+                            <img className="w-19 h-9 ml-[4px] flex-none" src={localStorage.school_logo} alt="logo" />
                             <span className="text-2xl ltr:ml-1.5 rtl:mr-1.5 font-semibold align-middle lg:inline dark:text-white-light"></span>
                         </NavLink>
 
@@ -87,9 +87,9 @@ const Sidebar = () => {
                                     ) : (
                                         <FaUserTie className="w-16 h-16   overflow-hidden  object-cover  mb-5 text-blue-400 " />
                                     )}
-                                    <p className="font-semibold space-y-0.5 p-4 py-0 text-xs">
+                                    <div className="font-semibold space-y-0.5 p-4 py-0 text-xs">
                                         Class: {themeConfig.classname}:{themeConfig.sectionname} <hr /> AdmNo: {themeConfig.std_regno}
-                                    </p>
+                                    </div>
                                 </NavLink>
                             </li>
                             <li className="menu nav-item">
@@ -124,6 +124,9 @@ const Sidebar = () => {
                                         </li>
                                         <li>
                                             <NavLink to="/attendance">{t('Attendance')}</NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/face-attendance">{t('Face Attendance')}</NavLink>
                                         </li>
                                         {/* <li>
                                             <NavLink to="/leave-management">{t('Leave Management')}</NavLink>
@@ -167,11 +170,14 @@ const Sidebar = () => {
                                             <NavLink to="/offline-exam">{t('Offline Exam')}</NavLink>
                                         </li> */}
                                         <li>
-                                            <NavLink to="/schedule">{t('Exam Schedule')}</NavLink>
+                                            <NavLink to="/exam_schedule">{t('Exam Schedule')}</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/mark">{t('Mark')}</NavLink>
+                                            <NavLink to="/marks">{t('Marks')}</NavLink>
                                         </li>
+                                        {/* <li>
+                                            <NavLink to="/mark">{t('Mark')}</NavLink>
+                                        </li> */}
                                     </ul>
                                 </AnimateHeight>
                             </li>

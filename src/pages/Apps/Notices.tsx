@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import axios from 'axios';
-import { MY_EVENTS_INFO_URL, MY_EVENTS_URL, MY_HOLIDAYS_INFO_URL, MY_HOLIDAYS_URL, MY_NOTICES_URL } from './query';
+import { MY_EVENTS_INFO_URL, MY_EVENTS_URL, MY_HOLIDAYS_INFO_URL, MY_HOLIDAYS_URL, MY_NOTICES_URL } from '../query';
 import moment from 'moment';
 import { Transition, Dialog } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
@@ -27,7 +27,7 @@ interface HolidayData {
     holidayID: string;
 }
 
-const Tabs = () => {
+const Notices = () => {
     const [Notices, setNotices] = useState(true);
     const [Events, setEvents] = useState(false);
     const [Holidays, setHolidays] = useState(false);
@@ -228,14 +228,6 @@ const Tabs = () => {
         // Call the fetchData function when the component mounts
         fetchData();
     }, [holyID]);
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
 
     const handleNotices = () => {
         setNotices(true);
@@ -270,7 +262,9 @@ const Tabs = () => {
         setEventID(eventID);
         setEventFDate(moment(fdate).format('DD:MM:YYYY'));
         setEventTDate(moment(tdate).format('DD:MM:YYYY'));
-        setEventTime(moment(tdate).format('LT'));
+
+        setEventTime(moment(ftime, 'HH:mm:ss').format('hh:mm:ss A'));
+
         setEventTitle(title);
         setmodalNotice(true);
     };
@@ -322,8 +316,8 @@ const Tabs = () => {
                                 ) : (
                                     <h2 className="text-md font-bold mb-4 mt-4"> Notices</h2>
                                 )}
-                                {datapast.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {datapast.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleNoticeModal(notice.notice, notice.title)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -366,8 +360,8 @@ const Tabs = () => {
                             </div>
 
                             <div className="space-y-2">
-                                {dataHoliday.map((notice: any) => (
-                                    <div className="flex bg-gray-100 p-2 ">
+                                {dataHoliday.map((notice: any, index: number) => (
+                                    <div key={index} className="flex bg-gray-100 p-2 ">
                                         <span
                                             onClick={() => handleHoliModal(notice.fdate, notice.title, notice.holidayID)}
                                             className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -495,7 +489,9 @@ const Tabs = () => {
                                                                     <tr>
                                                                         <td style={{ width: '200px' }}>Details</td>
                                                                         <td style={{ width: '10px' }}>:</td>
-                                                                        <td> {eventInfo}</td>
+                                                                        <td>
+                                                                            <div dangerouslySetInnerHTML={{ __html: eventInfo }} />
+                                                                        </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -556,4 +552,4 @@ const Tabs = () => {
     );
 };
 
-export default Tabs;
+export default Notices;

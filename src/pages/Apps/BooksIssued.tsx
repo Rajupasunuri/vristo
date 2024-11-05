@@ -6,7 +6,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import axios from 'axios';
-import { MY_BOOKS_URL, MY_ISSUED_BOOKS_URL } from './query';
+import { MY_BOOKS_URL, MY_ISSUED_BOOKS_URL } from '../query';
 import DataTable from 'react-data-table-component';
 import moment from 'moment';
 
@@ -29,7 +29,7 @@ interface BOOKSISSUED {
     status: string;
     due_date: string;
 }
-const Tables = () => {
+const BooksIssued = () => {
     const [modal10, setModal10] = useState(false);
     const [Books, setBooks] = useState(false);
     const [Issue, setIssue] = useState(true);
@@ -371,4 +371,4 @@ const Tables = () => {
     );
 };
 
-export default Tables;
+export default BooksIssued;

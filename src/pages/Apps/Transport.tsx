@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import axios from 'axios';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL } from '../query';
 
 const tableData = [
     {
@@ -36,7 +36,7 @@ const tableData = [
     },
 ];
 
-const Tables = () => {
+const Transport = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tables'));
@@ -133,4 +133,4 @@ const Tables = () => {
     );
 };
 
-export default Tables;
+export default Transport;

@@ -5,7 +5,7 @@ import { setPageTitle } from '../../store/themeConfigSlice';
 import { Dialog, Transition } from '@headlessui/react';
 import IconX from '../../components/Icon/IconX';
 import axios from 'axios';
-import { MY_BOOKS_URL, MY_ISSUED_BOOKS_URL } from './query';
+import { MY_BOOKS_URL, MY_ISSUED_BOOKS_URL } from '../query';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { FaEye } from 'react-icons/fa6';
@@ -27,7 +27,7 @@ interface BOOKSISSUED {
     status: string;
     due_date: string;
 }
-const Tables = () => {
+const Books = () => {
     const [Books, setBooks] = useState(true);
     const [Issue, setIssue] = useState(false);
     const [modalNotice, setmodalNotice] = useState(false);
@@ -138,8 +138,8 @@ const Tables = () => {
                         </div>
 
                         <div className="space-y-2">
-                            {dataBooks.map((book: any) => (
-                                <div className="flex bg-gray-100 p-2 ">
+                            {dataBooks.map((book: any, index: number) => (
+                                <div key={index} className="flex bg-gray-100 p-2 ">
                                     <span
                                         onClick={() => handleBookModal(book.author, book.book, book.due_quantity, book.quantity, book.rack, book.subject_code)}
                                         className=" cursor-pointer shrink-0 grid place-content-center text-base w-9 h-9 rounded-md bg-success-light dark:bg-success text-success dark:text-success-light"
@@ -308,4 +308,4 @@ const Tables = () => {
     );
 };
 
-export default Tables;
+export default Books;

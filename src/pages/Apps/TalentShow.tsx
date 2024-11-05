@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
-import { MY_TALENT_SHOW_URL } from './query';
+import { MY_TALENT_SHOW_URL } from '../query';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import moment from 'moment';
 
-const Skin = () => {
+const TalentShow = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Skin Tables'));
-    });
+
     const [talentShow, setTalentShow] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
@@ -107,4 +104,4 @@ const Skin = () => {
     );
 };
 
-export default Skin;
+export default TalentShow;

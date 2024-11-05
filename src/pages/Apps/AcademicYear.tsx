@@ -4,7 +4,7 @@ import 'tippy.js/dist/tippy.css';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
-import { MY_DASHBOARD_URL } from './query';
+import { MY_DASHBOARD_URL } from '../query';
 import axios from 'axios';
 
 const tableData = [
@@ -47,7 +47,7 @@ const tableData = [
     },
 ];
 
-const Tables = () => {
+const AcademicYear = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(setPageTitle('Tables'));
@@ -132,4 +132,4 @@ const Tables = () => {
     );
 };
 
-export default Tables;
+export default AcademicYear;

@@ -51,23 +51,9 @@ const rowData = [
     },
 ];
 
-const Tabs = () => {
+const QueryRequest = () => {
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Tabs'));
-    });
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
-    };
 
-    useEffect(() => {
-        dispatch(setPageTitle('Skin Tables'));
-    });
     const PAGE_SIZES = [10, 20, 30, 50, 100];
 
     //Skin: Striped
@@ -512,4 +498,4 @@ const Tabs = () => {
     );
 };
 
-export default Tabs;
+export default QueryRequest;

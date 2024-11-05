@@ -3,49 +3,17 @@ import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/themeConfigSlice';
 import axios from 'axios';
-import { MY_DASHBOARD_URL, MY_DICTIONARY_URL } from './query';
+import { MY_DASHBOARD_URL, MY_DICTIONARY_URL } from '../query';
 import Swal from 'sweetalert2';
 
-const Tabs = () => {
+const Dictionary = () => {
     const [word, setWord] = useState('');
     const [show, setShow] = useState(false);
     const [WordErr, setWordErr] = useState(false);
     const [resWord, setResWord] = useState('');
     const [wordMeaning, setWordMeaning] = useState<any>({});
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(setPageTitle('Tabs'));
-    });
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const headers = {
-    //                 'Content-Type': 'application/json',
-    //                 Authorization: localStorage.token,
-    //             };
-    //             const postData = {
-    //                 studentID: localStorage.studentID,
-    //                 schoolID: localStorage.schoolID,
-    //             };
-    //             const response = await axios.post(MY_DASHBOARD_URL, postData, {
-    //                 headers: headers,
-    //             });
 
-    //             console.log('dashboard', response);
-    //             // if (response.data.error) {
-    //             //     Swal.fire('Request Failed, Try Again Later!');
-    //             // } else {
-    //             //     setALeaveList(response.data.data.leave_Management);
-    //             //     setLeaveLoader(false);
-    //             // }
-    //         } catch (error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
-
-    //     // Call the fetchData function when the component mounts
-    //     fetchData();
-    // }, []);
     const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
 
@@ -88,14 +56,6 @@ const Tabs = () => {
             .catch((error) => {
                 console.log('Error is ', error);
             });
-    };
-    const [tabs, setTabs] = useState<string[]>([]);
-    const toggleCode = (name: string) => {
-        if (tabs.includes(name)) {
-            setTabs((value) => value.filter((d) => d !== name));
-        } else {
-            setTabs([...tabs, name]);
-        }
     };
 
     const handleword = (e: any) => {
@@ -174,4 +134,4 @@ const Tabs = () => {
     );
 };
 
-export default Tabs;
+export default Dictionary;
